@@ -13,14 +13,12 @@ void floydWarshall(int graph[V][V]) {
     int dist[V][V];
     int i, j, k;
 
-    // Initialisation de la matrice dist avec les valeurs du graphe
     for (i = 0; i < V; i++) {
         for (j = 0; j < V; j++) {
             dist[i][j] = graph[i][j];
         }
     }
 
-    // Application de l'algorithme de Floyd-Warshall
     for (k = 0; k < V; k++) {
         for (i = 0; i < V; i++) {
             for (j = 0; j < V; j++) {
@@ -31,11 +29,10 @@ void floydWarshall(int graph[V][V]) {
         }
     }
 
-    // Affichage des résultats
     printf("Matrice de distances minimales :\n");
     for (i = 0; i < V; i++) {
         for (j = 0; j < V; j++) {
-            if (dist[i][j] == INF) {
+            if (dist[i][j] == __INT16_MAX__) {
                 printf("INF\t");
             } else {
                 printf("%d\t", dist[i][j]);
