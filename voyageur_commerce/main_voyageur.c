@@ -98,7 +98,6 @@ int main(int argc, char* argv[])
     
     libereMatrice(matrice, nombre_points);
     clean_sdl(&window,&renderer);
-
     return 0;
 }
 
