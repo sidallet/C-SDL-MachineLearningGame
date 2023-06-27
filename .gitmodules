@@ -1,3 +1,9 @@
 [submodule "Travaux perso/projetindividuel"]
 	path = Travaux perso/projetindividuel
 	url = https://gitlab.isima.fr/Simon.DALLET/projetindividuel.git
+[submodule "Travaux perso/Martin/dessinsdl2"]
+	path = Travaux perso/Martin/dessinsdl2
+	url = https://gitlab.isima.fr/marouault/dessinsdl2.git
+[submodule "Travaux perso/Martin/x_fenetre"]
+	path = Travaux perso/Martin/x_fenetre
+	url = https://gitlab.isima.fr/marouault/x_fenetre.git
