@@ -21,10 +21,7 @@ void initMatrice(int ** matrice)
     int i;
 
     for (i = 0; i < N; i++) {
-        matrice[i] = (int*)malloc(N * sizeof(int));
-        for (int j = 0; j < N; j++) {
-            matrice[i][j] = 0;
-        }
+        matrice[i] = (int*)calloc(N, sizeof(int));
     }
 }
 
