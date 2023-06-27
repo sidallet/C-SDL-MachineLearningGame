@@ -1,3 +1,6 @@
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL2_framerate.h>
+#include <SDL2/SDL_stdinc.h>
 #include <assert.h>
 #include <stdbool.h>
 #include "wrapper_sdl.h"
@@ -15,7 +18,7 @@ void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int
 
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
@@ -26,6 +29,32 @@ int main()
     {
         return EXIT_FAILURE;
     }
+
+	FPSmanager fps_manager;
+	SDL_initFramerate(&fps_manager);
+	SDL_setFramerate(&fps_manager, 60);
+
+	Uint32 delta_time = 0;
+
+	bool actif = true;
+	while (actif) {
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+				case SDL_QUIT: {
+					actif = false;
+					break;
+				}
+			}
+		}
+
+		SDL_RenderClear(renderer);
+		SDL_RenderPresent(renderer);
+		
+		delta_time = SDL_framerateDelay(&fps_manager);
+	}
+
+
     clean_sdl(&window,&renderer);
     return 0;
 }
