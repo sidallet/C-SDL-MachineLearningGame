@@ -56,7 +56,7 @@ void genereGraphe(int ** matrice, float p)
             if (randomVal < p )
             {
                 matrice[i][j] = 1;
-                matrice[i][j] = 1;
+                matrice[j][i] = 1;
             }
         }
     }
