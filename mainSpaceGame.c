@@ -64,8 +64,12 @@ int main()
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
     SDL_Rect * rect = NULL;
+    
 
-    start_sdl(&window,&renderer, "Space Game",rect);
+    if (!start_sdl(&window,&renderer, "Space Game",rect))
+    {
+        return EXIT_FAILURE;
+    }
     clean_sdl(&window,&renderer);
     return 0;
 }
