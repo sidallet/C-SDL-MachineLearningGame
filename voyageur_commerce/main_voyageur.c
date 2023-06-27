@@ -46,7 +46,6 @@ int main(int argc, char* argv[])
 {
     float p = 0.1;
     srand(time(NULL));
-    int** matrice = (int**)malloc(N * sizeof(int*));
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
     SDL_Rect rect_fenetre = {0,0,1000,800};
@@ -57,19 +56,19 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-	Point points[N];
+	const size_t nombre_points = 5;
+	Matrice matrice = initMatrice(nombre_points);
+    genereMatriceArbre(matrice, 0, nombre_points-1);
+    genereGraphe(matrice,p, nombre_points);
+
+	Point points[nombre_points];
 	
-	for (size_t i=0; i<N; ++i) {
+	for (size_t i=0; i<nombre_points; ++i) {
 		points[i].val = i;
 		points[i].x = rand()%rect_fenetre.w;
 		points[i].y = rand()%rect_fenetre.h;
 		printf("%d, %d\n", points[i].x, points[i].y);
 	}
-
-    initMatrice(matrice);
-    genereMatriceArbre(matrice, 0, N-1);
-    genereGraphe(matrice,p);
-
 	FPSmanager fps_manager;
 	SDL_initFramerate(&fps_manager);
 	SDL_setFramerate(&fps_manager, 60);
@@ -89,7 +88,7 @@ int main(int argc, char* argv[])
 		}
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
-		afficherGraphe(renderer, matrice, points, N);
+		afficherGraphe(renderer, matrice, points, nombre_points);
 		SDL_RenderPresent(renderer);
 		
 		delta_time = SDL_framerateDelay(&fps_manager);
@@ -97,7 +96,7 @@ int main(int argc, char* argv[])
 
     
     
-    libereMatrice(matrice);
+    libereMatrice(matrice, nombre_points);
     clean_sdl(&window,&renderer);
 
     return 0;

@@ -1,7 +1,10 @@
 #include "matrice.h" 
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 
-void genereMatriceArbre(int** matrice, int bas, int haut) {
+void genereMatriceArbre(Matrice matrice, int bas, int haut) {
     if (bas < haut) {
         int k = (rand() % (haut - bas)) + bas + 1;
         matrice[bas][bas+1] = 1;
@@ -11,46 +14,58 @@ void genereMatriceArbre(int** matrice, int bas, int haut) {
             matrice[k+1][bas] = 1;
         }
         genereMatriceArbre(matrice, bas+1, k);
-        genereMatriceArbre(matrice, k+1, haut);
-        
+        genereMatriceArbre(matrice, k+1, haut); 
     }
 }
 
-void initMatrice(int ** matrice)
+Matrice initMatrice(const size_t nombre_points)
 {
-    int i;
+    Matrice matrice = (Matrice)malloc(nombre_points * sizeof(int*));
+	if (matrice) {
+		fprintf(stderr, "Erreur malloc graphe\n");
+		return NULL;
+	}
 
-    for (i = 0; i < N; i++) {
-        matrice[i] = (int*)calloc(N, sizeof(int));
+    for (size_t i = 0; i < nombre_points; i++) {
+        matrice[i] = (int*)calloc(nombre_points, sizeof(int));
+		if (matrice[i]==NULL) {
+			for (; i!=0; --i) {
+				free(matrice[i-1]);
+			}
+			free(matrice);
+			fprintf(stderr, "Erreur malloc graphe\n");
+			return NULL;
+		}
     }
+
+	return matrice;
 }
 
-void afficheMatrice(int ** matrice)
+void afficheMatrice(Matrice matrice, const size_t nombre_points)
 {
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
+    for (size_t i = 0; i < nombre_points; i++) {
+        for (size_t j = 0; j < nombre_points; j++) {
             printf("%d ", matrice[i][j]);
         }
         printf("\n");
     }
 }
 
-void libereMatrice(int ** matrice)
+void libereMatrice(Matrice matrice, const size_t nombre_points)
 {
-    for (int i = 0; i < N; i++) {
+    for (size_t i = 0; i < nombre_points; i++) {
         free(matrice[i]);
     }
     free(matrice);
 }
 
 
-void genereGraphe(int ** matrice, float p)
+void genereGraphe(Matrice matrice, float p, const size_t nombre_points)
 {
     float randomVal;
-    int i,j;
 
-    for (i = 0; i < N; i++) {
-        for (j = 0; j < N; j++) {
+    for (size_t i = 0; i < nombre_points; i++) {
+        for (size_t j = 0; j < nombre_points; j++) {
             randomVal = (float)rand() / RAND_MAX;
             
             if (randomVal < p )

@@ -1,15 +1,17 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-#define N 10
+typedef int** Matrice;
 
-void genereMatriceArbre(int** matrice, int bas, int haut);
+void genereMatriceArbre(Matrice matrice, int bas, int haut);
 
-void initMatrice(int ** matrice);
+Matrice initMatrice(const size_t nombre_points);
 
-void afficheMatrice(int ** matrice);
+void afficheMatrice(Matrice matrice, const size_t nombre_points);
 
-void libereMatrice(int ** matrice);
+void libereMatrice(Matrice matrice, const size_t nombre_points);
 
-void genereGraphe(int ** matrice, float p);
+void genereGraphe(Matrice matrice, float p, const size_t nombre_points);
+
