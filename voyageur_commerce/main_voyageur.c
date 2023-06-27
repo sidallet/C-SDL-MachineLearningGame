@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "wrapper_sdl.h"
-
+#include "voyageur.h"
 
 void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int recty,int Red,int Green,int Blue)
 {  
@@ -28,6 +28,16 @@ int main()
         return EXIT_FAILURE;
     }
     clean_sdl(&window,&renderer);
+    
+
+     int graph[V][V] = {
+        {0, INF, -2, INF},
+        {4, 0, 3, INF},
+        {INF, INF, 0, 2},
+        {INF, -1, INF, 0}
+    };
+    
+    floydWarshall(graph);
     return 0;
 }
 
