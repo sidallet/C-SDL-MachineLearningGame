@@ -50,6 +50,18 @@ bool start_sdl(SDL_Window** window, SDL_Renderer** renderer, const char* titre, 
 	return true;
 }
 
+void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int recty,int Red,int Green,int Blue)
+{  
+    SDL_Rect rect;
+    rect.x = rectx;
+    rect.y = recty;
+    rect.w = rectWidth;
+    rect.h = rectHeight;
+    SDL_SetRenderDrawColor(renderer,Red,Green,Blue,200);
+    SDL_RenderFillRect(renderer, &rect);
+
+}
+
 void clean_sdl(SDL_Window** window, SDL_Renderer** renderer) {
 	SDL_DestroyRenderer(*renderer);
 	SDL_DestroyWindow(*window);
