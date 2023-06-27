@@ -7,3 +7,6 @@
 [submodule "Travaux perso/Martin/x_fenetre"]
 	path = Travaux perso/Martin/x_fenetre
 	url = https://gitlab.isima.fr/marouault/x_fenetre.git
+[submodule "Travaux perso/projet-1-val"]
+	path = Travaux perso/projet-1-val
+	url = https://gitlab.isima.fr/vaboutouri/projet-1-val.git
