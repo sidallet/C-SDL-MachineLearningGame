@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "wrapper_sdl.h"
+#include "voyageur.h"
 
 
 void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int recty,int Red,int Green,int Blue)
