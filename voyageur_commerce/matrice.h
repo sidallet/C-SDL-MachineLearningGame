@@ -11,3 +11,5 @@ void initMatrice(int ** matrice);
 void afficheMatrice(int ** matrice);
 
 void libereMatrice(int ** matrice);
+
+void genereGraphe(int ** matrice, float p);

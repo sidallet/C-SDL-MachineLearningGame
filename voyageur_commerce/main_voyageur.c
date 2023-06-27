@@ -22,6 +22,7 @@ void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int
 
 int main(int argc, char* argv[])
 {
+    float p = 0.1;
     srand(time(NULL));
     int** matrice = (int**)malloc(N * sizeof(int*));
     SDL_Window * window = NULL;
@@ -36,6 +37,9 @@ int main(int argc, char* argv[])
 
     initMatrice(matrice);
     genereMatriceArbre(matrice, 0, N-1);
+    afficheMatrice(matrice);
+    genereGraphe(matrice,p);
+    printf("apres \n");
     afficheMatrice(matrice);
     libereMatrice(matrice);
 

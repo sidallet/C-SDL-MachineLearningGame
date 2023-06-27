@@ -42,3 +42,27 @@ void libereMatrice(int ** matrice)
     }
     free(matrice);
 }
+
+
+void genereGraphe(int ** matrice, float p)
+{
+    float randomVal;
+    int i,j;
+
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            randomVal = (float)rand() / RAND_MAX;
+            
+            if (randomVal < p )
+            {
+                matrice[i][j] = 1;
+                matrice[i][j] = 1;
+            }
+        }
+    }
+}
+    
+
+    
+        
+            
