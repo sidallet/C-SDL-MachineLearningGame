@@ -62,6 +62,8 @@ void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int
 
 }
 
+
+
 void clean_sdl(SDL_Window** window, SDL_Renderer** renderer) {
 	SDL_DestroyRenderer(*renderer);
 	SDL_DestroyWindow(*window);
