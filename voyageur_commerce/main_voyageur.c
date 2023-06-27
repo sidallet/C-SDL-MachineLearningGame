@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "wrapper_sdl.h"
 #include "voyageur.h"
+#include "matrice.h"
 
 
 void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int recty,int Red,int Green,int Blue)
@@ -21,6 +22,8 @@ void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int
 
 int main(int argc, char* argv[])
 {
+    srand(time(NULL));
+    int** matrice = (int**)malloc(N * sizeof(int*));
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
     SDL_Rect rect = {0,0,1000,800};
@@ -30,6 +33,11 @@ int main(int argc, char* argv[])
     {
         return EXIT_FAILURE;
     }
+
+    initMatrice(matrice);
+    genereMatriceArbre(matrice, 0, N-1);
+    afficheMatrice(matrice);
+    libereMatrice(matrice);
 
 	FPSmanager fps_manager;
 	SDL_initFramerate(&fps_manager);
@@ -55,8 +63,14 @@ int main(int argc, char* argv[])
 		delta_time = SDL_framerateDelay(&fps_manager);
 	}
 
-
+    
+    
     clean_sdl(&window,&renderer);
+
     return 0;
 }
+
+
+
+
 
