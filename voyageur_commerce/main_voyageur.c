@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-
+#define N 10
 void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int recty,int Red,int Green,int Blue)
 {  
     SDL_Rect rect;
@@ -33,10 +33,40 @@ void genereMatriceArbre(int** matrice, int bas, int haut) {
     }
 }
 
+void initMatrice(int ** matrice)
+{
+    int i;
+
+    for (i = 0; i < N; i++) {
+        matrice[i] = (int*)malloc(N * sizeof(int));
+        for (int j = 0; j < N; j++) {
+            matrice[i][j] = 0;
+        }
+    }
+}
+
+void afficheMatrice(int ** matrice)
+{
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            printf("%d ", matrice[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void libereMatrice(int ** matrice)
+{
+    for (int i = 0; i < N; i++) {
+        free(matrice[i]);
+    }
+    free(matrice);
+}
+
 
 int main()
 {
-    int N = 10; 
+    srand(time(NULL));
     int** matrice = (int**)malloc(N * sizeof(int*));
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
@@ -48,27 +78,12 @@ int main()
         return EXIT_FAILURE;
     }
 
-    for (int i = 0; i < N; i++) { //init matrice
-        matrice[i] = (int*)malloc(N * sizeof(int));
-        for (int j = 0; j < N; j++) {
-            matrice[i][j] = 0;
-        }
-    }//fin init
+    initMatrice(matrice);
     genereMatriceArbre(matrice, 0, N-1);
-
-    //affichage matrice
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            printf("%d ", matrice[i][j]);
-        }
-        printf("\n");
-    }
+    afficheMatrice(matrice);
+    libereMatrice(matrice);
     
-    //lib de la mémoire
-    for (int i = 0; i < N; i++) {
-        free(matrice[i]);
-    }
-    free(matrice);
+    
 
     clean_sdl(&window,&renderer);
 
