@@ -1,6 +1,8 @@
 #include <stdio.h>
-#define INF 99999
+#include "matrice.h"
+
 #define V 4 // Nombre de sommets du graphe
+
 typedef struct {
     int val;
     int x;
