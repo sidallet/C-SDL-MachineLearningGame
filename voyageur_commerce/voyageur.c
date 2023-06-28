@@ -59,32 +59,37 @@ void floydWarshall(int graph[V][V]) {
 
 int recherche_local(Matrice matrice,int N,Point points[])
 {   
-    int dist_graphe_sommet=INT16_MAX;//on commence a la distance 0 (initialisation)
     int dist_graphe_total=0;
     int i,j;
-    int * Liste[]
-    Point voisin_proche;
+    
+    int * Liste[100];// à changer avec le alloc
     int a=genererNombreAleatoire(N);//sommet aléatoire
+    Point voisin_proche;
     Point point_a=points[a];
    
     while (verifparcours()==FALSE)
-        {   
-            dist_graphe_sommet=0;//on remet à 0 car on revient sur un nouveau sommet
+        {   i=0;
+            int voisin_autre_présent==0;
+            int dist_graphe_sommet=INT16_MAX;//on commence a la distance à l'infini(initialisation)
             for(j=0;j<N;j++)
-            {//on commence à la ligne du sommet a
-                Point point_j= points[j];
-                if (matrice[point_a.val][point_j.val]==1)
+            {//on commence à la ligne du sommet a puis on enchaine sur la ligne du sommet le plus proche
+                Point point_j= points[j];//on va tester pour tout les points de la matrice d'ajacence
+                if (matrice[point_a.val][point_j.val]==1 && Liste[i]!=point_j.val)//si il y a un lien entre les deux sommets et que ce n'est pas le sommet précédent
+                {   
+                    voisin_autre_présent=1;//il y a un voisin qui n'est pas le précédent (donc pas un point isolé)
+                }  
+                if (distance_eucli(point_a,point_j)>dist_graphe_sommet)
                 {
-                    if (distance_eucli(point_a,point_j)>dist_graphe_sommet)
-                    {
-                    dist_graphe_sommet=distance_eucli(point_a,point_j);
-                    voisin_proche=point_j;
-                    }
-                }      
+                dist_graphe_sommet=distance_eucli(point_a,point_j);
+                voisin_proche=point_j;
+                }
+                     
             }
+            Liste[i]=point_a.val;//on ajoute le point précédent dans la liste pour pas "revenir en arrière" (problème si point isolé ?)
+            i=i+1;
             point_a=voisin_proche;
             dist_graphe_total+=dist_graphe_sommet;
-            in
+            
             
         }   
     return dist_graphe_total;
