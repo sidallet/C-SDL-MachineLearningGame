@@ -77,17 +77,6 @@ int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mo
 	
 }
 
-int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const size_t nombre_noeuds)
-{
-	int distTotal = 0;
-	for (size_t i = 0; i+1 < nombre_noeuds; i++)
-	{
-		distTotal += distance_eucli(points[indicesPointSelect[i]], points[indicesPointSelect[i+1]]);
-	}
-	return distTotal;
-}
-
-
 
 
 int main(int argc, char* argv[])

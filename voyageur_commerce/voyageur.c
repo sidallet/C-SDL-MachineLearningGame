@@ -1,8 +1,10 @@
 #include "voyageur.h"
 #include <math.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <time.h>
 #include "matrice.h"
 
@@ -20,6 +22,15 @@ int genererNombreAleatoire(int N) {
 }
 
 
+int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const size_t nombre_noeuds)
+{
+	int distTotal = 0;
+	for (size_t i = 0; i+1 < nombre_noeuds; i++)
+	{
+		distTotal += distance_eucli(points[indicesPointSelect[i]], points[indicesPointSelect[i+1]]);
+	}
+	return distTotal;
+}
 
 
 // void floydWarshall(int graph[V][V]) {
@@ -122,4 +133,113 @@ int recherche_local_glouton(Matrice matrice,int N,Point points[])
     return dist_graphe_total;
 }
 
+
+Chemin generer_solution_initiale(const int nombre_noeuds) {
+	Chemin chemin;
+	chemin.nombre_elems = nombre_noeuds+1;
+	if (nombre_noeuds==0) {
+		chemin.val = NULL;
+		return chemin;
+	}
+	chemin.val = (int*)malloc(sizeof(int)*(chemin.nombre_elems));
+	if (chemin.val==NULL) {
+		fprintf(stderr, "Erreur allocation\n");
+		chemin.nombre_elems = 0;
+		return chemin;
+	}
+
+	for (size_t i=0; i<chemin.nombre_elems-1;++i) {
+		chemin.val[i] = i;
+	}
+	chemin.val[chemin.nombre_elems-1] = chemin.val[0];
+
+	return chemin;
+}
+
+int calculDistanceGrapheComplet(const Matrice matrice, const Chemin* chemin) {
+	int longeur = 0;
+	for (size_t i=1; i<chemin->nombre_elems; ++i) {
+		longeur+=matrice[i][i-1];
+	}
+	return longeur;
+}
+
+
+Chemin alterChemin(Chemin chemin) {
+	int i = rand()%chemin.nombre_elems;
+	int j = rand()%chemin.nombre_elems;
+	if (j == i) {
+		j = (j+1)%chemin.nombre_elems; 
+	}
+	
+	Chemin nouveau_chemin = {
+		.val = malloc(sizeof(int)*chemin.nombre_elems),
+		.nombre_elems = chemin.nombre_elems,
+	};
+	
+	memcpy(nouveau_chemin.val, chemin.val, sizeof(int)*chemin.nombre_elems);
+
+	nouveau_chemin.val[i] = chemin.val[j];
+	nouveau_chemin.val[j] = chemin.val[i];
+	return nouveau_chemin;
+}
+
+bool recuit_impl(Chemin chemin, const int longueurChemin, const Matrice matrice, double temperature, int* nouvelle_longeur) {
+	Chemin nouveauChemin = alterChemin(chemin);
+	*nouvelle_longeur = calculDistanceGrapheComplet(matrice, &nouveauChemin);
+	if (longueurChemin > *nouvelle_longeur) {
+		free(chemin.val);
+		chemin.val = nouveauChemin.val;
+		return true;
+	}
+	else {
+		float p = exp((float)(*nouvelle_longeur - longueurChemin)/temperature);
+		if ((double)rand() /INT32_MAX < p) {
+			free(chemin.val);
+			chemin.val = nouveauChemin.val;
+			return true;	
+		}
+		else {
+			return false;
+		}
+	}
+}
+
+double init_temperature(Matrice matrice, int nombre_noeud) {
+	Chemin chemin = generer_solution_initiale(nombre_noeud);
+	int longeur_max = calculDistanceGrapheComplet(matrice, &chemin);
+	free(chemin.val);
+	for (size_t i=0; i<20; ++i) {
+		for(size_t j=0; j<nombre_noeud; ++j) {	
+			Chemin nouveau_chemin = alterChemin(chemin);
+			free(chemin.val);
+			chemin.val = nouveau_chemin.val;
+		}
+		int longeur = calculDistanceGrapheComplet(matrice, &chemin);
+		if (longeur > longeur_max) {
+			longeur_max = longeur;
+		}
+	}
+
+	return longeur_max;
+}
+
+int recuit(Matrice matrice, int N, int nombre_iterations) {
+	double temperature = init_temperature(matrice, N);
+	double pente = temperature/nombre_iterations;
+	Chemin chemin = generer_solution_initiale(N);
+	int longeurChemin = calculDistanceGrapheComplet(matrice, &chemin);
+
+	while (temperature>0.001) {
+		int nouvelle_longeur;
+		if (recuit_impl(chemin, longeurChemin, matrice, temperature, &nouvelle_longeur)) {
+			longeurChemin = nouvelle_longeur;
+		}
+			
+		temperature -= pente;
+	}
+
+	free(chemin.val);
+	return longeurChemin;
+}
 
