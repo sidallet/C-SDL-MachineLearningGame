@@ -14,7 +14,7 @@
 #include "voyageur.h"
 #include "matrice.h"
 
-
+//Permet de dessiner un SDL_Rect
 void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int recty,int Red,int Green,int Blue)
 {  
     SDL_Rect rect;
@@ -27,6 +27,15 @@ void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int
 
 }
 
+/**
+ * Permet d'afficher un graphe sur une fenetre
+ * renderer : renderer SDL
+ * matrice_graphe : matrice du graphe à afficher
+ * noeuds : liste des points à afficher
+ * nombre_noeuds : nombre de points
+ * indicesPointSelect : numero des points cliqués
+ * nb_indicesPointSelect : nombre de points cliqués
+ **/
 void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point noeuds[], const size_t nombre_noeuds, int indicesPointSelect[], int nb_indicesPointSelect) {
 	for (size_t j = 0; j<nombre_noeuds; ++j) {
 		for (size_t i = j; i<nombre_noeuds; ++i) {
@@ -61,6 +70,7 @@ void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point no
 	} 
 }
 
+//Permet de chercher quel point à été cliqué par l'utilisateur
 int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mouse, int y_mouse)
 {
 	Point click = {
@@ -78,41 +88,7 @@ int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mo
 	
 }
 
-int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const size_t nombre_noeuds)
-{
-	int distTotal = 0;
-	for (size_t i = 0; i+1 < nombre_noeuds; i++)
-	{
-		distTotal += distance_eucli(points[indicesPointSelect[i]], points[indicesPointSelect[i+1]]);
-	}
-	return distTotal;
-}
-
-bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds)
-{
-	if (!(nb_indicesPointSelect > 0 && indicesPointSelect[0] == indicesPointSelect[nb_indicesPointSelect - 1]))
-	{
-		return false;
-	}
-
-	for (size_t i = 0; i < nombre_noeuds; i++)
-	{
-		bool pointPresent = false;
-		for (size_t j = 0; j < nb_indicesPointSelect; j++)
-		{
-			if (indicesPointSelect[j] == i)
-			{
-				pointPresent = true;
-			}
-		}
-		if (!pointPresent)
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
+//Permet d'afficher la distance du parcours apres l'avoir complété
 void afficheScore(SDL_Renderer* renderer, int distTotal)
 {
 	char valStr[20] = "Score :";
@@ -150,7 +126,7 @@ void afficheScore(SDL_Renderer* renderer, int distTotal)
 
 
 
-
+//Main : programme principal contenant la boucle de jeu
 int main(int argc, char* argv[])
 {
     float p = 0.1;
@@ -169,7 +145,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-	const size_t nombre_points = 4;
+	const size_t nombre_points = 5;
 	Matrice matrice = initMatrice(nombre_points);
     genereMatriceArbre(matrice, 0, nombre_points-1);
     genereGraphe(matrice,p, nombre_points);
