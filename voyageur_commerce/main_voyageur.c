@@ -115,28 +115,29 @@ bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointS
 
 void afficheScore(SDL_Renderer* renderer, int distTotal)
 {
-	printf("Affiche le texte\n");
+	char valStr[20] = "Score :";
+	char tempStr[20];
+	sprintf(tempStr,"%d",distTotal);
+	strcat(valStr, tempStr);
 	if (TTF_Init() != 0)
 	{
     	fprintf(stderr, "Erreur d'initialisation TTF : %s\n", TTF_GetError()); 
 	}
 	
 	TTF_Font* font = NULL;       
-	font = TTF_OpenFont("./fonts/Pacifico.ttf", 65);    
+	font = TTF_OpenFont("./fonts/Pacifico.ttf", 32);    
 	if (font == NULL) fprintf(stderr, "Erreur d'initialisation TTF : %s\n", TTF_GetError()); 
-
-	TTF_SetFontStyle(font, TTF_STYLE_ITALIC | TTF_STYLE_BOLD); 
 	SDL_Color color = {255, 255, 255, 255};  
 
-	SDL_Surface * surfaceTexte = TTF_RenderText_Solid(font, "hello wordl", color);
+	SDL_Surface * surfaceTexte = TTF_RenderText_Solid(font, valStr, color);
 	SDL_Texture * textureTexte = SDL_CreateTextureFromSurface(renderer, surfaceTexte);
 
 	int largeurTexte = surfaceTexte->w;
 	int hauteurTexte = surfaceTexte->h;
 
 	SDL_Rect rectDest;
-	rectDest.x = 10;
-	rectDest.y = 10;
+	rectDest.x = 50;
+	rectDest.y = 50;
 	rectDest.w = largeurTexte;
 	rectDest.h = hauteurTexte;
 
@@ -145,7 +146,6 @@ void afficheScore(SDL_Renderer* renderer, int distTotal)
 
 	SDL_DestroyTexture(textureTexte); 
 	SDL_FreeSurface(surfaceTexte);  
-	printf("fin Affiche le texte\n");
 }
 
 
@@ -155,8 +155,9 @@ int main(int argc, char* argv[])
 {
     float p = 0.1;
 	int x_mouse, y_mouse, point_click;
-	int distTotal;
+	int distTotal = 0;
     srand(time(NULL));
+	bool parcoursOK = false;
 
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
@@ -217,15 +218,13 @@ int main(int argc, char* argv[])
 							else if (nb_indicesPointSelect>0 && point_click == indicesPointSelect[nb_indicesPointSelect-1]){
 								nb_indicesPointSelect--;
 							}
-							bool parcoursOK = verifParcours(indicesPointSelect, nb_indicesPointSelect, nombre_points);
+							parcoursOK = verifParcours(indicesPointSelect, nb_indicesPointSelect, nombre_points);
 							printf("parcours %d \n", parcoursOK);
 
 							if(parcoursOK)
 							{
-
 								distTotal = calculDistanceGraphe(points, indicesPointSelect,nb_indicesPointSelect);
 								printf("Dist total = %d\n",distTotal);
-								afficheScore(renderer, distTotal);
 							}
 						}
 						break;
@@ -240,6 +239,10 @@ int main(int argc, char* argv[])
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		afficherGraphe(renderer, matrice, points, nombre_points, indicesPointSelect,nb_indicesPointSelect);
+		if(parcoursOK)
+		{
+			afficheScore(renderer, distTotal);
+		}
 		SDL_RenderPresent(renderer);
 		
 		delta_time = SDL_framerateDelay(&fps_manager);
