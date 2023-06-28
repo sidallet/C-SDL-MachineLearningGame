@@ -121,10 +121,6 @@ int main(int argc, char* argv[])
 	int x_mouse, y_mouse, point_click;
 	int distTotal;
     srand(time(NULL));
-    int** matrice = (int**)malloc(N * sizeof(int*));
-	int indicesPointSelect[N];
-	int nb_indicesPointSelect = 0;
-	bool parcoursOK = false;
 
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
@@ -136,19 +132,19 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-	Point points[N];
+	const size_t nombre_points = 5;
+	Matrice matrice = initMatrice(nombre_points);
+    genereMatriceArbre(matrice, 0, nombre_points-1);
+    genereGraphe(matrice,p, nombre_points);
+
+	Point points[nombre_points];
 	
-	for (size_t i=0; i<N; ++i) {
+	for (size_t i=0; i<nombre_points; ++i) {
 		points[i].val = i;
 		points[i].x = rand()%rect_fenetre.w;
 		points[i].y = rand()%rect_fenetre.h;
 		printf("%d, %d\n", points[i].x, points[i].y);
 	}
-
-    initMatrice(matrice);
-    genereMatriceArbre(matrice, 0, N-1);
-    genereGraphe(matrice,p);
-
 	FPSmanager fps_manager;
 	SDL_initFramerate(&fps_manager);
 	SDL_setFramerate(&fps_manager, 60);
@@ -209,7 +205,7 @@ int main(int argc, char* argv[])
 		}
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
-		afficherGraphe(renderer, matrice, points, N, indicesPointSelect,nb_indicesPointSelect);
+		afficherGraphe(renderer, matrice, points, nombre_points, indicesPointSelect,nb_indicesPointSelect);
 		SDL_RenderPresent(renderer);
 		
 		delta_time = SDL_framerateDelay(&fps_manager);
@@ -217,7 +213,7 @@ int main(int argc, char* argv[])
 
     
     
-    libereMatrice(matrice);
+    libereMatrice(matrice, nombre_points);
     clean_sdl(&window,&renderer);
 
     return 0;
