@@ -78,40 +78,6 @@ int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mo
 	
 }
 
-int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const size_t nombre_noeuds)
-{
-	int distTotal = 0;
-	for (size_t i = 0; i+1 < nombre_noeuds; i++)
-	{
-		distTotal += distance_eucli(points[indicesPointSelect[i]], points[indicesPointSelect[i+1]]);
-	}
-	return distTotal;
-}
-
-bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds)
-{
-	if (!(nb_indicesPointSelect > 0 && indicesPointSelect[0] == indicesPointSelect[nb_indicesPointSelect - 1]))
-	{
-		return false;
-	}
-
-	for (size_t i = 0; i < nombre_noeuds; i++)
-	{
-		bool pointPresent = false;
-		for (size_t j = 0; j < nb_indicesPointSelect; j++)
-		{
-			if (indicesPointSelect[j] == i)
-			{
-				pointPresent = true;
-			}
-		}
-		if (!pointPresent)
-		{
-			return false;
-		}
-	}
-	return true;
-}
 
 void afficheScore(SDL_Renderer* renderer, int distTotal)
 {
