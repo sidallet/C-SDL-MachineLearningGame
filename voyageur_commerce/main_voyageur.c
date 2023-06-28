@@ -203,11 +203,13 @@ int main(int argc, char* argv[])
 					switch(event.button.clicks)
 					{
 					case SDL_BUTTON_LEFT: {
-						x_mouse = event.button.x;
-                        y_mouse = event.button.y;
-						point_click = cherchePointClick(points, nombre_points, x_mouse, y_mouse);
-						if(point_click != -1)
+						if(!parcoursOK)
 						{
+							x_mouse = event.button.x;
+                        	y_mouse = event.button.y;
+							point_click = cherchePointClick(points, nombre_points, x_mouse, y_mouse);
+							if(point_click != -1)
+							{
 							printf("point click %d \n", point_click);
 							if(nb_indicesPointSelect == 0 || matrice[point_click][indicesPointSelect[nb_indicesPointSelect-1]] == 1)
 							{
@@ -228,6 +230,8 @@ int main(int argc, char* argv[])
 							}
 						}
 						break;
+						}
+						
 					}
 					default:
 						break;
