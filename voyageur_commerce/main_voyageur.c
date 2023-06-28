@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-	const size_t nombre_points = 5;
+	const size_t nombre_points = 10;
 	Matrice matrice = initMatrice(nombre_points);
     genereMatriceArbre(matrice, 0, nombre_points-1);
     genereGraphe(matrice,p, nombre_points);
@@ -139,13 +139,12 @@ int main(int argc, char* argv[])
 
 	int indicesPointSelect[nombre_points*4];
 	int nb_indicesPointSelect = 0;
-	
+
+	generer_points(points, nombre_points, rect_fenetre.w, rect_fenetre.h);
 	for (size_t i=0; i<nombre_points; ++i) {
-		points[i].val = i;
-		points[i].x = rand()%rect_fenetre.w;
-		points[i].y = rand()%rect_fenetre.h;
 		printf("%d, %d\n", points[i].x, points[i].y);
 	}
+
 	FPSmanager fps_manager;
 	SDL_initFramerate(&fps_manager);
 	SDL_setFramerate(&fps_manager, 60);
