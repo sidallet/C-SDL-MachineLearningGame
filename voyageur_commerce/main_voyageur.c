@@ -26,7 +26,7 @@ void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int
 
 }
 
-void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point noeuds[], const size_t nombre_noeuds) {
+void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point noeuds[], const size_t nombre_noeuds, int pointsSelect[], int nb_pointsSelect) {
 	for (size_t j = 0; j<nombre_noeuds; ++j) {
 		for (size_t i = j; i<nombre_noeuds; ++i) {
 			if (matrice_graphe[i][j]) {
@@ -37,16 +37,47 @@ void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point no
 	}
 
 	for (size_t i=0; i<nombre_noeuds; ++i) {
-		filledCircleRGBA(renderer, noeuds[i].x, noeuds[i].y, 10, 25*i,255,0,255);
+		filledCircleRGBA(renderer, noeuds[i].x, noeuds[i].y, RAYON_POINT, 25*i,255,0,255);
 		characterRGBA(renderer, noeuds[i].x-2, noeuds[i].y-2, toascii(noeuds[i].val+'0'), 0, 0, 30, 255);
 	} 
+
+	for (size_t i=0; i+1<nb_pointsSelect; ++i) {
+		circleRGBA(renderer, noeuds[pointsSelect[i]].x, noeuds[pointsSelect[i]].y, RAYON_POINT*1.3, 255,255,255,255);
+	} 
+	if(nb_pointsSelect > 0)
+	{
+		filledCircleRGBA(renderer, noeuds[pointsSelect[nb_pointsSelect-1]].x, noeuds[pointsSelect[nb_pointsSelect-1]].y, RAYON_POINT*1.1, 255,255,255,255);
+		characterRGBA(renderer, noeuds[pointsSelect[nb_pointsSelect-1]].x-2, noeuds[pointsSelect[nb_pointsSelect-1]].y-2, toascii(noeuds[pointsSelect[nb_pointsSelect-1]].val+'0'), 0, 0, 30, 255);
+	}
+}
+
+int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mouse, int y_mouse)
+{
+	Point click = {
+
+		.x = x_mouse,
+		.y = y_mouse
+	};
+	for (size_t i = 0; i < nombre_noeuds; i++)
+	{
+		if(distance_eucli(noeuds[i],click) < RAYON_POINT )
+		{
+			return i;
+		}
+	}
+	return -1;
+	
 }
 
 int main(int argc, char* argv[])
 {
     float p = 0.1;
+	int x_mouse, y_mouse, point_click;
     srand(time(NULL));
     int** matrice = (int**)malloc(N * sizeof(int*));
+	int pointsSelect[N];
+	int nb_pointsSelect = 0;
+
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
     SDL_Rect rect_fenetre = {0,0,1000,800};
@@ -85,11 +116,35 @@ int main(int argc, char* argv[])
 					actif = false;
 					break;
 				}
+				case SDL_MOUSEBUTTONDOWN: {
+					switch(event.button.clicks)
+					{
+					case SDL_BUTTON_LEFT: {
+						x_mouse = event.button.x;
+                        y_mouse = event.button.y;
+						point_click = cherchePointClick(points, N, x_mouse, y_mouse);
+						if(point_click != -1)
+						{
+							if(nb_pointsSelect == 0 || matrice[point_click][pointsSelect[nb_pointsSelect-1]] == 1)
+							{
+								pointsSelect[nb_pointsSelect] = point_click;
+								nb_pointsSelect++;
+							}
+							
+						}
+						printf("point click %d \n", point_click);
+						break;
+					}
+					default:
+						break;
+					} 
+				}
+
 			}
 		}
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
-		afficherGraphe(renderer, matrice, points, N);
+		afficherGraphe(renderer, matrice, points, N, pointsSelect,nb_pointsSelect);
 		SDL_RenderPresent(renderer);
 		
 		delta_time = SDL_framerateDelay(&fps_manager);
