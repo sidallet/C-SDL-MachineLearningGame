@@ -14,4 +14,3 @@ void afficheMatrice(Matrice matrice, const size_t nombre_points);
 void libereMatrice(Matrice matrice, const size_t nombre_points);
 
 void genereGraphe(Matrice matrice, float p, const size_t nombre_points);
-
