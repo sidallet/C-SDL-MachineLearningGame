@@ -26,7 +26,7 @@ void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int
 
 }
 
-void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point noeuds[], const size_t nombre_noeuds, int pointsSelect[], int nb_pointsSelect) {
+void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point noeuds[], const size_t nombre_noeuds, int indicesPointSelect[], int nb_indicesPointSelect) {
 	for (size_t j = 0; j<nombre_noeuds; ++j) {
 		for (size_t i = j; i<nombre_noeuds; ++i) {
 			if (matrice_graphe[i][j]) {
@@ -36,9 +36,9 @@ void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point no
 		}
 	}
 	//Affichage points selectionnés
-	for (size_t i=0; i+1<nb_pointsSelect; ++i) {
-		circleRGBA(renderer, noeuds[pointsSelect[i]].x, noeuds[pointsSelect[i]].y, RAYON_POINT*1.3, 255,255,255,255);
-		thickLineRGBA(renderer, noeuds[pointsSelect[i]].x, noeuds[pointsSelect[i]].y, noeuds[pointsSelect[i+1]].x, noeuds[pointsSelect[i+1]].y, 3, 255, 255, 255, 255);
+	for (size_t i=0; i+1<nb_indicesPointSelect; ++i) {
+		circleRGBA(renderer, noeuds[indicesPointSelect[i]].x, noeuds[indicesPointSelect[i]].y, RAYON_POINT*1.3, 255,255,255,255);
+		thickLineRGBA(renderer, noeuds[indicesPointSelect[i]].x, noeuds[indicesPointSelect[i]].y, noeuds[indicesPointSelect[i+1]].x, noeuds[indicesPointSelect[i+1]].y, 3, 255, 255, 255, 255);
 	} 
 
 	//Affichage des points
@@ -48,10 +48,10 @@ void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point no
 	} 
 
 	//Affichage du dernier point selectionné
-	if(nb_pointsSelect > 0)
+	if(nb_indicesPointSelect > 0)
 	{
-		filledCircleRGBA(renderer, noeuds[pointsSelect[nb_pointsSelect-1]].x, noeuds[pointsSelect[nb_pointsSelect-1]].y, RAYON_POINT*1.1, 255,255,255,255);
-		characterRGBA(renderer, noeuds[pointsSelect[nb_pointsSelect-1]].x-2, noeuds[pointsSelect[nb_pointsSelect-1]].y-2, toascii(noeuds[pointsSelect[nb_pointsSelect-1]].val+'0'), 0, 0, 30, 255);
+		filledCircleRGBA(renderer, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].x, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].y, RAYON_POINT*1.1, 255,255,255,255);
+		characterRGBA(renderer, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].x-2, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].y-2, toascii(noeuds[indicesPointSelect[nb_indicesPointSelect-1]].val+'0'), 0, 0, 30, 255);
 	}
 
 	//Affichage du numero des points
@@ -63,7 +63,6 @@ void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point no
 int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mouse, int y_mouse)
 {
 	Point click = {
-
 		.x = x_mouse,
 		.y = y_mouse
 	};
@@ -78,44 +77,52 @@ int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mo
 	
 }
 
-int calculDistanceGraphe(const Point pointsSelect[], const size_t nombre_noeuds)
+int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const size_t nombre_noeuds)
 {
 	int distTotal = 0;
 	for (size_t i = 0; i+1 < nombre_noeuds; i++)
 	{
-		distTotal += distance_eucli(pointsSelect[i], pointsSelect[i+1]);
+		distTotal += distance_eucli(points[indicesPointSelect[i]], points[indicesPointSelect[i+1]]);
 	}
 	return distTotal;
 }
 
-bool verifParcours(const Point pointsSelect[], const size_t nb_pointsSelect, const size_t nombre_noeuds)
+bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds)
 {
 	bool verif = false;
 	bool flag, pointPresent;
-	if (nb_pointsSelect > 0 && pointsSelect[0].val == pointsSelect[nb_pointsSelect - 1].val)
+	for (size_t i = 0; i < nb_indicesPointSelect; i++)
+								{
+									printf("------%d ",indicesPointSelect[i]);
+								}
+								printf("\n");
+	
+	if (!(nb_indicesPointSelect > 0 && indicesPointSelect[0] == indicesPointSelect[nb_indicesPointSelect - 1]))
 	{
-		flag = false;
-		for (size_t i = 0; i < nombre_noeuds; i++)
+		return false;
+	}
+	flag = false;
+	for (size_t i = 0; i < nombre_noeuds; i++)
+	{
+		pointPresent = false;
+		for (size_t j = 0; j < nb_indicesPointSelect; j++)
 		{
-			pointPresent = false;
-			for (size_t j = 0; j < nb_pointsSelect; j++)
+			if (indicesPointSelect[j] == i)
 			{
-				if (pointsSelect[j].val == i)
-				{
-					pointPresent = true;
-					break;
-				}
-			}
-
-			if (!pointPresent)
-			{
-				flag = false;
+				pointPresent = true;
 				break;
 			}
-			flag = true;
 		}
-		verif = flag;
+
+		if (!pointPresent)
+		{
+			flag = false;
+			break;
+		}
+		flag = true;
 	}
+	verif = flag;
+	
 
 	return verif;
 }
@@ -128,8 +135,8 @@ int main(int argc, char* argv[])
 	int distTotal;
     srand(time(NULL));
     int** matrice = (int**)malloc(N * sizeof(int*));
-	int pointsSelect[N];
-	int nb_pointsSelect = 0;
+	int indicesPointSelect[N];
+	int nb_indicesPointSelect = 0;
 	bool parcoursOK = false;
 
     SDL_Window * window = NULL;
@@ -162,7 +169,7 @@ int main(int argc, char* argv[])
 	Uint32 delta_time = 0;
 
 	bool actif = true;
-	while (actif && !parcoursOK) {
+	while (actif) {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -179,20 +186,28 @@ int main(int argc, char* argv[])
 						point_click = cherchePointClick(points, N, x_mouse, y_mouse);
 						if(point_click != -1)
 						{
-							if(nb_pointsSelect == 0 || matrice[point_click][pointsSelect[nb_pointsSelect-1]] == 1)
+							printf("point click %d \n", point_click);
+							if(nb_indicesPointSelect == 0 || matrice[point_click][indicesPointSelect[nb_indicesPointSelect-1]] == 1)
 							{
-								pointsSelect[nb_pointsSelect] = point_click;
-								nb_pointsSelect++;
+								indicesPointSelect[nb_indicesPointSelect] = point_click;
+								nb_indicesPointSelect++;
 
 							}
-							else if (nb_pointsSelect>0 && point_click == pointsSelect[nb_pointsSelect-1]){
-								nb_pointsSelect--;
+							else if (nb_indicesPointSelect>0 && point_click == indicesPointSelect[nb_indicesPointSelect-1]){
+								nb_indicesPointSelect--;
 							}
-							parcoursOK = verifParcours(points, nb_pointsSelect,N);
+							parcoursOK = verifParcours(indicesPointSelect, nb_indicesPointSelect,N);
 							printf("parcours %d \n", parcoursOK);
+
+								for (size_t i = 0; i < nb_indicesPointSelect; i++)
+								{
+									printf("%d ",indicesPointSelect[i]);
+								}
+								printf("\n");
 							if(parcoursOK)
 							{
-								distTotal = calculDistanceGraphe(points,nb_pointsSelect);
+
+								distTotal = calculDistanceGraphe(points, indicesPointSelect,nb_indicesPointSelect);
 								printf("Dist total = %d\n",distTotal);
 							}
 						}
@@ -207,7 +222,7 @@ int main(int argc, char* argv[])
 		}
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
-		afficherGraphe(renderer, matrice, points, N, pointsSelect,nb_pointsSelect);
+		afficherGraphe(renderer, matrice, points, N, indicesPointSelect,nb_indicesPointSelect);
 		SDL_RenderPresent(renderer);
 		
 		delta_time = SDL_framerateDelay(&fps_manager);

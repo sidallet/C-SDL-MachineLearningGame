@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define N 10
+#define N 4
 
 void genereMatriceArbre(int** matrice, int bas, int haut);
 
