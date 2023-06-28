@@ -119,9 +119,17 @@ int main(int argc, char* argv[])
 	SDL_setFramerate(&fps_manager, 60);
 
 	Uint32 delta_time = 0;
+	
+	Matrice matriceDistance = calculMatriceDistance(matrice, points, nombre_points);
+	afficheMatrice(matriceDistance, nombre_points);
+	Matrice matriceGrapheComplet = floydWarshall(matriceDistance, nombre_points); 
+	printf("Matrice de distances minimales :\n");
+	afficheMatrice(matriceGrapheComplet, nombre_points);
 
-	int a=recherche_local_glouton(matrice,nombre_points,points);
-	printf("algo val : %d\n",a);
+	recuit(matriceGrapheComplet, nombre_points, 1000);
+
+//	int a=recherche_local_glouton(matrice,nombre_points,points);
+//	printf("algo val : %d\n",a);
 
 
 	bool actif = true;

@@ -23,10 +23,12 @@ int recherche_local_glouton(Matrice matrice,int N,Point points[]);
 
 int recuit(Matrice matrice, int N, int nombre_iteration);
 
+Matrice calculMatriceDistance(Matrice adjacence, Point points[], size_t nombre_noeuds);
 
 int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const size_t nombre_noeuds);
 
 
+Matrice floydWarshall(Matrice graph, size_t nombre_noeuds);
 
 
 bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds);
