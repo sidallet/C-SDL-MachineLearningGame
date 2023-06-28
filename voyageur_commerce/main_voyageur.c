@@ -78,14 +78,59 @@ int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mo
 	
 }
 
+int calculDistanceGraphe(const Point pointsSelect[], const size_t nombre_noeuds)
+{
+	int distTotal = 0;
+	for (size_t i = 0; i+1 < nombre_noeuds; i++)
+	{
+		distTotal += distance_eucli(pointsSelect[i], pointsSelect[i+1]);
+	}
+	return distTotal;
+}
+
+bool verifParcours(const Point pointsSelect[], const size_t nb_pointsSelect, const size_t nombre_noeuds)
+{
+	bool verif = false;
+	bool flag, pointPresent;
+	if (nb_pointsSelect > 0 && pointsSelect[0].val == pointsSelect[nb_pointsSelect - 1].val)
+	{
+		flag = false;
+		for (size_t i = 0; i < nombre_noeuds; i++)
+		{
+			pointPresent = false;
+			for (size_t j = 0; j < nb_pointsSelect; j++)
+			{
+				if (pointsSelect[j].val == i)
+				{
+					pointPresent = true;
+					break;
+				}
+			}
+
+			if (!pointPresent)
+			{
+				flag = false;
+				break;
+			}
+			flag = true;
+		}
+		verif = flag;
+	}
+
+	return verif;
+}
+
+
 int main(int argc, char* argv[])
 {
     float p = 0.1;
 	int x_mouse, y_mouse, point_click;
+	int distTotal;
     srand(time(NULL));
     int** matrice = (int**)malloc(N * sizeof(int*));
 	int pointsSelect[N];
 	int nb_pointsSelect = 0;
+	bool parcoursOK = false;
 
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
@@ -117,7 +162,7 @@ int main(int argc, char* argv[])
 	Uint32 delta_time = 0;
 
 	bool actif = true;
-	while (actif) {
+	while (actif && !parcoursOK) {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -138,10 +183,19 @@ int main(int argc, char* argv[])
 							{
 								pointsSelect[nb_pointsSelect] = point_click;
 								nb_pointsSelect++;
+
 							}
-							
+							else if (nb_pointsSelect>0 && point_click == pointsSelect[nb_pointsSelect-1]){
+								nb_pointsSelect--;
+							}
+							parcoursOK = verifParcours(points, nb_pointsSelect,N);
+							printf("parcours %d \n", parcoursOK);
+							if(parcoursOK)
+							{
+								distTotal = calculDistanceGraphe(points,nb_pointsSelect);
+								printf("Dist total = %d\n",distTotal);
+							}
 						}
-						printf("point click %d \n", point_click);
 						break;
 					}
 					default:
