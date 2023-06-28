@@ -3,7 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+/**
+ * Generer une matrice d'adjacence sous forme d'arbre
+ * matrice : matrice d'adjacence
+ *
+**/
 void genereMatriceArbre(Matrice matrice, int bas, int haut) {
     if (bas < haut) {
         int k = (rand() % (haut - bas)) + bas + 1;
@@ -18,6 +22,10 @@ void genereMatriceArbre(Matrice matrice, int bas, int haut) {
     }
 }
 
+/**
+ * Permet d'initialiser une matrice correspond à un graphe
+ * nombre_points : nombre de sommet du graphe
+ **/
 Matrice initMatrice(const size_t nombre_points)
 {
     Matrice matrice = (Matrice)malloc(nombre_points * sizeof(int*));
@@ -41,6 +49,11 @@ Matrice initMatrice(const size_t nombre_points)
 	return matrice;
 }
 
+/**
+ * Permet d'afficher une matrice
+ * matrice : matrice à afficher
+ * nombre_points : nombres de sommets
+ * */
 void afficheMatrice(Matrice matrice, const size_t nombre_points)
 {
     for (size_t i = 0; i < nombre_points; i++) {
@@ -51,6 +64,11 @@ void afficheMatrice(Matrice matrice, const size_t nombre_points)
     }
 }
 
+/**
+ * Permet de liberer une matrice
+ * matrice : matrice à liberer
+ * nombre_points : nombres de sommets
+ * */
 void libereMatrice(Matrice matrice, const size_t nombre_points)
 {
     for (size_t i = 0; i < nombre_points; i++) {
@@ -59,7 +77,12 @@ void libereMatrice(Matrice matrice, const size_t nombre_points)
     free(matrice);
 }
 
-
+/**
+ * Permet de generer un graphe en rajoutant des arretes
+ * matrice : matrice à modifier
+ * p : parametre pour avoir plus ou moins d'aretes
+ * nombre_points : nombres de sommets
+ * */
 void genereGraphe(Matrice matrice, float p, const size_t nombre_points)
 {
     float randomVal;
