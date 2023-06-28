@@ -54,19 +54,21 @@ void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point no
 	//Affichage des points
 	for (size_t i=0; i<nombre_noeuds; ++i) {
 		filledCircleRGBA(renderer, noeuds[i].x, noeuds[i].y, RAYON_POINT, 25*i,255,0,255);
-		characterRGBA(renderer, noeuds[i].x-2, noeuds[i].y-2, toascii(noeuds[i].val+'0'), 0, 0, 30, 255);
 	} 
 
+	char nom_noeud[50];
 	//Affichage du dernier point selectionné
 	if(nb_indicesPointSelect > 0)
 	{
+		//sprintf(nom_noeud, "%d", noeuds[indicesPointSelect[nb_indicesPointSelect-1]].val);
 		filledCircleRGBA(renderer, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].x, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].y, RAYON_POINT*1.1, 255,255,255,255);
-		characterRGBA(renderer, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].x-2, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].y-2, toascii(noeuds[indicesPointSelect[nb_indicesPointSelect-1]].val+'0'), 0, 0, 30, 255);
+		//stringRGBA(renderer, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].x-RAYON_POINT/2, noeuds[indicesPointSelect[nb_indicesPointSelect-1]].y-RAYON_POINT/2, nom_noeud, 0, 0, 30, 255);
 	}
 
 	//Affichage du numero des points
 	for (size_t i=0; i<nombre_noeuds; ++i) {
-		characterRGBA(renderer, noeuds[i].x-2, noeuds[i].y-2, toascii(noeuds[i].val+'0'), 0, 0, 30, 255);
+		sprintf(nom_noeud, "%d", noeuds[i].val);
+		stringRGBA(renderer, noeuds[i].x-RAYON_POINT/4, noeuds[i].y-RAYON_POINT/4, nom_noeud, 0, 0, 20, 255);
 	} 
 }
 
@@ -126,14 +128,16 @@ void afficheScore(SDL_Renderer* renderer, int distTotal)
 
 
 
-//Main : programme principal contenant la boucle de jeu
-int main(int argc, char* argv[])
+
+int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 {
     float p = 0.1;
 	int x_mouse, y_mouse, point_click;
 	int distTotal = 0;
     srand(time(NULL));
 	bool parcoursOK = false;
+
+	
 
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
@@ -165,6 +169,14 @@ int main(int argc, char* argv[])
 	SDL_setFramerate(&fps_manager, 60);
 
 	Uint32 delta_time = 0;
+	
+	Matrice matriceDistance = calculMatriceDistance(matrice, points, nombre_points);
+	afficheMatrice(matriceDistance, nombre_points);
+	Matrice matriceGrapheComplet = floydWarshall(matriceDistance, nombre_points); 
+	printf("Matrice de distances minimales :\n");
+	afficheMatrice(matriceGrapheComplet, nombre_points);
+
+	recuit(matriceGrapheComplet, nombre_points, 1000);
 
 	bool actif = true;
 	while (actif) {

@@ -1,11 +1,13 @@
 #include "voyageur.h"
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_stdinc.h>
 #include <math.h>
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <SDL2/SDL_rect.h>
+#include <stdint.h>
+#include <string.h>
+#include "matrice.h"
 
 int distance_eucli(Point point1,Point point2)
 {
@@ -79,6 +81,56 @@ void generer_points(Point points[], const size_t nombre_points, const Uint32 w_z
 	}
 }
 
+int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const size_t nombre_noeuds)
+{
+	int distTotal = 0;
+	for (size_t i = 0; i+1 < nombre_noeuds; i++)
+	{
+		distTotal += distance_eucli(points[indicesPointSelect[i]], points[indicesPointSelect[i+1]]);
+	}
+	return distTotal;
+}
+
+Matrice calculMatriceDistance(Matrice adjacence, Point points[], size_t nombre_noeuds) {
+	Matrice distances = initMatrice(nombre_noeuds);
+	for (size_t i = 0; i < nombre_noeuds; i++) {
+		for (size_t j = 0; j < nombre_noeuds; j++) {
+			if (adjacence[i][j]) {
+				distances[i][j] = distance_eucli(points[i], points[j]);
+			}
+			else if (i==j) {
+				distances[i][j] = 0;
+			}
+			else {
+				distances[i][j] = INT16_MAX;
+			}
+		}
+	}
+
+	return distances;
+}
+
+Matrice floydWarshall(Matrice graph, size_t nombre_noeuds) {
+	Matrice dist = initMatrice(nombre_noeuds);
+	
+	for (size_t i = 0; i < nombre_noeuds; i++) {
+		for (size_t j = 0; j < nombre_noeuds; j++) {
+			dist[i][j] = graph[i][j];
+		}
+	}
+	for (size_t k = 0; k < nombre_noeuds; k++) {
+		for (size_t i = 0; i < nombre_noeuds; i++) {
+			for (size_t j = 0; j < nombre_noeuds; j++) {
+				if (dist[i][k] + dist[k][j] < dist[i][j]) {
+					dist[i][j] = dist[i][k] + dist[k][j];
+				}
+			}
+		}
+	}
+
+	return dist;
+}
+
 bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds)
 {
 	if (!(nb_indicesPointSelect > 0 && indicesPointSelect[0] == indicesPointSelect[nb_indicesPointSelect - 1]))
@@ -104,12 +156,130 @@ bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointS
 	return true;
 }
 
-int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const size_t nombre_noeuds)
-{
-	int distTotal = 0;
-	for (size_t i = 0; i+1 < nombre_noeuds; i++)
-	{
-		distTotal += distance_eucli(points[indicesPointSelect[i]], points[indicesPointSelect[i+1]]);
+Chemin generer_solution_initiale(const int nombre_noeuds) {
+	Chemin chemin;
+	chemin.nombre_elems = nombre_noeuds+1;
+	if (nombre_noeuds==0) {
+		chemin.val = NULL;
+		return chemin;
 	}
-	return distTotal;
+	chemin.val = (int*)malloc(sizeof(int)*(chemin.nombre_elems));
+	if (chemin.val==NULL) {
+		fprintf(stderr, "Erreur allocation\n");
+		chemin.nombre_elems = 0;
+		return chemin;
+	}
+
+	for (size_t i=0; i<chemin.nombre_elems-1;++i) {
+		chemin.val[i] = i;
+	}
+	chemin.val[chemin.nombre_elems-1] = chemin.val[0];
+
+	return chemin;
 }
+
+int calculDistanceGrapheComplet(const Matrice matrice, const Chemin* chemin) {
+	int longeur = 0;
+	for (size_t i=1; i<chemin->nombre_elems; ++i) {
+		longeur+=matrice[chemin->val[i]][chemin->val[i-1]];
+	}
+	return longeur;
+}
+
+void afficheChemin(const Chemin* chemin) {
+	for (size_t i=0; i<chemin->nombre_elems; ++i) {
+		printf("%d ", chemin->val[i]);
+	}
+	printf("\n");
+}
+
+
+
+Chemin alterChemin(const Chemin* chemin) {
+	int i = rand()%(chemin->nombre_elems-1);
+	int	j = 1 + rand()%(chemin->nombre_elems-2);
+	if (j == i) {
+		j = 1+(j+1)%(chemin->nombre_elems-2); 
+	}
+
+
+	Chemin nouveau_chemin = {
+		.val = malloc(sizeof(int)*chemin->nombre_elems),
+		.nombre_elems = chemin->nombre_elems,
+	};
+	
+	memcpy(nouveau_chemin.val, chemin->val, sizeof(int)*chemin->nombre_elems);
+	
+	nouveau_chemin.val[i] = chemin->val[j];
+	nouveau_chemin.val[j] = chemin->val[i];
+	if (i==0) {
+		nouveau_chemin.val[chemin->nombre_elems-1] = chemin->val[j];
+	}
+	return nouveau_chemin;
+}
+
+bool recuit_impl(Chemin* chemin, const int longueurChemin, const Matrice matrice, double temperature, int* nouvelle_longeur) {
+	Chemin nouveauChemin = alterChemin(chemin);
+	*nouvelle_longeur = calculDistanceGrapheComplet(matrice, &nouveauChemin);
+	
+	if (longueurChemin > *nouvelle_longeur) {
+		free(chemin->val);
+		chemin->val = nouveauChemin.val;
+		return true;
+	}
+	else {
+		float p = exp(-(float)(*nouvelle_longeur - longueurChemin)/temperature);
+		if ((double)rand() /INT32_MAX < p) {
+			free(chemin->val);
+			chemin->val = nouveauChemin.val;
+			return true;	
+		}
+		else {
+			return false;
+		}
+	}
+}
+
+double init_temperature(Matrice matrice, size_t nombre_noeud) {
+	Chemin chemin = generer_solution_initiale(nombre_noeud);
+	int longeur_max = calculDistanceGrapheComplet(matrice, &chemin);
+	for (size_t i=0; i<20; ++i) {
+		for(size_t j=0; j<nombre_noeud; ++j) {	
+			Chemin nouveau_chemin = alterChemin(&chemin);
+			free(chemin.val);
+			chemin.val = nouveau_chemin.val;
+		}
+		int longeur = calculDistanceGrapheComplet(matrice, &chemin);
+		afficheChemin(&chemin);
+		if (longeur > longeur_max) {
+			longeur_max = longeur;
+		}
+	}
+
+	return longeur_max;
+}
+
+int recuit(Matrice matrice, int N, int nombre_iterations) {
+	double temperature = init_temperature(matrice, N);
+	printf("température initiale : %f\n", temperature);
+	double pente = temperature/nombre_iterations;
+	Chemin chemin = generer_solution_initiale(N);
+	afficheChemin(&chemin);
+	int longeurChemin = calculDistanceGrapheComplet(matrice, &chemin);
+
+	while (temperature>0.001) {
+		int nouvelle_longeur;
+		if (recuit_impl(&chemin, longeurChemin, matrice, temperature, &nouvelle_longeur)) {
+			longeurChemin = nouvelle_longeur;
+		}
+			
+		temperature -= pente;
+	}
+
+	afficheChemin(&chemin);
+	printf("Longueur %d\n", longeurChemin);
+
+	free(chemin.val);
+	return longeurChemin;
+}
+
