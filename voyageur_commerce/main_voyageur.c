@@ -89,8 +89,6 @@ int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const s
 
 bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds)
 {
-	bool verif = false;
-	
 	if (!(nb_indicesPointSelect > 0 && indicesPointSelect[0] == indicesPointSelect[nb_indicesPointSelect - 1]))
 	{
 		return false;
@@ -138,6 +136,9 @@ int main(int argc, char* argv[])
     genereGraphe(matrice,p, nombre_points);
 
 	Point points[nombre_points];
+
+	int indicesPointSelect[nombre_points*4];
+	int nb_indicesPointSelect = 0;
 	
 	for (size_t i=0; i<nombre_points; ++i) {
 		points[i].val = i;
@@ -166,7 +167,7 @@ int main(int argc, char* argv[])
 					case SDL_BUTTON_LEFT: {
 						x_mouse = event.button.x;
                         y_mouse = event.button.y;
-						point_click = cherchePointClick(points, N, x_mouse, y_mouse);
+						point_click = cherchePointClick(points, nombre_points, x_mouse, y_mouse);
 						if(point_click != -1)
 						{
 							printf("point click %d \n", point_click);
@@ -179,14 +180,9 @@ int main(int argc, char* argv[])
 							else if (nb_indicesPointSelect>0 && point_click == indicesPointSelect[nb_indicesPointSelect-1]){
 								nb_indicesPointSelect--;
 							}
-							parcoursOK = verifParcours(indicesPointSelect, nb_indicesPointSelect,N);
+							bool parcoursOK = verifParcours(indicesPointSelect, nb_indicesPointSelect, nombre_points);
 							printf("parcours %d \n", parcoursOK);
 
-								for (size_t i = 0; i < nb_indicesPointSelect; i++)
-								{
-									printf("%d ",indicesPointSelect[i]);
-								}
-								printf("\n");
 							if(parcoursOK)
 							{
 
