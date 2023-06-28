@@ -53,15 +53,15 @@ Matrice calculMatriceDistance(Matrice adjacence, Point points[], size_t nombre_n
 
 Matrice floydWarshall(Matrice graph, size_t nombre_noeuds) {
 	Matrice dist = initMatrice(nombre_noeuds);
-	int i, j, k;
-	for (i = 0; i < nombre_noeuds; i++) {
-		for (j = 0; j < nombre_noeuds; j++) {
+	
+	for (size_t i = 0; i < nombre_noeuds; i++) {
+		for (size_t j = 0; j < nombre_noeuds; j++) {
 			dist[i][j] = graph[i][j];
 		}
 	}
-	for (k = 0; k < nombre_noeuds; k++) {
-		for (i = 0; i < nombre_noeuds; i++) {
-			for (j = 0; j < nombre_noeuds; j++) {
+	for (size_t k = 0; k < nombre_noeuds; k++) {
+		for (size_t i = 0; i < nombre_noeuds; i++) {
+			for (size_t j = 0; j < nombre_noeuds; j++) {
 				if (dist[i][k] + dist[k][j] < dist[i][j]) {
 					dist[i][j] = dist[i][k] + dist[k][j];
 				}
@@ -196,7 +196,7 @@ bool recuit_impl(Chemin* chemin, const int longueurChemin, const Matrice matrice
 	}
 }
 
-double init_temperature(Matrice matrice, int nombre_noeud) {
+double init_temperature(Matrice matrice, size_t nombre_noeud) {
 	Chemin chemin = generer_solution_initiale(nombre_noeud);
 	int longeur_max = calculDistanceGrapheComplet(matrice, &chemin);
 	for (size_t i=0; i<20; ++i) {
