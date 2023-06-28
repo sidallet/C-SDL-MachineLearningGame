@@ -18,7 +18,7 @@ int distance_eucli(Point point1,Point point2)
 
 int genererNombreAleatoire(int N) {
     srand(time(NULL)); // Initialisation du générateur de nombres aléatoires
-    return rand() % (N + 1); // Utilisation de la fonction rand() pour générer un nombre aléatoire entre 0 et N
+    return rand() % (N); // Utilisation de la fonction rand() pour générer un nombre aléatoire entre 0 et N-1
 }
 
 
@@ -98,45 +98,17 @@ bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointS
 }
 
 
-
-
-int recherche_local_glouton(Matrice matrice,int N,Point points[])
-{   
-    int dist_graphe_total=0;
-    int i,j;
-    
-    int Liste[100];// à changer avec le alloc (c'est la liste des des points qu'on a ajouté au fur et à mesure)
-    int a=genererNombreAleatoire(N);//sommet aléatoire
-    Point voisin_proche;
-    Point point_a=points[a];
-    i=0;
-    while (verifParcours(Liste,i,N)==false)
-        {   printf("i:%d\n",i);
-            
-            int voisin_autre_présent=0;
-            int dist_graphe_sommet=INT16_MAX;//on commence a la distance à l'infini(initialisation)
-            for(j=0;j<N;j++)
-            {//on commence à la ligne du sommet a puis on enchaine sur la ligne du sommet le plus proche
-                Point point_j= points[j];//on va tester pour tout les points de la ligne a de la matrice d'adjacence
-                if (matrice[point_a.val][point_j.val]==1 && Liste[i]!=point_a.val)//si il y a un lien entre les deux sommets et que ce n'est pas le sommet précédent
-                {   
-                    voisin_autre_présent=1;     //il y a un voisin qui n'est pas le précédent (donc pas un point isolé)
-                    if (distance_eucli(point_a,point_j)<dist_graphe_sommet){        //si la distance entre le poitn a et j est plus faible on actualise la distance
-                    dist_graphe_sommet=distance_eucli(point_a,point_j);
-                    voisin_proche=point_j;   //on a le nouveau voisin le plus proche qui n'est pas le précédent
-                    }
-                }  
-                if (voisin_autre_présent==0)// si c'est un point isolé on "revient en arrière"
-                {   
-                    voisin_proche.val=Liste[i];                   
-                }                    
-            }
-            Liste[i]=point_a.val;//on ajoute le point précédent dans la liste pour "revenir en arrière" ou non.
-            i=i+1;
-            point_a=voisin_proche;//on actualise le point par le nouveau voisin le plus proche
-            dist_graphe_total+=dist_graphe_sommet;//on actualise la nouvelle distance du graphe
-        }   
-    return dist_graphe_total;
+int existe(int val,int Liste[])
+{int i;
+int present=0;
+    for(i=0;i<6;i++)
+    {
+        if (val==Liste[i])
+        {
+            present=1;
+        }
+    } 
+    return present;
 }
 
 
@@ -266,4 +238,90 @@ int recuit(Matrice matrice, int N, int nombre_iterations) {
 	free(chemin.val);
 	return longeurChemin;
 }
+
+
+int recherche_local_glouton(int N,Point points[])
+{   
+    int dist_graphe_total=0;
+    int i,j;
+    //int Liste[N];        
+    int * Liste = (int*)malloc(sizeof(int)*N+1);                                                                 // à changer avec le alloc (c'est la liste des des points qu'on a ajouté au fur et à mesure)
+    int a=genererNombreAleatoire(N); 
+    printf("a est : %d\n",a);                                                     //sommet aléatoire
+    Point voisin_proche;
+    Point point_a=points[a];
+    Point point_deb=points[a];
+    i=0;
+ 
+    while (i<N-1)
+    {
+        {  
+            int dist_graphe_sommet=INT16_MAX;                                               //on commence a la distance à l'infini(initialisation)
+            for(j=0;j<N;j++)
+            {            
+                printf("----------------------- points actuel %d  -------------------\n", point_a.val);
+                                                                                 //on commence à la ligne du sommet a puis on enchaine sur la ligne du sommet le plus proche
+                Point point_j= points[j];                                                   //on va tester pour tout les points de la ligne a de la matrice d'adjacence
+                if(i==4)
+                {
+                    printf("dernier !ii!!i!i!i!i!i!i!i\n");
+                    dist_graphe_sommet=distance_eucli(point_deb,points[i]);
+                }
+                else if (point_j.val!=point_a.val&& existe(point_j.val,Liste)==0 )                 //ce n'est pas le sommet précédent
+                {                                                                    //il y a un voisin qui n'est pas le précédent (donc pas un point isolé)
+                    if (distance_eucli(point_a,point_j)<dist_graphe_sommet  ){                //si la distance entre le poitn a et j est plus faible on actualise la distance
+                        dist_graphe_sommet=distance_eucli(point_a,point_j);
+                        voisin_proche=point_j;                                                  //on a le nouveau voisin le plus proche qui n'est pas le précédent
+                    }
+                }                    
+            }
+            if (i==N-1)
+            {
+                printf("ici le i=N-1:");
+                Liste[i]=point_a.val;
+            }
+            printf("i:%d\n",i);
+            printf("point a ajouté: %d\n",voisin_proche.val); 
+            
+            
+            Liste[i]=point_a.val;                                                       //on ajoute le point précédent dans la liste pour ne pas revenir en arriere.
+            i=i+1;
+            point_a=voisin_proche;                                                        //on actualise le point par le nouveau voisin le plus proche
+            dist_graphe_total+=dist_graphe_sommet;
+            printf("la distance est: %d\n",dist_graphe_total);                                          //on actualise la nouvelle distance du graphe
+        } 
+
+    printf("\n LISTE : ");
+    for (int i = 0; i < N; i++)
+    {
+        printf("%d ", Liste[i]);
+    }
+    printf("\n");
+    }  
+    
+    return dist_graphe_total;
+}
+
+// int fourmi(Matrice matrice,int N,Point points[])
+// {
+//     int j;
+//     int proba;
+//     Point point_actuel=points[0];
+//     for(j=0;j<N;j++)
+//     {   Point point_j= points[j]
+//         int compt=0;
+//         if (matrice[point_a.val][point_j.val]==1)
+//         {
+//         compt=compt+1;
+//         }
+//     }
+//     for(j=0;j<N;j++)
+//     {
+
+//     }
+
+
+
+// }
+
 

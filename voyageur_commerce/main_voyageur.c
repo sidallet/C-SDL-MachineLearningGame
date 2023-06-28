@@ -128,8 +128,8 @@ int main(int argc, char* argv[])
 
 	recuit(matriceGrapheComplet, nombre_points, 1000);
 
-//	int a=recherche_local_glouton(matrice,nombre_points,points);
-//	printf("algo val : %d\n",a);
+	int a=recherche_local_glouton(nombre_points,points);
+	printf("algo val : %d\n",a);
 
 
 	bool actif = true;
