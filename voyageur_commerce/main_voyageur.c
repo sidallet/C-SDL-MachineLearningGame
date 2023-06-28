@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 
 	Uint32 delta_time = 0;
 
-	int a=recherche_local_glouton(matrice,nombre_points,points);
+	int a=recherche_local_glouton(nombre_points,points);
 	printf("algo val : %d\n",a);
 
 
