@@ -87,30 +87,7 @@ int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const s
 	return distTotal;
 }
 
-bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds)
-{
-	if (!(nb_indicesPointSelect > 0 && indicesPointSelect[0] == indicesPointSelect[nb_indicesPointSelect - 1]))
-	{
-		return false;
-	}
 
-	for (size_t i = 0; i < nombre_noeuds; i++)
-	{
-		bool pointPresent = false;
-		for (size_t j = 0; j < nb_indicesPointSelect; j++)
-		{
-			if (indicesPointSelect[j] == i)
-			{
-				pointPresent = true;
-			}
-		}
-		if (!pointPresent)
-		{
-			return false;
-		}
-	}
-	return true;
-}
 
 
 int main(int argc, char* argv[])
@@ -119,6 +96,8 @@ int main(int argc, char* argv[])
 	int x_mouse, y_mouse, point_click;
 	int distTotal;
     srand(time(NULL));
+
+	
 
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
@@ -151,6 +130,10 @@ int main(int argc, char* argv[])
 	SDL_setFramerate(&fps_manager, 60);
 
 	Uint32 delta_time = 0;
+
+	int a=recherche_local_glouton(matrice,nombre_points,points);
+	printf("algo val : %d\n",a);
+
 
 	bool actif = true;
 	while (actif) {
