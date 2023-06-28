@@ -3,6 +3,7 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_stdinc.h>
+#include <SDL2/SDL_ttf.h>
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -112,6 +113,43 @@ bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointS
 	return true;
 }
 
+void afficheScore(SDL_Renderer* renderer, int distTotal)
+{
+	printf("Affiche le texte\n");
+	if (TTF_Init() != 0)
+	{
+    	fprintf(stderr, "Erreur d'initialisation TTF : %s\n", TTF_GetError()); 
+	}
+	
+	TTF_Font* font = NULL;       
+	font = TTF_OpenFont("./fonts/Pacifico.ttf", 65);    
+	if (font == NULL) fprintf(stderr, "Erreur d'initialisation TTF : %s\n", TTF_GetError()); 
+
+	TTF_SetFontStyle(font, TTF_STYLE_ITALIC | TTF_STYLE_BOLD); 
+	SDL_Color color = {255, 255, 255, 255};  
+
+	SDL_Surface * surfaceTexte = TTF_RenderText_Solid(font, "hello wordl", color);
+	SDL_Texture * textureTexte = SDL_CreateTextureFromSurface(renderer, surfaceTexte);
+
+	int largeurTexte = surfaceTexte->w;
+	int hauteurTexte = surfaceTexte->h;
+
+	SDL_Rect rectDest;
+	rectDest.x = 10;
+	rectDest.y = 10;
+	rectDest.w = largeurTexte;
+	rectDest.h = hauteurTexte;
+
+
+	SDL_RenderCopy(renderer, textureTexte, NULL, &rectDest);   
+
+	SDL_DestroyTexture(textureTexte); 
+	SDL_FreeSurface(surfaceTexte);  
+	printf("fin Affiche le texte\n");
+}
+
+
+
 
 int main(int argc, char* argv[])
 {
@@ -130,7 +168,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-	const size_t nombre_points = 10;
+	const size_t nombre_points = 4;
 	Matrice matrice = initMatrice(nombre_points);
     genereMatriceArbre(matrice, 0, nombre_points-1);
     genereGraphe(matrice,p, nombre_points);
@@ -187,6 +225,7 @@ int main(int argc, char* argv[])
 
 								distTotal = calculDistanceGraphe(points, indicesPointSelect,nb_indicesPointSelect);
 								printf("Dist total = %d\n",distTotal);
+								afficheScore(renderer, distTotal);
 							}
 						}
 						break;
