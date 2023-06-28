@@ -35,20 +35,29 @@ void afficherGraphe(SDL_Renderer* renderer, int** matrice_graphe, const Point no
 			}
 		}
 	}
+	//Affichage points selectionnés
+	for (size_t i=0; i+1<nb_pointsSelect; ++i) {
+		circleRGBA(renderer, noeuds[pointsSelect[i]].x, noeuds[pointsSelect[i]].y, RAYON_POINT*1.3, 255,255,255,255);
+		thickLineRGBA(renderer, noeuds[pointsSelect[i]].x, noeuds[pointsSelect[i]].y, noeuds[pointsSelect[i+1]].x, noeuds[pointsSelect[i+1]].y, 3, 255, 255, 255, 255);
+	} 
 
+	//Affichage des points
 	for (size_t i=0; i<nombre_noeuds; ++i) {
 		filledCircleRGBA(renderer, noeuds[i].x, noeuds[i].y, RAYON_POINT, 25*i,255,0,255);
 		characterRGBA(renderer, noeuds[i].x-2, noeuds[i].y-2, toascii(noeuds[i].val+'0'), 0, 0, 30, 255);
 	} 
 
-	for (size_t i=0; i+1<nb_pointsSelect; ++i) {
-		circleRGBA(renderer, noeuds[pointsSelect[i]].x, noeuds[pointsSelect[i]].y, RAYON_POINT*1.3, 255,255,255,255);
-	} 
+	//Affichage du dernier point selectionné
 	if(nb_pointsSelect > 0)
 	{
 		filledCircleRGBA(renderer, noeuds[pointsSelect[nb_pointsSelect-1]].x, noeuds[pointsSelect[nb_pointsSelect-1]].y, RAYON_POINT*1.1, 255,255,255,255);
 		characterRGBA(renderer, noeuds[pointsSelect[nb_pointsSelect-1]].x-2, noeuds[pointsSelect[nb_pointsSelect-1]].y-2, toascii(noeuds[pointsSelect[nb_pointsSelect-1]].val+'0'), 0, 0, 30, 255);
 	}
+
+	//Affichage du numero des points
+	for (size_t i=0; i<nombre_noeuds; ++i) {
+		characterRGBA(renderer, noeuds[i].x-2, noeuds[i].y-2, toascii(noeuds[i].val+'0'), 0, 0, 30, 255);
+	} 
 }
 
 int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mouse, int y_mouse)
