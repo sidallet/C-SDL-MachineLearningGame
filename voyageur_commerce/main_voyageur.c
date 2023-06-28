@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "wrapper_sdl.h"
@@ -91,12 +92,10 @@ int cherchePointClick(const Point noeuds[], const size_t nombre_noeuds, int x_mo
 }
 
 //Permet d'afficher la distance du parcours apres l'avoir complété
-void afficheScore(SDL_Renderer* renderer, int distTotal)
+void afficheScore(SDL_Renderer* renderer, int distTotal, int distPresqueOptimal)
 {
-	char valStr[20] = "Score :";
-	char tempStr[20];
-	sprintf(tempStr,"%d",distTotal);
-	strcat(valStr, tempStr);
+	char valStr[80] = "Score :";
+	sprintf(valStr,"Score : %d / %d",distTotal, distPresqueOptimal);
 	if (TTF_Init() != 0)
 	{
     	fprintf(stderr, "Erreur d'initialisation TTF : %s\n", TTF_GetError()); 
@@ -128,10 +127,12 @@ void afficheScore(SDL_Renderer* renderer, int distTotal)
 
 
 
-
 int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 {
-    float p = 0.1;
+	size_t nombre_points = 6;
+    if (argc>=2 && sscanf(argv[1], "%ld", &nombre_points)) {}
+
+	float p = 0.1;
 	int x_mouse, y_mouse, point_click;
 	int distTotal = 0;
     srand(time(NULL));
@@ -149,7 +150,6 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
         return EXIT_FAILURE;
     }
 
-	const size_t nombre_points = 5;
 	Matrice matrice = initMatrice(nombre_points);
     genereMatriceArbre(matrice, 0, nombre_points-1);
     genereGraphe(matrice,p, nombre_points);
@@ -160,23 +160,25 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 	int nb_indicesPointSelect = 0;
 
 	generer_points(points, nombre_points, rect_fenetre.w, rect_fenetre.h);
+	printf("Coordonnées des points :\n");
 	for (size_t i=0; i<nombre_points; ++i) {
-		printf("%d, %d\n", points[i].x, points[i].y);
+		printf("%ld : (%d, %d)\n", i, points[i].x, points[i].y);
 	}
 
 	FPSmanager fps_manager;
 	SDL_initFramerate(&fps_manager);
 	SDL_setFramerate(&fps_manager, 60);
 
-	Uint32 delta_time = 0;
+	[[maybe_unused]]Uint32 delta_time = 0;
 	
 	Matrice matriceDistance = calculMatriceDistance(matrice, points, nombre_points);
+	printf("Matrice de distances (avec inf = %d):\n", INT16_MAX);
 	afficheMatrice(matriceDistance, nombre_points);
 	Matrice matriceGrapheComplet = floydWarshall(matriceDistance, nombre_points); 
-	printf("Matrice de distances minimales :\n");
+	printf("Matrice de distances graphe complet :\n");
 	afficheMatrice(matriceGrapheComplet, nombre_points);
 
-	recuit(matriceGrapheComplet, nombre_points, 1000);
+	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 1000);
 
 	bool actif = true;
 	while (actif) {
@@ -233,7 +235,7 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 		afficherGraphe(renderer, matrice, points, nombre_points, indicesPointSelect,nb_indicesPointSelect);
 		if(parcoursOK)
 		{
-			afficheScore(renderer, distTotal);
+			afficheScore(renderer, distTotal, longueur_presque_optimale);
 		}
 		SDL_RenderPresent(renderer);
 		

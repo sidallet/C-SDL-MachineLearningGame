@@ -250,7 +250,6 @@ double init_temperature(Matrice matrice, size_t nombre_noeud) {
 			chemin.val = nouveau_chemin.val;
 		}
 		int longeur = calculDistanceGrapheComplet(matrice, &chemin);
-		afficheChemin(&chemin);
 		if (longeur > longeur_max) {
 			longeur_max = longeur;
 		}
@@ -260,6 +259,10 @@ double init_temperature(Matrice matrice, size_t nombre_noeud) {
 }
 
 int recuit(Matrice matrice, int N, int nombre_iterations) {
+	if (N <= 1) {
+		return 0;
+	}
+
 	double temperature = init_temperature(matrice, N);
 	printf("température initiale : %f\n", temperature);
 	double pente = temperature/nombre_iterations;
