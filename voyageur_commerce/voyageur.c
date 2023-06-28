@@ -29,7 +29,6 @@ void generer_points(Point points[], const size_t nombre_points, const Uint32 w_z
 	const size_t nombre_cadres = 9*nombre_points;
 	size_t nb_colones = floor(sqrt((double)nombre_cadres));
 	size_t nb_lignes = (nombre_cadres / nb_colones)+1;
-	printf("%d %d %d\n", nb_colones, nb_lignes, nombre_cadres);
 	bool cases[nombre_cadres];
 
 	for (size_t i=0; i<nombre_points; ++i) {
