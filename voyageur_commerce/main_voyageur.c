@@ -90,41 +90,28 @@ int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const s
 bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds)
 {
 	bool verif = false;
-	bool flag, pointPresent;
-	for (size_t i = 0; i < nb_indicesPointSelect; i++)
-								{
-									printf("------%d ",indicesPointSelect[i]);
-								}
-								printf("\n");
 	
 	if (!(nb_indicesPointSelect > 0 && indicesPointSelect[0] == indicesPointSelect[nb_indicesPointSelect - 1]))
 	{
 		return false;
 	}
-	flag = false;
+
 	for (size_t i = 0; i < nombre_noeuds; i++)
 	{
-		pointPresent = false;
+		bool pointPresent = false;
 		for (size_t j = 0; j < nb_indicesPointSelect; j++)
 		{
 			if (indicesPointSelect[j] == i)
 			{
 				pointPresent = true;
-				break;
 			}
 		}
-
 		if (!pointPresent)
 		{
-			flag = false;
-			break;
+			return false;
 		}
-		flag = true;
 	}
-	verif = flag;
-	
-
-	return verif;
+	return true;
 }
 
 
