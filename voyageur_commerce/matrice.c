@@ -21,7 +21,7 @@ void genereMatriceArbre(Matrice matrice, int bas, int haut) {
 Matrice initMatrice(const size_t nombre_points)
 {
     Matrice matrice = (Matrice)malloc(nombre_points * sizeof(int*));
-	if (matrice) {
+	if (matrice==NULL) {
 		fprintf(stderr, "Erreur malloc graphe\n");
 		return NULL;
 	}
