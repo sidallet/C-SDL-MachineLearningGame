@@ -136,7 +136,7 @@ Chemin generer_solution_initiale(const int nombre_noeuds) {
 
 int calculDistanceGrapheComplet(const Matrice matrice, const Chemin* chemin) {
 	int longeur = 0;
-	for (size_t i=1; i<chemin->nombre_elems-1; ++i) {
+	for (size_t i=1; i<chemin->nombre_elems; ++i) {
 		longeur+=matrice[chemin->val[i]][chemin->val[i-1]];
 	}
 	return longeur;
