@@ -98,6 +98,16 @@ int main(int argc, char* argv[])
     
     libereMatrice(matrice, nombre_points);
     clean_sdl(&window,&renderer);
+    
+
+     int graph[V][V] = {
+        {0, INT16_MAX, -2, INT16_MAX},
+        {4, 0, 3, INT16_MAX},
+        {INT16_MAX, INT16_MAX, 0, 2},
+        {INT16_MAX, -1, INT16_MAX, 0}
+    };
+    
+    floydWarshall(graph);
     return 0;
 }
 
