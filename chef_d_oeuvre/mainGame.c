@@ -1,11 +1,11 @@
 #include "wrapper_sdl.h"
 #include <SDL2/SDL2_framerate.h>
+#include "game.h"
 
-void affichage(SDL_Renderer* renderer) {
-
+void affichage(SDL_Renderer* renderer, const Game* game) {
 	SDL_RenderClear(renderer);
+	game_affichage(renderer, game);
 	SDL_RenderPresent(renderer);
-
 }
 
 
@@ -23,6 +23,8 @@ int main (int argc, char* argv[]) {
 	SDL_setFramerate(&fpsManager, 60);
 	Uint32 delta_time = 0;
 
+	Game game = new_game();
+
 	bool actif = true;
 
 	while (actif)
@@ -37,11 +39,13 @@ int main (int argc, char* argv[]) {
 				break;
 			
 			default:
+				game_handle_event(&game, &event, &rect_fenetre);
 				break;
 			}
 		}
 		
-		affichage(renderer);
+		affichage(renderer, &game);
+
 
 		delta_time = SDL_framerateDelay(&fpsManager);
 
