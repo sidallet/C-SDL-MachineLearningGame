@@ -10,7 +10,7 @@ const char* texturesNames[] = {
 TextureHandler newTextureHandler(SDL_Renderer* renderer) {
 	TextureHandler tH;
 
-	const char directoryPath[] = "rsrc/img/";
+	const char directoryPath[] = "img/";
 
 	fprintf(stderr, "Nb textures %d\n", NB_TEXTURES_DEFINED);
 
