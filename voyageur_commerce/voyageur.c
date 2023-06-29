@@ -110,43 +110,7 @@ int recherche_local_glouton(int N,Point points[])
     i=0;
  
     while (i<N-1)
-    {
-        {  
-            int dist_graphe_sommet=INT16_MAX;                                               //on commence a la distance à l'infini(initialisation)
-            for(j=0;j<N;j++)
-            {            
-                printf("----------------------- points actuel %d  -------------------\n", point_a.val);
-                                                                                 //on commence à la ligne du sommet a puis on enchaine sur la ligne du sommet le plus proche
-                Point point_j= points[j];                                                   //on va tester pour tout les points de la ligne a de la matrice d'adjacence
-                if(i==4)
-                {
-                    printf("dernier !ii!!i!i!i!i!i!i!i\n");
-                    dist_graphe_sommet=distance_eucli(point_deb,points[i]);
-                }
-                else if (point_j.val!=point_a.val&& existe(point_j.val,Liste)==0 )                 //ce n'est pas le sommet précédent
-                {                                                                    //il y a un voisin qui n'est pas le précédent (donc pas un point isolé)
-                    if (distance_eucli(point_a,point_j)<dist_graphe_sommet  ){                //si la distance entre le poitn a et j est plus faible on actualise la distance
-                        dist_graphe_sommet=distance_eucli(point_a,point_j);
-                        voisin_proche=point_j;                                                  //on a le nouveau voisin le plus proche qui n'est pas le précédent
-                    }
-                }                    
-            }
-            if (i==N-1)
-            {
-                printf("ici le i=N-1:");
-                Liste[i]=point_a.val;
-            }
-            printf("i:%d\n",i);
-            printf("point a ajouté: %d\n",voisin_proche.val); 
-            
-            
-            Liste[i]=point_a.val;                                                       //on ajoute le point précédent dans la liste pour ne pas revenir en arriere.
-            i=i+1;
-            point_a=voisin_proche;                                                        //on actualise le point par le nouveau voisin le plus proche
-            dist_graphe_total+=dist_graphe_sommet;
-            printf("la distance est: %d\n",dist_graphe_total);                                          //on actualise la nouvelle distance du graphe
-        } 
-
+    
     printf("\n LISTE : ");
     for (int i = 0; i < N; i++)
     {
