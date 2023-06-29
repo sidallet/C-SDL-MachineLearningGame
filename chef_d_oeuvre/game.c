@@ -12,7 +12,7 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.vie_max = 5,
 		.delai_invulnerabilite = -1,
 		.delai_invulnerabilite_max = 400,
-		.voiture = {fenetre->w/2.0 - 100,fenetre->h-125,100,100},
+		.voiture = {fenetre->w/2.0 - 100,fenetre->h-125,65,110},
 		.textureHandler = newTextureHandler(renderer),
 		.deplacement_voiture = 0, 
 		.nbVoiture = 6
