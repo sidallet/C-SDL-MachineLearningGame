@@ -35,6 +35,7 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 					break;
 				}
 
+
 				case SDLK_d : {
 					printf("droite \n");
 					deplaceDroite(&game->voiture,rect_fenetre);
