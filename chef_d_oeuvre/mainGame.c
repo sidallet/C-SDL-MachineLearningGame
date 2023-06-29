@@ -5,7 +5,7 @@
 void affichage(SDL_Renderer* renderer, const Game* game) {
 	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 	SDL_RenderClear(renderer);
-	game_afficher(game, renderer);
+	game_afficher(game,renderer);
 	SDL_RenderPresent(renderer);
 }
 
