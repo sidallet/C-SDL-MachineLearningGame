@@ -8,7 +8,7 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.voiture = {fenetre->w/2 - 100,fenetre->h-125,100,100},
 		.textureHandler = newTextureHandler(renderer),
 		.deplacement_voiture = 0, 
-		.nbVoiture = 4
+		.nbVoiture = 6
 		
 	};
 	for (int i = 0; i < game.nbVoiture ; i++)
@@ -27,11 +27,31 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 
 void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
 {
-	int xAlea = rand() % fenetre->w;
-	int yAlea = rand() % 400;
-	SDL_FRect obst = {xAlea,-yAlea,100.0,100.0};
-	game->rect_obstacle[pos] = obst;
+    int xAlea, yAlea;
+    bool positionValide = false;
+    int diffX, diffY;
+    
+    while (!positionValide) {
+        xAlea = rand() % fenetre->w;
+        yAlea = rand() % 400;
+        
+        positionValide = true;
+        
+        for (int i = 0; i < pos; i++) {
+            diffX = abs(game->rect_obstacle[i].x - xAlea);
+            diffY = abs(game->rect_obstacle[i].y + game->rect_obstacle[i].h - yAlea);
+            
+            if (diffX < 100 && diffY < 100) {
+                positionValide = false; 
+                break;
+            }
+        }
+    }
+    
+    SDL_FRect obst = { xAlea, -(yAlea+100), 100.0, 100.0 };
+    game->rect_obstacle[pos] = obst;
 }
+
 
 //Appelé une fois par frame
 void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
@@ -40,7 +60,6 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 	deplacer_obstacle(game,rect_fenetre,deltatime, game->distance_parcouru, game->nbVoiture);
 
 	deplaceVoiture(&game->voiture,rect_fenetre, game->deplacement_voiture, deltatime);
-
 
 	//Gerer collision ici
 }
@@ -80,22 +99,29 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 
 void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
 	afficherRoute(renderer, game->textureHandler.textures[TEXTURE_Route], rect_fenetre, game->distance_parcouru);
-	afficher_obstacle(renderer,game->rect_obstacle, game->nbVoiture);
+	afficher_obstacle(renderer,game->rect_obstacle, game->textureHandler.textures,game->nbVoiture);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15);
 	afficher_texte(renderer, game->distance_parcouru, rect_fenetre);
 }
 
 
-void afficher_obstacle(SDL_Renderer* renderer, const SDL_FRect rect_obstacle[], int nombreVoiture)
+void afficher_obstacle(SDL_Renderer* renderer, const SDL_FRect rect_obstacle[], SDL_Texture *textureObst[], int nombreVoiture)
 {
+	int randVoiture = rand() % 2;
 	SDL_SetRenderDrawColor(renderer, 255,0,0,255);
 	for (int i = 0; i < nombreVoiture; i++)
 	{
-		SDL_RenderFillRectF(renderer, &rect_obstacle[i]);
+		
+		SDL_RenderCopyExF(renderer,textureObst[randVoiture],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
 	}
 	
-	
 }
+
+void afficherVoiture(SDL_Renderer* renderer, const SDL_Rect* voiture, SDL_Texture* textureVoiture, int inclinaison)
+{
+	SDL_RenderCopyEx(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
+}
+
 
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre){
 	char dist_char[10];
@@ -121,20 +147,20 @@ void deplaceVoiture(SDL_Rect* voiture, SDL_Rect* fenetre, int direction_deplacem
 }
 
 void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru , int nbVoiture){
-	int vitesse = 80;
-	vitesse += distance_parcouru/700;
+	int vitesse = 180;
+	vitesse += distance_parcouru/200;
 	for (int i = 0; i < nbVoiture; i++)
 	{
 		game->rect_obstacle[i].y+=vitesse*deltatime/1000.0;
+
+		if(game->rect_obstacle[i].y > rect_fenetre->h)
+		{
+			voitureAleatoire(game,i,rect_fenetre);
+		}
 	}
-	
-	
+		
 }
 
-void afficherVoiture(SDL_Renderer* renderer, const SDL_Rect* voiture, SDL_Texture* textureVoiture, int inclinaison)
-{
-	SDL_RenderCopyEx(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
-}
 
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue) {
 	SDL_Rect rect_dest = {

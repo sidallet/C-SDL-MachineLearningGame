@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <math.h>
+#include <stdbool.h>
 #include "TextureHandler.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
 
@@ -27,7 +28,7 @@ void liberer_game(Game* game);
 
 
 void game_afficher(const Game* game, SDL_Renderer* renderer,SDL_Rect* rect_fenetre);
-void afficher_obstacle(SDL_Renderer* renderer, const SDL_FRect* rect_obstacle, int nombreVoiture);
+void afficher_obstacle(SDL_Renderer* renderer, const SDL_FRect rect_obstacle[], SDL_Texture *textureObst[], int nombreVoiture);
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue);
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre);
 
