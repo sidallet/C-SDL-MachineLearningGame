@@ -10,6 +10,7 @@ void affichage(SDL_Renderer* renderer, const Game* game) {
 }
 
 
+
 int main (int argc, char* argv[]) {
 
 	SDL_Window* window;
