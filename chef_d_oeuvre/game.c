@@ -113,6 +113,14 @@ void afficherVoiture(SDL_Renderer* renderer, const SDL_Rect* voiture, SDL_Textur
 }
 
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue) {
-
-	SDL_RenderCopy(renderer, texture, NULL, rect_fenetre);
+	SDL_Rect rect_dest = {
+		.x = 0,
+		.y = distance_parcourue%rect_fenetre->h,
+		.w = rect_fenetre->w,
+		.h = rect_fenetre->h
+	};
+	SDL_RenderCopy(renderer, texture, NULL, &rect_dest);
+	
+	rect_dest.y -= rect_fenetre->h;
+	SDL_RenderCopy(renderer, texture, NULL, &rect_dest);
 }

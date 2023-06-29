@@ -27,6 +27,7 @@ void liberer_game(Game* game);
 void game_afficher(const Game* game, SDL_Renderer* renderer,SDL_Rect* rect_fenetre);
 void afficher_obstacle(SDL_Renderer* renderer,const SDL_FRect* rect_obstacle);
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue);
+void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre);
 
 //fonction voiture
 void deplaceGauche(SDL_Rect* voiture, SDL_Rect* fenetre, Uint32 delta_time);
