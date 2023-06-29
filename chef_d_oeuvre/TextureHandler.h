@@ -23,7 +23,9 @@
 	M(Bus) \
 	M(Dragster) \
 	M(Route) \
-	M(voiture_course) 
+	M(voiture_course) \
+	M(Coeur_gris) \
+	M(Coeur_rouge)
 
 /**
  *  \brief Allow the generation of enum

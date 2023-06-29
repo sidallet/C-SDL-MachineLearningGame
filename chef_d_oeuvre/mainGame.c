@@ -12,7 +12,7 @@ void affichage(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre)
 
 
 int main (int argc, char* argv[]) {
-
+	//srand(time(NULL));
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	SDL_Rect rect_fenetre = {100, 100, 1000, 800};
