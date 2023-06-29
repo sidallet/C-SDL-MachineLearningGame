@@ -21,3 +21,5 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 void game_afficher(const Game* game, SDL_Renderer* renderer) {
 	
 }
+
+stringRGBA(renderer, noeuds[i].x-RAYON_POINT/4, noeuds[i].y-RAYON_POINT/4, nom_noeud, 0, 0, 20, 255);  //affichage texte

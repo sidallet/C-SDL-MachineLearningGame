@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include "TextureHandler.h"
+#include <SDL2/SDL2_gfxPrimitives.h>
 
 typedef struct
 {
