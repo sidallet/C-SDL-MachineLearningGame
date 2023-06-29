@@ -44,6 +44,7 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre);
 
 
 
+void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre);
 bool test_collision(const SDL_FRect* voiture, const SDL_FRect rect_obstacle[], const int nbVoiture);
 
 #endif //GAME_INCLUDED

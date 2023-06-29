@@ -1,5 +1,6 @@
 #include "game.h"
 #include "TextureHandler.h"
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #define RAYON_POINT 10
 
@@ -99,6 +100,8 @@ void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fene
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15);
 	afficher_texte(renderer, game->distance_parcouru, rect_fenetre);
 	afficherVie(renderer, game->textureHandler.textures[TEXTURE_Coeur_rouge], game->textureHandler.textures[TEXTURE_Coeur_gris], game->vie, game->vie_max, rect_fenetre);
+
+	afficherEffetDegats(renderer, game->delai_invulnerabilite, game->delai_invulnerabilite_max, rect_fenetre);
 }
 
 
@@ -186,6 +189,16 @@ void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* 
 
 }
 
+void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre) {
+	if (delai_invulnerabilite > 0.8*delai_invulnerabilite_max) {
+		SDL_SetRenderDrawColor(renderer, 200, 100, 100, 5);
+		SDL_Rect rect = *rect_fenetre;
+		rect.x = 0;
+		rect.y = 0;
+		SDL_RenderFillRect(renderer, &rect);
+	}
+}
+
 bool test_collision(const SDL_FRect* voiture, const SDL_FRect rect_obstacle[], const int nbVoiture) {
 	for (int i=0; i<nbVoiture; ++i) {
 		if (SDL_HasIntersectionF(voiture, &rect_obstacle[i])) {
@@ -194,3 +207,5 @@ bool test_collision(const SDL_FRect* voiture, const SDL_FRect rect_obstacle[], c
 	}
 	return false;
 }
+
+
