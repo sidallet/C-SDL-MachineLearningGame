@@ -8,7 +8,7 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 	printf("w et h %d %d \n", fenetre->w, fenetre->h);
 	Game game = {
 		.distance_parcouru = 0,
-		.vie = 3,
+		.vie = 5,
 		.vie_max = 5,
 		.delai_invulnerabilite = -1,
 		.delai_invulnerabilite_max = 800,
@@ -81,9 +81,16 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
 
 //Appelé une fois par frame
 void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
+
 	int vitesse;
 	game->distance_parcouru += deltatime;
 	game->vitesse = deplacer_obstacle(game,rect_fenetre,deltatime, game->distance_parcouru, game->nbVoiture);
+
+
+	if (game->vie<=0) {
+		game->delai_invulnerabilite = -1;
+		return;
+	}
 
 	deplaceVoiture(&game->voiture,rect_fenetre, game->deplacement_voiture, deltatime);
 
@@ -134,8 +141,12 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 
 void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
 	afficherRoute(renderer, game->textureHandler.textures[TEXTURE_Route], rect_fenetre, game->distance_parcouru);
-	afficher_obstacle(renderer,game->rect_obstacle, game->textureHandler.textures,game->nbVoiture);
+	afficher_obstacle(renderer,game->rect_obstacle, (SDL_Texture**)game->textureHandler.textures,game->nbVoiture);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15, game->delai_invulnerabilite);
+	if (game->vie <= 0) {
+		afficherFin(renderer, rect_fenetre, game->distance_parcouru/175, game->vitesse);
+		return;
+	}
 	afficher_texte(renderer, game->distance_parcouru, rect_fenetre, game->vitesse);
 	afficherVie(renderer, game->textureHandler.textures[TEXTURE_Coeur_rouge], game->textureHandler.textures[TEXTURE_Coeur_gris], game->vie, game->vie_max, rect_fenetre);
 
@@ -271,4 +282,14 @@ bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], con
 	return false;
 }
 
+void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse) {
+	SDL_SetRenderDrawColor(renderer, 100, 100, 100, 20);
+	SDL_Rect rect = {
+		.x = rect_fenetre->w*0.3,
+		.y = rect_fenetre->h*0.3,
+		.w = rect_fenetre->w*0.4,
+		.h = rect_fenetre->h*0.4,
+	};
 
+	SDL_RenderFillRect(renderer, &rect);
+}

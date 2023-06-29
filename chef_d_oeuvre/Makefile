@@ -12,8 +12,8 @@ BUILD=debug
 LDFLAGS:=-lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm -lSDL2
 
 ifeq ($(BUILD), debug)
-	CFLAGS:=$(CFLAGS) -Og -g #-fsanitize=address
-	LDFLAGS:=$(LDFLAGS) #-fsanitize=address 
+	CFLAGS:=$(CFLAGS) -Og -g #-fsanitize=undefined
+	LDFLAGS:=$(LDFLAGS) #-fsanitize=undefined
 else
 	CFLAGS:=$(CFLAGS) -O2
 endif
