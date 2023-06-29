@@ -18,6 +18,14 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.nbVoiture = 6
 		
 	};
+
+	game.rect_obstacle = malloc(sizeof(SDL_Rect)*game.nbVoiture);
+	//init voiture dehors
+	SDL_Rect rect_loin = {-100,300, 0,0};
+	for (int i = 0; i < game.nbVoiture ; i++) {
+		game.rect_obstacle[i] = rect_loin;
+	}
+
 	for (int i = 0; i < game.nbVoiture ; i++)
 	{
 		voitureAleatoire(&game, i, fenetre);
@@ -34,29 +42,38 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 
 void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
 {
-    int xAlea, yAlea, tailleAlea;
+    SDL_Rect obst;
     bool positionValide = false;
-    int diffX, diffY;
+	int ecart = 10;
     
     while (!positionValide) {
-        xAlea = rand() % fenetre->w;
-        yAlea = rand() % 400;
-		tailleAlea = rand() %50;
+        int yAlea = rand() % 100*game->nbVoiture;
+		int tailleAlea = rand() %50;
         
-        positionValide = true;
+		obst.w = tailleAlea + 80 + ecart;
+		obst.h = tailleAlea + 80 + ecart;
         
-        for (int i = 0; i < pos; i++) {
-            diffX = abs(game->rect_obstacle[i].x - xAlea);
-            diffY = abs(game->rect_obstacle[i].y + game->rect_obstacle[i].h - yAlea);
-            
-            if (diffX < 100 && diffY < 100) {
-                positionValide = false; 
-                break;
-            }
-        }
+		int xAlea = rand() % (fenetre->w - obst.w);
+		
+		obst.x = xAlea + ecart;
+		obst.y = -(yAlea+100) - ecart;
+		
+
+		positionValide = true;
+        
+        for (int i = 0; i < game->nbVoiture; i++) {
+			if (i != pos && SDL_HasIntersection(&game->rect_obstacle[i], &obst)) {
+				positionValide = false;
+				break;
+			}
+		}
     }
-    
-    SDL_Rect obst = { xAlea, -(yAlea+100), tailleAlea + 80, tailleAlea + 80};
+	
+	obst.x += ecart;
+	obst.y += ecart;
+	obst.w -= ecart;
+	obst.h -= ecart;
+
     game->rect_obstacle[pos] = obst;
 }
 
@@ -143,6 +160,7 @@ void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre){
 }
 
 void liberer_game(Game* game) {
+	free(game->rect_obstacle);
 	freeTextureHandler(&game->textureHandler);
 }
 

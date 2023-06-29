@@ -18,7 +18,7 @@ typedef struct
 	SDL_Rect voiture;
 	TextureHandler textureHandler;
 	int deplacement_voiture;
-	SDL_Rect rect_obstacle[10];
+	SDL_Rect* rect_obstacle;
 	int nbVoiture;
 } Game;
 
