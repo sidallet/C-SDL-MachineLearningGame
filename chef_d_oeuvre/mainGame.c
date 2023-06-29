@@ -26,7 +26,7 @@ int main (int argc, char* argv[]) {
 	SDL_setFramerate(&fpsManager, 60);
 	Uint32 delta_time = 0;
 
-	Game game = new_game(renderer);
+	Game game = new_game(renderer, &rect_fenetre);
 
 	bool actif = true;
 
