@@ -5,13 +5,16 @@
 #include <math.h>
 #include "TextureHandler.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
+#include <stdbool.h>
 
 typedef struct
 {
 	int distance_parcouru;
 	int vie;
 	int vie_max;
-	SDL_Rect voiture;
+	int delai_invulnerabilite;
+	int delai_invulnerabilite_max;
+	SDL_FRect voiture;
 	TextureHandler textureHandler;
 	int deplacement_voiture;
 	SDL_FRect rect_obstacle[10];
@@ -35,9 +38,13 @@ void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre);
 void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* coeur_gris, int vie, int vie_max, const SDL_Rect* rect_fenetre);
 
 //fonction voiture
-void deplaceVoiture(SDL_Rect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time);
-void afficherVoiture(SDL_Renderer * renderer, const SDL_Rect * voiture, SDL_Texture * textureVoiture, int inclinaison);
+void deplaceVoiture(SDL_FRect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time);
+void afficherVoiture(SDL_Renderer * renderer, const SDL_FRect * voiture, SDL_Texture * textureVoiture, int inclinaison);
 void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre);
+
+
+
+bool test_collision(const SDL_FRect* voiture, const SDL_FRect rect_obstacle[], const int nbVoiture);
 
 #endif //GAME_INCLUDED
 

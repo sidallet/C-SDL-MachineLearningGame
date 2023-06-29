@@ -9,6 +9,8 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.distance_parcouru = 0,
 		.vie = 3,
 		.vie_max = 5,
+		.delai_invulnerabilite = -1,
+		.delai_invulnerabilite_max = 300,
 		.voiture = {fenetre->w/2 - 100,fenetre->h-125,100,100},
 		.textureHandler = newTextureHandler(renderer),
 		.deplacement_voiture = 0, 
@@ -47,6 +49,15 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 
 
 	//Gerer collision ici
+	if (game->delai_invulnerabilite<0) {
+		if (test_collision(&game->voiture, game->rect_obstacle, game->nbVoiture)) {
+			game->vie--;
+			game->delai_invulnerabilite = game->delai_invulnerabilite_max;
+		}
+	}
+	else {
+		game->delai_invulnerabilite -= deltatime;
+	}
 }
 
 
@@ -112,7 +123,7 @@ void liberer_game(Game* game) {
 	freeTextureHandler(&game->textureHandler);
 }
 
-void deplaceVoiture(SDL_Rect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time) {
+void deplaceVoiture(SDL_FRect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time) {
     int limiteGauche = 0;  //lim gauche de la fenêtre
     int limiteDroite = fenetre->w;  //lim gauche de la fenêtre
 	float vitesse = 300.0;
@@ -136,9 +147,9 @@ void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int 
 	
 }
 
-void afficherVoiture(SDL_Renderer* renderer, const SDL_Rect* voiture, SDL_Texture* textureVoiture, int inclinaison)
+void afficherVoiture(SDL_Renderer* renderer, const SDL_FRect* voiture, SDL_Texture* textureVoiture, int inclinaison)
 {
-	SDL_RenderCopyEx(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
+	SDL_RenderCopyExF(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
 }
 
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue) {
@@ -175,3 +186,11 @@ void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* 
 
 }
 
+bool test_collision(const SDL_FRect* voiture, const SDL_FRect rect_obstacle[], const int nbVoiture) {
+	for (int i=0; i<nbVoiture; ++i) {
+		if (SDL_HasIntersectionF(voiture, &rect_obstacle[i])) {
+			return true;
+		}	
+	}
+	return false;
+}
