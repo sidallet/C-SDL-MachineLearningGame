@@ -11,8 +11,8 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.vie = 3,
 		.vie_max = 5,
 		.delai_invulnerabilite = -1,
-		.delai_invulnerabilite_max = 300,
-		.voiture = {fenetre->w/2 - 100,fenetre->h-125,100,100},
+		.delai_invulnerabilite_max = 400,
+		.voiture = {fenetre->w/2.0 - 100,fenetre->h-125,100,100},
 		.textureHandler = newTextureHandler(renderer),
 		.deplacement_voiture = 0, 
 		.nbVoiture = 4
@@ -97,7 +97,7 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
 	afficherRoute(renderer, game->textureHandler.textures[TEXTURE_Route], rect_fenetre, game->distance_parcouru);
 	afficher_obstacle(renderer,game->rect_obstacle, game->nbVoiture);
-	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15);
+	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15, game->delai_invulnerabilite);
 	afficher_texte(renderer, game->distance_parcouru, rect_fenetre);
 	afficherVie(renderer, game->textureHandler.textures[TEXTURE_Coeur_rouge], game->textureHandler.textures[TEXTURE_Coeur_gris], game->vie, game->vie_max, rect_fenetre);
 
@@ -150,9 +150,11 @@ void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int 
 	
 }
 
-void afficherVoiture(SDL_Renderer* renderer, const SDL_FRect* voiture, SDL_Texture* textureVoiture, int inclinaison)
+void afficherVoiture(SDL_Renderer* renderer, const SDL_FRect* voiture, SDL_Texture* textureVoiture, int inclinaison, int delai_invulnerabilite)
 {
-	SDL_RenderCopyExF(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
+	if (delai_invulnerabilite<0 || delai_invulnerabilite%10 > 5) {
+		SDL_RenderCopyExF(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
+	}
 }
 
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue) {
@@ -191,7 +193,7 @@ void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* 
 
 void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre) {
 	if (delai_invulnerabilite > 0.8*delai_invulnerabilite_max) {
-		SDL_SetRenderDrawColor(renderer, 200, 100, 100, 5);
+		SDL_SetRenderDrawColor(renderer, 200, 100, 100, 2);
 		SDL_Rect rect = *rect_fenetre;
 		rect.x = 0;
 		rect.y = 0;

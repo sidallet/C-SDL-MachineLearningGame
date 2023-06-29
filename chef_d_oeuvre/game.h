@@ -39,7 +39,7 @@ void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* 
 
 //fonction voiture
 void deplaceVoiture(SDL_FRect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time);
-void afficherVoiture(SDL_Renderer * renderer, const SDL_FRect * voiture, SDL_Texture * textureVoiture, int inclinaison);
+void afficherVoiture(SDL_Renderer * renderer, const SDL_FRect * voiture, SDL_Texture * textureVoiture, int inclinaison, int delai_invulnerabilite);
 void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre);
 
 
