@@ -4,7 +4,7 @@
 
 void affichage(SDL_Renderer* renderer, const Game* game) {
 	SDL_RenderClear(renderer);
-	game_affichage(renderer, game);
+	game_afficher(game,renderer);
 	SDL_RenderPresent(renderer);
 }
 
