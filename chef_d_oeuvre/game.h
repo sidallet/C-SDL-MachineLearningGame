@@ -10,6 +10,7 @@ typedef struct
 	int distance_parcouru;
 	int position_horizontale_voiture;
 	TextureHandler textureHandler;
+	SDL_Rect  rect_obstacle;
 } Game;
 
 Game new_game();

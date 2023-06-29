@@ -6,6 +6,7 @@ Game new_game(SDL_Renderer* renderer) {
 		.distance_parcouru = 0,
 		.position_horizontale_voiture = 0,
 		.textureHandler = newTextureHandler(renderer)
+		.rect_obstacle = {100,100,100,100};        //coordonnée x, coordonée y, taille x, taille y
 	};
 	return game;
 }

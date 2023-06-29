@@ -20,6 +20,7 @@ int main (int argc, char* argv[]) {
 
 	FPSmanager fpsManager;
 	SDL_initFramerate(&fpsManager);
+	
 	SDL_setFramerate(&fpsManager, 60);
 	Uint32 delta_time = 0;
 
