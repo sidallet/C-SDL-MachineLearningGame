@@ -3,46 +3,12 @@
 #include "game.h"
 
 void affichage(SDL_Renderer* renderer, const Game* game) {
+	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 	SDL_RenderClear(renderer);
 	game_afficher(game, renderer);
 	SDL_RenderPresent(renderer);
 }
 
-void deplaceGauche(SDL_Renderer* renderer, SDL_Rect* voiture, SDL_Window* fenetre) {
-    int limiteGauche = 0;  //lim gauche de la fenêtre
-    int fenetreX, fenetreY;
-
-    SDL_GetWindowPosition(fenetre, &fenetreX, &fenetreY);
-    limiteGauche = fenetreX;
-
-    if (voiture->x > limiteGauche) {
-        voiture->x -= 1;  //pixel vers la gauche
-    }
-	//voiture->y += 1;
-	//voiture->w += 2;
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(renderer, voiture);
-    SDL_RenderPresent(renderer);
-	//voiture->y -= 1;
-	//voiture->w -= 2;
-}
-
-void deplaceDroite(SDL_Renderer* renderer, SDL_Rect* voiture, SDL_Window* fenetre) {
-    int limiteDroite = 0;  //lim gauche de la fenêtre
-    int fenetreX, fenetreY;
-
-    SDL_GetWindowPosition(fenetre, &fenetreX, &fenetreY);
-    limiteDroite = fenetreX;
-
-    if (voiture->x > limiteDroite) {
-        voiture->x -= 1;  //pixel vers la droite
-    }
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(renderer, voiture);
-    SDL_RenderPresent(renderer);
-}
 
 
 int main (int argc, char* argv[]) {
@@ -73,22 +39,6 @@ int main (int argc, char* argv[]) {
 			case SDL_QUIT:
 				actif = false;
 				break;
-			case SDL_KEYDOWN: {
-				switch(event.key.keysym.sym)
-				{
-					case SDLK_q : {
-						printf("gauche \n");
-						deplaceGauche(renderer,voiture,window);
-						break;
-					}
-
-					case SDLK_d : {
-						printf("droite \n");
-						deplaceDroite(renderer,voiture,window);
-						break;
-					}
-				}
-			}
 			
 			default:
 				game_handle_event(&game, &event, &rect_fenetre);
