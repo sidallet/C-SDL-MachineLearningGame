@@ -1,7 +1,9 @@
 #include "game.h"
 #include "TextureHandler.h"
+#include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_ttf.h>
 #define RAYON_POINT 10
 
 Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
@@ -16,8 +18,8 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.textureHandler = newTextureHandler(renderer),
 		.deplacement_voiture = 0, 
 		.nbVoiture = 6,
-		.vitesse = 100
-		
+		.vitesse = 100,
+		.font = charger_font(),	
 	};
 
 	game.rect_obstacle = malloc(sizeof(SDL_Rect)*game.nbVoiture);
@@ -81,11 +83,10 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
 
 //Appelé une fois par frame
 void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
-
-	int vitesse;
-	game->distance_parcouru += deltatime;
-	game->vitesse = deplacer_obstacle(game,rect_fenetre,deltatime, game->distance_parcouru, game->nbVoiture);
-
+	if (game->vie>0) {
+		game->distance_parcouru += deltatime;
+		game->vitesse = deplacer_obstacle(game,rect_fenetre,deltatime, game->distance_parcouru, game->nbVoiture);
+	}	
 
 	if (game->vie<=0) {
 		game->delai_invulnerabilite = -1;
@@ -144,7 +145,7 @@ void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fene
 	afficher_obstacle(renderer,game->rect_obstacle, (SDL_Texture**)game->textureHandler.textures,game->nbVoiture);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15, game->delai_invulnerabilite);
 	if (game->vie <= 0) {
-		afficherFin(renderer, rect_fenetre, game->distance_parcouru/175, game->vitesse);
+		afficherFin(renderer, rect_fenetre, game->distance_parcouru/175, game->vitesse/4, game->font);
 		return;
 	}
 	afficher_texte(renderer, game->distance_parcouru, rect_fenetre, game->vitesse);
@@ -166,9 +167,8 @@ void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], S
 }
 
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int vitesse){
-	SDL_SetRenderDrawColor(renderer,255,255,255,0);
 	SDL_Rect fond_blanc = {rect_fenetre->w-92, 5, 90, 25};
-	SDL_RenderFillRect(renderer,&fond_blanc);
+	roundedBoxRGBA(renderer, fond_blanc.x, fond_blanc.y, fond_blanc.x + fond_blanc.w, fond_blanc.y + fond_blanc.h, 2, 255, 255, 255, 80);
 
 	vitesse = vitesse / 4; //On divise par 4 pour "convertir" en km/h
 	char vitesse_char[25];
@@ -182,6 +182,8 @@ void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int 
 }
 
 void liberer_game(Game* game) {
+	TTF_CloseFont(game->font);
+	TTF_Quit();
 	free(game->rect_obstacle);
 	freeTextureHandler(&game->textureHandler);
 }
@@ -282,14 +284,41 @@ bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], con
 	return false;
 }
 
-void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse) {
-	SDL_SetRenderDrawColor(renderer, 100, 100, 100, 20);
-	SDL_Rect rect = {
-		.x = rect_fenetre->w*0.3,
-		.y = rect_fenetre->h*0.3,
-		.w = rect_fenetre->w*0.4,
-		.h = rect_fenetre->h*0.4,
-	};
+void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse, TTF_Font* font) {
+	roundedBoxRGBA(renderer, rect_fenetre->w*0.1, rect_fenetre->h*0.1, rect_fenetre->w*0.9, rect_fenetre->h*0.9, 10, 255, 255, 255, 80);
+	char valStr[180];
+	sprintf(valStr,"Score %d Vitesse max %d",score, vitesse);
 
-	SDL_RenderFillRect(renderer, &rect);
+	SDL_Color color = {10, 10, 10, 255};  
+	SDL_Surface * surfaceTexte = TTF_RenderText_Solid(font, valStr, color);
+	SDL_Texture * textureTexte = SDL_CreateTextureFromSurface(renderer, surfaceTexte);
+
+
+	int largeurTexte = surfaceTexte->w;
+	int hauteurTexte = surfaceTexte->h;
+
+	SDL_Rect rectDest;
+	rectDest.x = rect_fenetre->w/2 - largeurTexte/2;
+	rectDest.y = rect_fenetre->h/2 - hauteurTexte/2;
+	rectDest.w = largeurTexte;
+	rectDest.h = hauteurTexte;
+
+
+	SDL_RenderCopy(renderer, textureTexte, NULL, &rectDest);   
+	SDL_FreeSurface(surfaceTexte);  
+	SDL_DestroyTexture(textureTexte); 
+}
+
+
+TTF_Font* charger_font() {
+	if (TTF_Init() != 0)
+	{
+    	fprintf(stderr, "Erreur d'initialisation TTF : %s\n", TTF_GetError()); 
+	}
+	
+	TTF_Font* font = NULL;       
+	font = TTF_OpenFont("./font/8bit.ttf", 32);    
+	if (font == NULL) fprintf(stderr, "Erreur d'initialisation TTF : %s\n", TTF_GetError()); 
+
+	return font;	
 }

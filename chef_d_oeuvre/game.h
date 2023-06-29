@@ -2,6 +2,7 @@
 #define GAME_INCLUDED
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <math.h>
 #include <stdbool.h>
 #include "TextureHandler.h"
@@ -21,6 +22,8 @@ typedef struct
 	SDL_Rect* rect_obstacle;
 	int nbVoiture;
 	int vitesse;
+
+	TTF_Font* font;
 } Game;
 
 Game new_game(SDL_Renderer* renderer, SDL_Rect * rect);
@@ -38,7 +41,7 @@ void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], S
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue);
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre,int vitesse);
 void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* coeur_gris, int vie, int vie_max, const SDL_Rect* rect_fenetre);
-void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse);
+void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse, TTF_Font* font);
 
 //fonction voiture
 void deplaceVoiture(SDL_Rect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time);
@@ -49,6 +52,8 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre);
 
 void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre);
 bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], const int nbVoiture);
+
+TTF_Font* charger_font();
 
 #endif //GAME_INCLUDED
 
