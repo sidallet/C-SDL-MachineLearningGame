@@ -26,8 +26,8 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 	printf("voiture obst : \n");
 	for (int i = 0; i < game.nbVoiture; i++)
 	{
-		printf("x %f " , game.rect_obstacle[i].x);
-		printf("y %f " , game.rect_obstacle[i].y);
+		printf("x %d " , game.rect_obstacle[i].x);
+		printf("y %d " , game.rect_obstacle[i].y);
 	}
 	return game;
 }
@@ -46,8 +46,8 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
         positionValide = true;
         
         for (int i = 0; i < pos; i++) {
-            diffX = fabs(game->rect_obstacle[i].x - xAlea);
-            diffY = fabs(game->rect_obstacle[i].y + game->rect_obstacle[i].h - yAlea);
+            diffX = abs(game->rect_obstacle[i].x - xAlea);
+            diffY = abs(game->rect_obstacle[i].y + game->rect_obstacle[i].h - yAlea);
             
             if (diffX < 100 && diffY < 100) {
                 positionValide = false; 
@@ -56,7 +56,7 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
         }
     }
     
-    SDL_FRect obst = { xAlea, -(yAlea+100), tailleAlea + 80, tailleAlea + 80};
+    SDL_Rect obst = { xAlea, -(yAlea+100), tailleAlea + 80, tailleAlea + 80};
     game->rect_obstacle[pos] = obst;
 }
 
@@ -125,13 +125,13 @@ void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fene
 }
 
 
-void afficher_obstacle(SDL_Renderer* renderer, const SDL_FRect rect_obstacle[], SDL_Texture *textureObst[], int nombreVoiture)
+void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], SDL_Texture *textureObst[], int nombreVoiture)
 {
 	SDL_SetRenderDrawColor(renderer, 255,0,0,255);
 	for (int i = 0; i < nombreVoiture; i++)
 	{
 		
-		SDL_RenderCopyExF(renderer,textureObst[i%2],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
+		SDL_RenderCopyEx(renderer,textureObst[i%2],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
 	}
 	
 }
@@ -146,7 +146,7 @@ void liberer_game(Game* game) {
 	freeTextureHandler(&game->textureHandler);
 }
 
-void deplaceVoiture(SDL_FRect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time) {
+void deplaceVoiture(SDL_Rect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time) {
     int limiteGauche = 0;  //lim gauche de la fenêtre
     int limiteDroite = fenetre->w;  //lim gauche de la fenêtre
 	float vitesse = 300.0;
@@ -181,10 +181,10 @@ void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int 
 		
 }
 
-void afficherVoiture(SDL_Renderer* renderer, const SDL_FRect* voiture, SDL_Texture* textureVoiture, int inclinaison, int delai_invulnerabilite)
+void afficherVoiture(SDL_Renderer* renderer, const SDL_Rect* voiture, SDL_Texture* textureVoiture, int inclinaison, int delai_invulnerabilite)
 {
 	if (delai_invulnerabilite<0 || delai_invulnerabilite%10 > 5) {
-		SDL_RenderCopyExF(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
 	}
 }
 
@@ -232,9 +232,9 @@ void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite
 	}
 }
 
-bool test_collision(const SDL_FRect* voiture, const SDL_FRect rect_obstacle[], const int nbVoiture) {
+bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], const int nbVoiture) {
 	for (int i=0; i<nbVoiture; ++i) { //SDL_HasIntersectionF
-		if (SDL_HasIntersectionF(voiture, &rect_obstacle[i])) {
+		if (SDL_HasIntersection(voiture, &rect_obstacle[i])) {
 			return true;
 		}	
 	}

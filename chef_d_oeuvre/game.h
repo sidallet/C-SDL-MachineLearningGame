@@ -15,10 +15,10 @@ typedef struct
 	int vie_max;
 	int delai_invulnerabilite;
 	int delai_invulnerabilite_max;
-	SDL_FRect voiture;
+	SDL_Rect voiture;
 	TextureHandler textureHandler;
 	int deplacement_voiture;
-	SDL_FRect rect_obstacle[10];
+	SDL_Rect rect_obstacle[10];
 	int nbVoiture;
 } Game;
 
@@ -33,20 +33,20 @@ void liberer_game(Game* game);
 
 
 void game_afficher(const Game* game, SDL_Renderer* renderer,SDL_Rect* rect_fenetre);
-void afficher_obstacle(SDL_Renderer* renderer, const SDL_FRect rect_obstacle[], SDL_Texture *textureObst[], int nombreVoiture);
+void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], SDL_Texture *textureObst[], int nombreVoiture);
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue);
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre);
 void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* coeur_gris, int vie, int vie_max, const SDL_Rect* rect_fenetre);
 
 //fonction voiture
-void deplaceVoiture(SDL_FRect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time);
-void afficherVoiture(SDL_Renderer * renderer, const SDL_FRect * voiture, SDL_Texture * textureVoiture, int inclinaison, int delai_invulnerabilite);
+void deplaceVoiture(SDL_Rect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time);
+void afficherVoiture(SDL_Renderer * renderer, const SDL_Rect * voiture, SDL_Texture * textureVoiture, int inclinaison, int delai_invulnerabilite);
 void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre);
 
 
 
 void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre);
-bool test_collision(const SDL_FRect* voiture, const SDL_FRect rect_obstacle[], const int nbVoiture);
+bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], const int nbVoiture);
 
 #endif //GAME_INCLUDED
 
