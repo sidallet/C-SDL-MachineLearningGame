@@ -34,13 +34,14 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 
 void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
 {
-    int xAlea, yAlea;
+    int xAlea, yAlea, tailleAlea;
     bool positionValide = false;
     int diffX, diffY;
     
     while (!positionValide) {
         xAlea = rand() % fenetre->w;
         yAlea = rand() % 400;
+		tailleAlea = rand() %50;
         
         positionValide = true;
         
@@ -55,7 +56,7 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
         }
     }
     
-    SDL_FRect obst = { xAlea, -(yAlea+100), 100.0, 100.0 };
+    SDL_FRect obst = { xAlea, -(yAlea+100), tailleAlea + 80, tailleAlea + 80};
     game->rect_obstacle[pos] = obst;
 }
 
@@ -159,12 +160,12 @@ void deplaceVoiture(SDL_FRect* voiture, SDL_Rect* fenetre, int direction_deplace
 }
 
 void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru , int nbVoiture){
-	int vitesse = 130;
+	int vitesse = 100;
 	
-	vitesse += distance_parcouru/150;
-	if(vitesse > 1500)
+	vitesse += pow((distance_parcouru/150),1.15);
+	if(vitesse > 1250)
 	{
-		vitesse = 1500;
+		vitesse = 1250;
 		
 	}
 	printf("vitesse %d \n",vitesse);
@@ -232,7 +233,7 @@ void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite
 }
 
 bool test_collision(const SDL_FRect* voiture, const SDL_FRect rect_obstacle[], const int nbVoiture) {
-	for (int i=0; i<nbVoiture; ++i) {
+	for (int i=0; i<nbVoiture; ++i) { //SDL_HasIntersectionF
 		if (SDL_HasIntersectionF(voiture, &rect_obstacle[i])) {
 			return true;
 		}	
