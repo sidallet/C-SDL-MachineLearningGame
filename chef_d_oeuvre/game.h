@@ -11,10 +11,18 @@ typedef struct
 	SDL_Rect voiture;
 	TextureHandler textureHandler;
 	int inclinaison;
+	SDL_FRect  rect_obstacle;
 } Game;
 
 Game new_game(SDL_Renderer* renderer, SDL_Rect * rect);
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre, Uint32 delta_time);
+
+
+
+
+void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime);
+void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime);
+void afficher_obstacle(SDL_Renderer* renderer,const SDL_FRect* rect_obstacle);
 void game_afficher(const Game* game, SDL_Renderer* renderer);
 void liberer_game(Game* game);
 

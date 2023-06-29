@@ -7,10 +7,22 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.distance_parcouru = 0,
 		.voiture = {fenetre->w/2 - 100,fenetre->h-125,100,100},
 		.textureHandler = newTextureHandler(renderer),
-		.inclinaison = 0
+		.inclinaison = 0,
+		.rect_obstacle = {100.0,0.0,100.0,100.0}        //coordonnée x, coordonée y, taille x, taille y
+		
 	};
 	return game;
 }
+void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
+	deplacer_obstacle(game,rect_fenetre,deltatime);
+}
+
+void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
+	game->rect_obstacle.y+=200.0*deltatime/1000.0;
+}
+
+
+
 
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre, Uint32 delta_time) {
 
@@ -39,8 +51,16 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre, Uin
 
 void game_afficher(const Game* game, SDL_Renderer* renderer) {
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->inclinaison);
+
+	afficher_obstacle(renderer,&game->rect_obstacle);
 }
 
+
+void afficher_obstacle(SDL_Renderer* renderer, const SDL_FRect* rect_obstacle)
+{
+	SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+	SDL_RenderFillRectF(renderer, rect_obstacle);
+}
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre){
 	char dist_char[10];
 	sprintf(dist_char, "%d", dist);

@@ -3,7 +3,7 @@
 #include "game.h"
 
 void affichage(SDL_Renderer* renderer, const Game* game) {
-	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+	SDL_SetRenderDrawColor(renderer,0,0,0,255);
 	SDL_RenderClear(renderer);
 	game_afficher(game,renderer);
 	SDL_RenderPresent(renderer);
@@ -22,6 +22,7 @@ int main (int argc, char* argv[]) {
 
 	FPSmanager fpsManager;
 	SDL_initFramerate(&fpsManager);
+
 	SDL_setFramerate(&fpsManager, 60);
 	Uint32 delta_time = 0;
 
@@ -45,7 +46,7 @@ int main (int argc, char* argv[]) {
 				break;
 			}
 		}
-		
+		game_update(&game,&rect_fenetre,delta_time);
 		affichage(renderer, &game);
 
 
