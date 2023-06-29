@@ -2,11 +2,13 @@
 #define GAME_INCLUDED
 
 #include <SDL2/SDL.h>
+#include "TextureHandler.h"
 
 typedef struct
 {
 	int distance_parcouru;
 	int position_horizontale_voiture;
+	TextureHandler textureHandler;
 } Game;
 
 Game new_game();

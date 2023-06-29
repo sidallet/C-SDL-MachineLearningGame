@@ -1,9 +1,10 @@
 #include "game.h"
 
-Game new_game() {
+Game new_game(SDL_Renderer* renderer) {
 	Game game = {
 		.distance_parcouru = 0,
-		.position_horizontale_voiture = 0
+		.position_horizontale_voiture = 0,
+		.textureHandler = newTextureHandler(renderer)
 	};
 	return game;
 }
