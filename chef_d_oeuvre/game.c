@@ -1,10 +1,14 @@
 #include "game.h"
+#include "TextureHandler.h"
+#include <SDL2/SDL_render.h>
 #define RAYON_POINT 10
 
 Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 	printf("w et h %d %d \n", fenetre->w, fenetre->h);
 	Game game = {
 		.distance_parcouru = 0,
+		.vie = 3,
+		.vie_max = 5,
 		.voiture = {fenetre->w/2 - 100,fenetre->h-125,100,100},
 		.textureHandler = newTextureHandler(renderer),
 		.deplacement_voiture = 0,
@@ -64,6 +68,7 @@ void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fene
 	afficher_obstacle(renderer,&game->rect_obstacle);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15);
 	afficher_texte(renderer, game->distance_parcouru, rect_fenetre);
+	afficherVie(renderer, game->textureHandler.textures[TEXTURE_Coeur_rouge], game->textureHandler.textures[TEXTURE_Coeur_gris], game->vie, game->vie_max, rect_fenetre);
 }
 
 
@@ -116,5 +121,26 @@ void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect*
 	
 	rect_dest.y -= rect_fenetre->h;
 	SDL_RenderCopy(renderer, texture, NULL, &rect_dest);
+}
+
+void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* coeur_gris, int vie, int vie_max, const SDL_Rect* rect_fenetre) {
+	int espace_entre_coeur = 20;
+	int taille_coeur = 50;
+	SDL_Rect rect_dest = {
+		.x = rect_fenetre->w - vie_max * (taille_coeur + espace_entre_coeur),
+		.y = 20,
+		.w = taille_coeur,
+		.h = taille_coeur
+	};	
+
+	for (int i=0; i<vie; ++i) {
+		SDL_RenderCopy(renderer, coeur_rouge, NULL, &rect_dest);
+		rect_dest.x += taille_coeur + espace_entre_coeur;
+	}
+	for (int i=0; i<vie_max - vie; ++i) {
+		SDL_RenderCopy(renderer, coeur_gris, NULL, &rect_dest);
+		rect_dest.x += taille_coeur + espace_entre_coeur;
+	}
+
 }
 
