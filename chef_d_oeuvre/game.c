@@ -112,12 +112,11 @@ void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fene
 
 void afficher_obstacle(SDL_Renderer* renderer, const SDL_FRect rect_obstacle[], SDL_Texture *textureObst[], int nombreVoiture)
 {
-	int randVoiture = rand() % 2;
 	SDL_SetRenderDrawColor(renderer, 255,0,0,255);
 	for (int i = 0; i < nombreVoiture; i++)
 	{
 		
-		SDL_RenderCopyExF(renderer,textureObst[randVoiture],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
+		SDL_RenderCopyExF(renderer,textureObst[i%2],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
 	}
 	
 }
@@ -152,8 +151,15 @@ void deplaceVoiture(SDL_Rect* voiture, SDL_Rect* fenetre, int direction_deplacem
 }
 
 void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru , int nbVoiture){
-	int vitesse = 180;
-	vitesse += distance_parcouru/200;
+	int vitesse = 130;
+	
+	vitesse += distance_parcouru/150;
+	if(vitesse > 1500)
+	{
+		vitesse = 1500;
+		
+	}
+	printf("vitesse %d \n",vitesse);
 	for (int i = 0; i < nbVoiture; i++)
 	{
 		game->rect_obstacle[i].y+=vitesse*deltatime/1000.0;
