@@ -51,7 +51,7 @@ int main (int argc, char* argv[]) {
 
 	}
 	
-
+	liberer_game(&game);
 	clean_sdl(&window, &renderer);
 	return EXIT_SUCCESS;
 }

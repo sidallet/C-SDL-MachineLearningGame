@@ -21,3 +21,7 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 void game_afficher(const Game* game, SDL_Renderer* renderer) {
 	
 }
+
+void liberer_game(Game* game) {
+	freeTextureHandler(&game->textureHandler);
+}
