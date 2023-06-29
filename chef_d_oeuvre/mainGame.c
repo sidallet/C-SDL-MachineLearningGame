@@ -22,6 +22,7 @@ int main (int argc, char* argv[]) {
 
 	FPSmanager fpsManager;
 	SDL_initFramerate(&fpsManager);
+
 	SDL_setFramerate(&fpsManager, 60);
 	Uint32 delta_time = 0;
 
@@ -46,8 +47,8 @@ int main (int argc, char* argv[]) {
 			}
 		}
 		
+		game_update(&game,&rect_fenetre,delta_time);
 		affichage(renderer, &game, &rect_fenetre);
-
 
 		delta_time = SDL_framerateDelay(&fpsManager);
 
