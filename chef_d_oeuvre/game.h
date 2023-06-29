@@ -32,8 +32,7 @@ void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect*
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre);
 
 //fonction voiture
-void deplaceGauche(SDL_Rect* voiture, SDL_Rect* fenetre, Uint32 delta_time);
-void deplaceDroite(SDL_Rect* voiture, SDL_Rect* fenetre, Uint32 delta_time);
+void deplaceVoiture(SDL_Rect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time);
 void afficherVoiture(SDL_Renderer * renderer, const SDL_Rect * voiture, SDL_Texture * textureVoiture, int inclinaison);
 void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre);
 
