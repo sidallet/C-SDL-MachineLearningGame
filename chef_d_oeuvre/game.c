@@ -160,7 +160,7 @@ void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], S
 	for (int i = 0; i < nombreVoiture; i++)
 	{
 		
-		SDL_RenderCopyEx(renderer,textureObst[i%2],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
+		SDL_RenderCopyEx(renderer,textureObst[i%4],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
 	}
 	
 }

@@ -22,6 +22,8 @@
 #define MACRO_FOR_ALL_TEXTURES(M) 	\
 	M(Bus) \
 	M(Dragster) \
+	M(BusViolet) \
+	M(BusVert) \
 	M(Route) \
 	M(voiture_course) \
 	M(Coeur_gris) \
