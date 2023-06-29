@@ -155,10 +155,19 @@ void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], S
 }
 
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int vitesse){
+	SDL_SetRenderDrawColor(renderer,255,255,255,0);
+	SDL_Rect fond_blanc = {rect_fenetre->w-92, 5, 90, 25};
+	SDL_RenderFillRect(renderer,&fond_blanc);
+
 	vitesse = vitesse / 4; //On divise par 4 pour "convertir" en km/h
-	char vitesse_char[10];
+	char vitesse_char[25];
 	sprintf(vitesse_char, "%d KM/H", vitesse);
-	stringRGBA(renderer, rect_fenetre->w-75,10, vitesse_char, 0, 0, 20, 255);  //affichage texte
+
+	char score[25];
+	sprintf(score, "%d POINTS", dist/175);
+
+	stringRGBA(renderer, rect_fenetre->w-90,10, vitesse_char, 0, 0, 20, 255);  //affichage texte
+	stringRGBA(renderer, rect_fenetre->w-90,20, score, 0, 0, 20, 255);  //affichage texte
 }
 
 void liberer_game(Game* game) {
