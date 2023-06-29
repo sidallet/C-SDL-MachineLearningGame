@@ -1,5 +1,6 @@
 #include "game.h"
 #include "TextureHandler.h"
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #define RAYON_POINT 10
 
@@ -9,7 +10,9 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.distance_parcouru = 0,
 		.vie = 3,
 		.vie_max = 5,
-		.voiture = {fenetre->w/2 - 100,fenetre->h-125,100,100},
+		.delai_invulnerabilite = -1,
+		.delai_invulnerabilite_max = 400,
+		.voiture = {fenetre->w/2.0 - 100,fenetre->h-125,100,100},
 		.textureHandler = newTextureHandler(renderer),
 		.deplacement_voiture = 0, 
 		.nbVoiture = 6
@@ -42,8 +45,8 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
         positionValide = true;
         
         for (int i = 0; i < pos; i++) {
-            diffX = abs(game->rect_obstacle[i].x - xAlea);
-            diffY = abs(game->rect_obstacle[i].y + game->rect_obstacle[i].h - yAlea);
+            diffX = fabs(game->rect_obstacle[i].x - xAlea);
+            diffY = fabs(game->rect_obstacle[i].y + game->rect_obstacle[i].h - yAlea);
             
             if (diffX < 100 && diffY < 100) {
                 positionValide = false; 
@@ -66,6 +69,15 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 	deplaceVoiture(&game->voiture,rect_fenetre, game->deplacement_voiture, deltatime);
 
 	//Gerer collision ici
+	if (game->delai_invulnerabilite<0) {
+		if (test_collision(&game->voiture, game->rect_obstacle, game->nbVoiture)) {
+			game->vie--;
+			game->delai_invulnerabilite = game->delai_invulnerabilite_max;
+		}
+	}
+	else {
+		game->delai_invulnerabilite -= deltatime;
+	}
 }
 
 
@@ -104,9 +116,11 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
 	afficherRoute(renderer, game->textureHandler.textures[TEXTURE_Route], rect_fenetre, game->distance_parcouru);
 	afficher_obstacle(renderer,game->rect_obstacle, game->textureHandler.textures,game->nbVoiture);
-	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15);
+	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15, game->delai_invulnerabilite);
 	afficher_texte(renderer, game->distance_parcouru, rect_fenetre);
 	afficherVie(renderer, game->textureHandler.textures[TEXTURE_Coeur_rouge], game->textureHandler.textures[TEXTURE_Coeur_gris], game->vie, game->vie_max, rect_fenetre);
+
+	afficherEffetDegats(renderer, game->delai_invulnerabilite, game->delai_invulnerabilite_max, rect_fenetre);
 }
 
 
@@ -121,12 +135,6 @@ void afficher_obstacle(SDL_Renderer* renderer, const SDL_FRect rect_obstacle[], 
 	
 }
 
-void afficherVoiture(SDL_Renderer* renderer, const SDL_Rect* voiture, SDL_Texture* textureVoiture, int inclinaison)
-{
-	SDL_RenderCopyEx(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
-}
-
-
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre){
 	char dist_char[10];
 	sprintf(dist_char, "%d", dist);
@@ -137,7 +145,7 @@ void liberer_game(Game* game) {
 	freeTextureHandler(&game->textureHandler);
 }
 
-void deplaceVoiture(SDL_Rect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time) {
+void deplaceVoiture(SDL_FRect* voiture, SDL_Rect* fenetre, int direction_deplacement, Uint32 delta_time) {
     int limiteGauche = 0;  //lim gauche de la fenêtre
     int limiteDroite = fenetre->w;  //lim gauche de la fenêtre
 	float vitesse = 300.0;
@@ -172,6 +180,12 @@ void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int 
 		
 }
 
+void afficherVoiture(SDL_Renderer* renderer, const SDL_FRect* voiture, SDL_Texture* textureVoiture, int inclinaison, int delai_invulnerabilite)
+{
+	if (delai_invulnerabilite<0 || delai_invulnerabilite%10 > 5) {
+		SDL_RenderCopyExF(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
+	}
+}
 
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue) {
 	SDL_Rect rect_dest = {
@@ -206,4 +220,24 @@ void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* 
 	}
 
 }
+
+void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre) {
+	if (delai_invulnerabilite > 0.8*delai_invulnerabilite_max) {
+		SDL_SetRenderDrawColor(renderer, 200, 100, 100, 2);
+		SDL_Rect rect = *rect_fenetre;
+		rect.x = 0;
+		rect.y = 0;
+		SDL_RenderFillRect(renderer, &rect);
+	}
+}
+
+bool test_collision(const SDL_FRect* voiture, const SDL_FRect rect_obstacle[], const int nbVoiture) {
+	for (int i=0; i<nbVoiture; ++i) {
+		if (SDL_HasIntersectionF(voiture, &rect_obstacle[i])) {
+			return true;
+		}	
+	}
+	return false;
+}
+
 
