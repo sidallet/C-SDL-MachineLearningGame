@@ -1,25 +1,36 @@
 #include "game.h"
 #define RAYON_POINT 10
 
-Game new_game(SDL_Renderer* renderer) {
+Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
+	printf("w et h %d %d \n", fenetre->w, fenetre->h);
 	Game game = {
 		.distance_parcouru = 0,
+		.voiture = {fenetre->w/2 - 100,fenetre->h-125,100,100},
 		.textureHandler = newTextureHandler(renderer),
-		.rect_obstacle = {100.0,0.0,100.0,100.0},        //coordonnée x, coordonée y, taille x, taille y
-		.voiture = {0,0,400,400},
+		.deplacement_voiture = 0,
+		.rect_obstacle = {100.0,-200.0,100.0,100.0}        //coordonnée x, coordonée y, taille x, taille y
 		
 	};
 	return game;
 }
+
+//Appelé une fois par frame
 void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
+	game->distance_parcouru += deltatime;
+
 	deplacer_obstacle(game,rect_fenetre,deltatime);
+
+
+	if (game->deplacement_voiture > 0) {
+		deplaceDroite(&game->voiture,rect_fenetre, deltatime);
+	}
+	else if (game->deplacement_voiture < 0) {
+		deplaceGauche(&game->voiture,rect_fenetre, deltatime);
+	}
+
+
+	//Gerer collision ici
 }
-
-void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
-	game->rect_obstacle.y+=200.0*deltatime/1000.0;
-}
-
-
 
 
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
@@ -31,27 +42,35 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 			{
 				case SDLK_q : {
 					printf("gauche \n");
-					deplaceGauche(&game->voiture,rect_fenetre);
+					game->deplacement_voiture=-1;
 					break;
 				}
 
 
 				case SDLK_d : {
 					printf("droite \n");
-					deplaceDroite(&game->voiture,rect_fenetre);
+					game->deplacement_voiture=1;
 					break;
 				}
 			}
+			break;
+		}
+		case SDL_KEYUP: {
+			game->deplacement_voiture = 0;
+			break;
 		}
 	default:
 		break;
 	}
+
+
 }
 
-void game_afficher(const Game* game, SDL_Renderer* renderer) {
-
+void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
+	afficherRoute(renderer, game->textureHandler.textures[TEXTURE_Route], rect_fenetre, game->distance_parcouru);
 	afficher_obstacle(renderer,&game->rect_obstacle);
-	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course]);
+	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15);
+	afficher_texte(renderer, game->distance_parcouru, rect_fenetre);
 }
 
 
@@ -69,35 +88,31 @@ void liberer_game(Game* game) {
 	freeTextureHandler(&game->textureHandler);
 }
 
-void deplaceGauche(SDL_Rect* voiture, SDL_Rect* fenetre) {
+void deplaceGauche(SDL_Rect* voiture, SDL_Rect* fenetre, Uint32 delta_time) {
     int limiteGauche = 0;  //lim gauche de la fenêtre
-
     if (voiture->x > limiteGauche) {
-        voiture->x -= 1;  //pixel vers la gauche
+        voiture->x -= 10;  //pixel vers la gauche
     }
-	//voiture->y += 1;
-	//voiture->w += 2;
-
-	//voiture->y -= 1;
-	//voiture->w -= 2;
 }
 
-void deplaceDroite(SDL_Rect* voiture, SDL_Rect* fenetre) {
+void deplaceDroite(SDL_Rect* voiture, SDL_Rect* fenetre, Uint32 delta_time) {
     int limiteDroite = fenetre->w;  //lim gauche de la fenêtre
-
-    if (voiture->x > limiteDroite) {
-        voiture->x -= 1;  //pixel vers la droite
-    }
-
-    
+    if (voiture->x+100 < limiteDroite) {
+        voiture->x += 10;  //pixel vers la droite
+    }    
 }
 
-void afficherVoiture(SDL_Renderer * renderer, const SDL_Rect * voiture, SDL_Texture * textureVoiture)
+void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
+	game->rect_obstacle.y+=200.0*deltatime/1000.0;
+}
+
+void afficherVoiture(SDL_Renderer* renderer, const SDL_Rect* voiture, SDL_Texture* textureVoiture, int inclinaison)
 {
-	printf("%p \n", textureVoiture);
-	SDL_SetRenderDrawColor(renderer,255,255,255,255);
-	//SDL_RenderCopyEx(renderer,textureVoiture,NULL,voiture,0,NULL,SDL_FLIP_NONE);
-	SDL_RenderCopy(renderer,textureVoiture,NULL,voiture);
-	SDL_RenderFillRect(renderer,voiture);
-    SDL_RenderFillRect(renderer, voiture);
+	printf("incli : %d \n", inclinaison);
+	SDL_RenderCopyEx(renderer,textureVoiture,NULL,voiture,inclinaison,NULL,SDL_FLIP_NONE);
+}
+
+void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue) {
+
+	SDL_RenderCopy(renderer, texture, NULL, rect_fenetre);
 }

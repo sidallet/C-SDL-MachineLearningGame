@@ -10,23 +10,28 @@ typedef struct
 	int distance_parcouru;
 	SDL_Rect voiture;
 	TextureHandler textureHandler;
+	int deplacement_voiture;
 	SDL_FRect  rect_obstacle;
 } Game;
 
+Game new_game(SDL_Renderer* renderer, SDL_Rect * rect);
+
+void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre);
 
 
-Game new_game();
 void deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime);
 void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime);
-void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre);
-void afficher_obstacle(SDL_Renderer* renderer,const SDL_FRect* rect_obstacle);
-void game_afficher(const Game* game, SDL_Renderer* renderer);
 void liberer_game(Game* game);
 
+
+void game_afficher(const Game* game, SDL_Renderer* renderer,SDL_Rect* rect_fenetre);
+void afficher_obstacle(SDL_Renderer* renderer,const SDL_FRect* rect_obstacle);
+void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue);
+
 //fonction voiture
-void deplaceGauche(SDL_Rect* voiture, SDL_Rect* fenetre);
-void deplaceDroite(SDL_Rect* voiture, SDL_Rect* fenetre);
-void afficherVoiture(SDL_Renderer * renderer, const SDL_Rect * voiture, SDL_Texture * textureVoiture);
+void deplaceGauche(SDL_Rect* voiture, SDL_Rect* fenetre, Uint32 delta_time);
+void deplaceDroite(SDL_Rect* voiture, SDL_Rect* fenetre, Uint32 delta_time);
+void afficherVoiture(SDL_Renderer * renderer, const SDL_Rect * voiture, SDL_Texture * textureVoiture, int inclinaison);
 
 #endif //GAME_INCLUDED
 

@@ -2,10 +2,10 @@
 #include <SDL2/SDL2_framerate.h>
 #include "game.h"
 
-void affichage(SDL_Renderer* renderer, const Game* game) {
-	SDL_SetRenderDrawColor(renderer,0,0,0,255);
+void affichage(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre) {
+	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 	SDL_RenderClear(renderer);
-	game_afficher(game,renderer);
+	game_afficher(game,renderer, rect_fenetre);
 	SDL_RenderPresent(renderer);
 }
 
@@ -26,7 +26,7 @@ int main (int argc, char* argv[]) {
 	SDL_setFramerate(&fpsManager, 60);
 	Uint32 delta_time = 0;
 
-	Game game = new_game(renderer);
+	Game game = new_game(renderer, &rect_fenetre);
 
 	bool actif = true;
 
@@ -46,9 +46,9 @@ int main (int argc, char* argv[]) {
 				break;
 			}
 		}
+		
 		game_update(&game,&rect_fenetre,delta_time);
-		affichage(renderer, &game);
-
+		affichage(renderer, &game, &rect_fenetre);
 
 		delta_time = SDL_framerateDelay(&fpsManager);
 
