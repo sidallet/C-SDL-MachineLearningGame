@@ -10,6 +10,13 @@ Game new_game(SDL_Renderer* renderer) {
 	};
 	return game;
 }
+void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime)
+{
+
+
+}
+
+
 
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 

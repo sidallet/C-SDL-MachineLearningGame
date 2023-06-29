@@ -13,7 +13,10 @@ typedef struct
 	SDL_Rect  rect_obstacle;
 } Game;
 
+
+
 Game new_game();
+void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime);
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre);
 void game_afficher(const Game* game, SDL_Renderer* renderer);
 void liberer_game(Game* game);
