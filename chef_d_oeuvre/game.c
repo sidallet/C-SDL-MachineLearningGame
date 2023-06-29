@@ -33,10 +33,14 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 	default:
 		break;
 	}
+
+
 }
 
-void game_afficher(const Game* game, SDL_Renderer* renderer) {
+void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
+	afficherRoute(renderer, rect_fenetre, game->textureHandler.textures[TEXTURE_Route], game->distance_parcouru);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course]);
+
 }
 
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre){
@@ -77,6 +81,14 @@ void afficherVoiture(SDL_Renderer * renderer, const SDL_Rect * voiture, SDL_Text
 	SDL_SetRenderDrawColor(renderer,255,255,255,255);
 	//SDL_RenderCopyEx(renderer,textureVoiture,NULL,voiture,0,NULL,SDL_FLIP_NONE);
 	SDL_RenderCopy(renderer,textureVoiture,NULL,voiture);
-	SDL_RenderFillRect(renderer,voiture);
-    SDL_RenderFillRect(renderer, voiture);
+}
+
+void afficherRoute(SDL_Renderer* renderer, const SDL_Rect* rect_fenetre, SDL_Texture* texture, int distance_parcourue) {
+	SDL_Rect destRect = {
+		.x = 0,
+		.y = distance_parcourue%rect_fenetre->h,
+		.w = rect_fenetre->w, 
+		.h = rect_fenetre->h, 
+	};
+	SDL_RenderCopy(renderer, texture, NULL, &destRect);
 }
