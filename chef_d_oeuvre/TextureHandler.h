@@ -20,8 +20,10 @@
  * \sa MACRO_TEXTURE_ENUM_GEN(E)
  */
 #define MACRO_FOR_ALL_TEXTURES(M) 	\
-	M(Voiture) \
-	M(Route) 
+	M(Bus) \
+	M(Dragster) \
+	M(Route) \
+	M(voiture_course) 
 
 /**
  *  \brief Allow the generation of enum

@@ -4,7 +4,7 @@
 
 void affichage(SDL_Renderer* renderer, const Game* game) {
 	SDL_RenderClear(renderer);
-	game_affichage(renderer, game);
+	game_afficher(game, renderer);
 	SDL_RenderPresent(renderer);
 }
 
@@ -23,7 +23,7 @@ int main (int argc, char* argv[]) {
 	SDL_setFramerate(&fpsManager, 60);
 	Uint32 delta_time = 0;
 
-	Game game = new_game();
+	Game game = new_game(renderer);
 
 	bool actif = true;
 
