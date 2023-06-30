@@ -267,7 +267,7 @@ void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* 
 
 void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre) {
 	if (delai_invulnerabilite > 0.8*delai_invulnerabilite_max) {
-		SDL_SetRenderDrawColor(renderer, 200, 100, 100, 2);
+		SDL_SetRenderDrawColor(renderer, 200, 100, 100, 55);
 		SDL_Rect rect = *rect_fenetre;
 		rect.x = 0;
 		rect.y = 0;

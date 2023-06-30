@@ -224,6 +224,61 @@ Chemin alterChemin(const Chemin* chemin) {
 	return nouveau_chemin;
 }
 
+
+int exist(int list[],int i,const size_t nombre_points)
+{	
+	int j;
+	int present=0;
+	for(j=0;j<nombre_points;j++)
+	{
+		if (list[j]==i)
+		{
+			present=1;
+		}
+	}
+	return present;
+
+}
+int Glouton_sans_proba(Matrice dist,const size_t nombre_points)
+{
+	int i;
+	int i_temp = 0;
+	
+	int list[nombre_points+1];
+	int distance=INT16_MAX;
+	int distance_mini = 0;
+	list[0] = rand() % nombre_points; //rand
+	for (int compt=1; compt<nombre_points; ++compt)
+	{
+		distance=INT16_MAX;
+		for (i=0;i<nombre_points;i++)
+		{
+			if (list[compt-1]!=i && dist[list[compt-1]][i]<distance && exist(list,i,compt)==0)
+			{
+				distance =dist[list[compt-1]][i];
+				//printf("dist %d ",dist[a][i]);
+				i_temp=i;
+			}
+			printf("compte : %d et nombre point  %ld \n", compt, nombre_points);
+		}
+		distance_mini=distance_mini+distance;
+		list[compt]=i_temp;
+	}
+
+	list[nombre_points] = list[0];
+	distance_mini += dist[list[nombre_points-1]][list[nombre_points]];
+	
+	printf("liste : ");
+	for (i = 0; i < nombre_points+1; i++)
+	{
+		printf("%d ", list[i]);
+	}
+	printf("\n");
+	
+	return distance_mini;
+}
+
+
 bool recuit_impl(Chemin* chemin, const int longueurChemin, const Matrice matrice, double temperature, int* nouvelle_longeur) {
 	Chemin nouveauChemin = alterChemin(chemin);
 	*nouvelle_longeur = calculDistanceGrapheComplet(matrice, &nouveauChemin);

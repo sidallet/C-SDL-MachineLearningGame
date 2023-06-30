@@ -181,6 +181,10 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 	afficheMatrice(matriceGrapheComplet, nombre_points);
 
 	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 10000);
+   
+	printf("Glouton : \n");
+    int longueur_glouton = Glouton_sans_proba(matriceGrapheComplet,nombre_points);
+    printf("Glouton : %d \n", longueur_glouton); 
 
 	bool actif = true;
 	while (actif) {
