@@ -178,6 +178,10 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 	printf("Matrice de distances graphe complet :\n");
 	afficheMatrice(matriceGrapheComplet, nombre_points);
 
+    printf("Glouton : \n");
+    int longueur_glouton = Glouton_sans_proba(matriceGrapheComplet,nombre_points);
+    printf("Glouton : %d \n", longueur_glouton); 
+
 	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 1000);
 
 	bool actif = true;
