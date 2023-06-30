@@ -130,7 +130,9 @@ void afficheScore(SDL_Renderer* renderer, int distTotal, int distPresqueOptimal)
 int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 {
 	size_t nombre_points = 6;
-    if (argc>=2 && sscanf(argv[1], "%ld", &nombre_points)) {}
+    if (argc<2 || sscanf(argv[1], "%ld", &nombre_points) == 0) {
+		nombre_points = 6;
+	}
 
 	float p = 0.1;
 	int x_mouse, y_mouse, point_click;
@@ -178,15 +180,15 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 	printf("Matrice de distances graphe complet :\n");
 	afficheMatrice(matriceGrapheComplet, nombre_points);
 
-    printf("Glouton : \n");
+	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 10000);
+   
+	printf("Glouton : \n");
     int longueur_glouton = Glouton_sans_proba(matriceGrapheComplet,nombre_points);
     printf("Glouton : %d \n", longueur_glouton); 
 
     printf("Glouton proba: \n");
     longueur_glouton = Glouton_avec_proba(matriceGrapheComplet,nombre_points,0.2); 
     printf("Glouton proba: %d \n", longueur_glouton); 
-
-	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 1000);
 
 	bool actif = true;
 	while (actif) {

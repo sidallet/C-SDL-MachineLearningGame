@@ -34,6 +34,7 @@ int Glouton_avec_proba(Matrice dist,const size_t nombre_points, int p);
  * @param[in] h_zone
  **/
 void generer_points(Point points[], const size_t nombre_points, const Uint32 w_zone, const Uint32 h_zone);
+void fisherYatesMelange(Chemin* chemin);
 
 int calculDistanceGraphe(Point * points, const int indicesPointSelect[], const size_t nombre_noeuds);
 bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds);
