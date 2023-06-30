@@ -178,7 +178,7 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 	printf("Matrice de distances graphe complet :\n");
 	afficheMatrice(matriceGrapheComplet, nombre_points);
 
-	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 1000);
+	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 10000);
 
 	bool actif = true;
 	while (actif) {

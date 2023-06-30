@@ -258,7 +258,7 @@ void fisherYatesMelange(Chemin* chemin)
 {
 	for (int i = 0; i < chemin->nombre_elems-1; i++)
 	{
-		int j = rand() % i +1;
+		int j = rand() % (i +1);
 		int temp = chemin->val[i];
 		chemin->val[i] = chemin->val[j];
 		chemin->val[j] = temp;
