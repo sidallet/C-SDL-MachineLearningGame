@@ -239,6 +239,8 @@ int exist(int list[],int i,const size_t nombre_points)
 	return present;
 
 }
+
+
 int Glouton_sans_proba(Matrice dist,const size_t nombre_points)
 {
 	int i;

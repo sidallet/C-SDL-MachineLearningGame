@@ -15,10 +15,52 @@ void calculerProbaArcs(const Matrice distances_graphe_complet, const MatriceDoub
 	}
 }
 
-Chemin parcours_fourmis(const MatriceDouble proba_arc, const size_t nombre_noeuds) {
-	// proba_arc[source][dest]
+Chemin parcours_fourmis(const MatriceDouble proba_arc, const size_t nombre_noeuds)
+{ //proba_arc(source)(dest)
+	int i;
+	Chemin chemin;
+	chemin.val = (int*)malloc((nombre_noeuds + 1) * sizeof(int));
+	int alea = 0;
+	int list[nombre_noeuds+1];
+	list[0] = rand() % nombre_noeuds; //rand
+	double probaTotale = 0;
 
-} 
+	for (int compt=1; compt<nombre_noeuds; ++compt)
+	{
+		for (i=0;i<nombre_noeuds;i++)
+		{
+			probaTotale += proba_arc[list[compt]][i];
+			alea = probaTotale*((double) rand()) / RAND_MAX;
+			
+		}
+		for (i=0;i<nombre_noeuds;i++)
+		{
+			if (alea < proba_arc[list[compt]][i] && exist(list,i,compt)==0)
+			{
+				list[compt]=i;
+			}
+			else {
+				alea -=proba_arc[list[compt]][i];
+			}
+		}
+	}
+
+	list[nombre_noeuds] = list[0];
+	
+	printf("liste : ");
+	for (i = 0; i < nombre_noeuds+1; i++)
+	{
+		printf("%d ", list[i]);
+	}
+	printf("\n");
+	
+	chemin.nombre_elems = nombre_noeuds;
+	for (i = 0; i < nombre_noeuds + 1; i++) {
+    chemin.val[i] = list[i];
+	}
+	return chemin;
+}
+
 
 int longueur_fourmis(const Matrice distances_graphe_complet, const size_t nombre_noeuds, const size_t nombre_iteration) {
 	Matrice proba_arcs = initMatrice(nombre_noeuds);
