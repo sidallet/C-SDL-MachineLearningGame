@@ -23,6 +23,7 @@ int distance_eucli(Point point1,Point point2);
 int exist(int list[],int i,const size_t nombre_points);
 
 int Glouton_sans_proba(Matrice dist,const size_t nombre_points);
+int Glouton_avec_proba(Matrice dist,const size_t nombre_points, int p);
 
 
 /***

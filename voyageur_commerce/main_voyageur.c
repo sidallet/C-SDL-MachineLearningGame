@@ -182,6 +182,10 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
     int longueur_glouton = Glouton_sans_proba(matriceGrapheComplet,nombre_points);
     printf("Glouton : %d \n", longueur_glouton); 
 
+    printf("Glouton proba: \n");
+    longueur_glouton = Glouton_avec_proba(matriceGrapheComplet,nombre_points,0.2); 
+    printf("Glouton proba: %d \n", longueur_glouton); 
+
 	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 1000);
 
 	bool actif = true;

@@ -233,6 +233,7 @@ int exist(int list[],int i,const size_t nombre_points)
 	return present;
 
 }
+
 int Glouton_sans_proba(Matrice dist,const size_t nombre_points)
 {
 	int i;
@@ -241,8 +242,7 @@ int Glouton_sans_proba(Matrice dist,const size_t nombre_points)
 	int list[nombre_points+1];
 	int distance=INT16_MAX;
 	int distance_mini = 0;
-	printf("depart : %d\n", rand() % nombre_points);
-	list[0] = rand() % nombre_points; //rand
+	list[0] = rand() % nombre_points;
 	for (int compt=1; compt<nombre_points; ++compt)
 	{
 		distance=INT16_MAX;
@@ -251,10 +251,44 @@ int Glouton_sans_proba(Matrice dist,const size_t nombre_points)
 			if (list[compt-1]!=i && dist[list[compt-1]][i]<distance && exist(list,i,compt)==0)
 			{
 				distance =dist[list[compt-1]][i];
-				//printf("dist %d ",dist[a][i]);
 				i_temp=i;
 			}
-			printf("compte : %d et nombre point  %ld \n", compt, nombre_points);
+		}
+		distance_mini=distance_mini+distance;
+		list[compt]=i_temp;
+	}
+
+	list[nombre_points] = list[0];
+	distance_mini += dist[list[nombre_points-1]][list[nombre_points]];
+	
+	return distance_mini;
+}
+
+int Glouton_avec_proba(Matrice dist,const size_t nombre_points, int p)
+{
+	int i;
+	int i_temp = 0;
+	
+	int list[nombre_points+1];
+	int distance=INT16_MAX;
+	int distance_mini = 0;
+	list[0] = rand() % nombre_points;
+	for (int compt=1; compt<nombre_points; ++compt)
+	{
+		distance=INT16_MAX;
+		for (i=0;i<nombre_points;i++)
+		{
+			int proba_passer = rand() / RAND_MAX;
+			if(dist[list[compt-1]][i]>distance && p < proba_passer)
+			{
+				distance =dist[list[compt-1]][i];
+				i_temp=i;
+			}
+			else if (list[compt-1]!=i && dist[list[compt-1]][i]<distance && exist(list,i,compt)==0)
+			{
+				distance =dist[list[compt-1]][i];
+				i_temp=i;
+			}
 		}
 		distance_mini=distance_mini+distance;
 		list[compt]=i_temp;
