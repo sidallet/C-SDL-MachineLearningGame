@@ -263,7 +263,7 @@ void fisherYatesMelange(Chemin* chemin)
 		chemin->val[i] = chemin->val[j];
 		chemin->val[j] = temp;
 	}
-	chemin->val[chemin->nombre_elems] = chemin->val[0];
+	chemin->val[chemin->nombre_elems-1] = chemin->val[0];
 
 }
 

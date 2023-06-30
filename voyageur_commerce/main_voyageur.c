@@ -130,7 +130,9 @@ void afficheScore(SDL_Renderer* renderer, int distTotal, int distPresqueOptimal)
 int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 {
 	size_t nombre_points = 6;
-    if (argc>=2 && sscanf(argv[1], "%ld", &nombre_points)) {}
+    if (argc<2 || sscanf(argv[1], "%ld", &nombre_points) == 0) {
+		nombre_points = 6;
+	}
 
 	float p = 0.1;
 	int x_mouse, y_mouse, point_click;
