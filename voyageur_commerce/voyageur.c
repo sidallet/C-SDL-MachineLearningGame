@@ -270,10 +270,15 @@ int Glouton_sans_proba(Matrice dist,const size_t nombre_points)
 	return distance_mini;
 }
 
-int Glouton_avec_proba(Matrice dist,const size_t nombre_points, int p)
+int Glouton_avec_proba(void * params)
 {
 	int i;
 	int i_temp = 0;
+	struct params *myParams = (struct params *)params;
+   
+   	Matrice dist = myParams->dist;
+   	size_t nombre_points = myParams->nombre_points;
+   	float p = myParams->p;
 	
 	int list[nombre_points+1];
 	int distance=INT16_MAX;

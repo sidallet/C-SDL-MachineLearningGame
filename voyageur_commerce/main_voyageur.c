@@ -14,6 +14,7 @@
 #include "wrapper_sdl.h"
 #include "voyageur.h"
 #include "matrice.h"
+#include <threads.h>
 
 //Permet de dessiner un SDL_Rect
 void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int recty,int Red,int Green,int Blue)
@@ -129,7 +130,7 @@ void afficheScore(SDL_Renderer* renderer, int distTotal, int distPresqueOptimal)
 
 int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 {
-	size_t nombre_points = 6;
+	size_t nombre_points = 40;
     if (argc<2 || sscanf(argv[1], "%ld", &nombre_points) == 0) {
 		nombre_points = 6;
 	}
@@ -181,14 +182,31 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 	afficheMatrice(matriceGrapheComplet, nombre_points);
 
 	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 10000);
-   
-	printf("Glouton : \n");
-    int longueur_glouton = Glouton_sans_proba(matriceGrapheComplet,nombre_points);
+
+    thrd_t thread_handles[NUM_THREADS];
+    int retours[NUM_THREADS];
+
+    struct params mesParams;
+    mesParams.dist = matriceGrapheComplet;
+    mesParams.nombre_points = nombre_points;
+    mesParams.p = 0.2;
+
+    for (int i = 0; i < NUM_THREADS; i++) {
+        thrd_create(&thread_handles[i], Glouton_avec_proba, (void *)&mesParams);
+    }
+
+    for (int i = 0; i < NUM_THREADS; i++) {
+        thrd_join(thread_handles[i], &retours[i]);
+    }
+
+    printf("Glouton : \n");
+    int longueur_glouton = Glouton_sans_proba(matriceGrapheComplet, nombre_points);
     printf("Glouton : %d \n", longueur_glouton); 
 
     printf("Glouton proba: \n");
-    longueur_glouton = Glouton_avec_proba(matriceGrapheComplet,nombre_points,0.2); 
-    printf("Glouton proba: %d \n", longueur_glouton); 
+    for (int i = 0; i < NUM_THREADS; i++) {
+        printf("Glouton proba: %d \n", retours[i]);
+    }
 
 	bool actif = true;
 	while (actif) {

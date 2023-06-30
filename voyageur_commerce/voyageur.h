@@ -16,14 +16,22 @@ typedef struct {
 	size_t nombre_elems;
 } Chemin;
 
+struct params
+{
+   Matrice dist;
+   size_t nombre_points;
+   float p;
+};
+
 
 #define RAYON_POINT 10
+#define NUM_THREADS 8
 
 int distance_eucli(Point point1,Point point2);
 int exist(int list[],int i,const size_t nombre_points);
 
 int Glouton_sans_proba(Matrice dist,const size_t nombre_points);
-int Glouton_avec_proba(Matrice dist,const size_t nombre_points, int p);
+int Glouton_avec_proba(void * params);
 
 
 /***
