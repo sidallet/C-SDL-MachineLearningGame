@@ -188,6 +188,7 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
     printf("Glouton : %d \n", longueur_glouton);
 
 	int longueur_fourmis = calcul_longueur_fourmis(matriceGrapheComplet, nombre_points, 20);
+    printf("Fourmis: %d \n", longueur_fourmis);
 
 	bool actif = true;
 	while (actif) {

@@ -14,11 +14,11 @@ void calculerProbaArcs(const Matrice distances_graphe_complet, const MatriceDoub
 	for (size_t i=0; i<nombre_noeuds; ++i) {
 		double sum = 0;
 		for (size_t j=0; j<nombre_noeuds; ++j) {
-			*(proba_arcs[i][j]) = (100+pheromones[i][j])/distances_graphe_complet[i][j];
-			sum += *(proba_arcs[i][j]);
+			(*proba_arcs)[i][j] = (100+pheromones[i][j])/distances_graphe_complet[i][j];
+			sum += (*proba_arcs)[i][j];
 		}
 		for (size_t j=0; j<nombre_noeuds; ++j) {	
-			*(proba_arcs[i][j]) /= sum;
+			(*proba_arcs)[i][j] /= sum;
 		}
 	}
 }
@@ -29,43 +29,32 @@ Chemin parcours_fourmis(const MatriceDouble proba_arc, const size_t nombre_noeud
 	Chemin chemin;
 	chemin.val = (int*)malloc((nombre_noeuds + 1) * sizeof(int));
 	int alea = 0;
-	int list[nombre_noeuds+1];
-	list[0] = rand() % nombre_noeuds; //rand
+	chemin.val[0] = rand() % nombre_noeuds; //rand
 	double probaTotale = 0;
 
-	for (int compt=1; compt<nombre_noeuds; ++compt)
+	for (chemin.nombre_elems=1; chemin.nombre_elems<nombre_noeuds; ++chemin.nombre_elems)
 	{
 		for (i=0;i<nombre_noeuds;i++)
 		{
-			probaTotale += proba_arc[list[compt]][i];
+			probaTotale += proba_arc[chemin.val[chemin.nombre_elems-1]][i];
 			alea = probaTotale*((double) rand()) / RAND_MAX;
 			
 		}
 		for (i=0;i<nombre_noeuds;i++)
 		{
-			if (alea < proba_arc[list[compt]][i] && exist(list,i,compt)==0)
+			if (alea < proba_arc[chemin.val[chemin.nombre_elems-1]][i] && exist(chemin.val,i,chemin.nombre_elems)==0)
 			{
-				list[compt]=i;
+				chemin.val[chemin.nombre_elems]=i;
 			}
 			else {
-				alea -=proba_arc[list[compt]][i];
+				alea -=proba_arc[chemin.val[chemin.nombre_elems-1]][i];
 			}
 		}
 	}
 
-	list[nombre_noeuds] = list[0];
+	chemin.val[nombre_noeuds] = chemin.val[0];
+	chemin.nombre_elems++;
 	
-	printf("liste : ");
-	for (i = 0; i < nombre_noeuds+1; i++)
-	{
-		printf("%d ", list[i]);
-	}
-	printf("\n");
-	
-	chemin.nombre_elems = nombre_noeuds;
-	for (i = 0; i < nombre_noeuds + 1; i++) {
-    chemin.val[i] = list[i];
-	}
 	return chemin;
 }
 
@@ -76,7 +65,7 @@ int calcul_longueur_fourmis(const Matrice distances_graphe_complet, const size_t
 	applyAllMatriceDouble(pheromones_presentes, nombre_noeuds, set_zero);
 	MatriceDouble pheromones_ajoutees = initMatriceDouble(nombre_noeuds);
 	
-	int distance_min = UINT32_MAX;
+	int distance_min = INT32_MAX;
 
 
 	for (size_t i=0; i<nombre_iteration; ++i) {
@@ -88,6 +77,9 @@ int calcul_longueur_fourmis(const Matrice distances_graphe_complet, const size_t
 			Chemin chemin = parcours_fourmis(proba_arcs, nombre_noeuds);
 		
 			int distance = calculDistanceGrapheComplet(distances_graphe_complet, &chemin);
+			if (distance<distance_min) {
+				distance_min = distance;
+			}
 			//Dépot phéromone
 			for (size_t k=1; k<chemin.nombre_elems; ++k) {
 				pheromones_ajoutees[chemin.val[k-1]][chemin.val[k]] += 100.0/distance;
