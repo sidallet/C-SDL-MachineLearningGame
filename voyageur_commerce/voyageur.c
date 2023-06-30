@@ -28,10 +28,16 @@ SDL_Rect create_rect_cadre(const size_t num_cadre, const size_t nb_colones, cons
 }
 
 void generer_points(Point points[], const size_t nombre_points, const Uint32 w_zone, const Uint32 h_zone) {
-	const size_t nombre_cadres = 9*nombre_points;
+	size_t nombre_cadres = 9*nombre_points;
 	size_t nb_colones = floor(sqrt((double)nombre_cadres));
 	size_t nb_lignes = (nombre_cadres / nb_colones)+1;
+	nombre_cadres = nb_lignes*nb_colones;
 	bool cases[nombre_cadres];
+	for (size_t i = 0; i < nombre_cadres; i++)
+	{
+		cases[i] = true;
+	}
+	
 
 	for (size_t i=0; i<nombre_points; ++i) {
 		size_t num_cadre = rand()%nombre_cadres;
