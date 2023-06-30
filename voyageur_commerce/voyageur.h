@@ -1,3 +1,6 @@
+#ifndef VOYAGEUR_INCLUDED
+#define VOYAGEUR_INCLUDED
+
 #include <SDL2/SDL_stdinc.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -54,3 +57,6 @@ Matrice floydWarshall(Matrice graph, size_t nombre_noeuds);
 
 bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds);
 
+int calculDistanceGrapheComplet(const Matrice matrice, const Chemin* chemin);
+
+#endif //VOYAGEUR_INCLUDED

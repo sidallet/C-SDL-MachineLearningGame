@@ -308,13 +308,6 @@ int Glouton_avec_proba(void * params)
 	list[nombre_points] = list[0];
 	distance_mini += dist[list[nombre_points-1]][list[nombre_points]];
 	
-	printf("liste : ");
-	for (i = 0; i < nombre_points+1; i++)
-	{
-		printf("%d ", list[i]);
-	}
-	printf("\n");
-	
 	return distance_mini;
 }
 
