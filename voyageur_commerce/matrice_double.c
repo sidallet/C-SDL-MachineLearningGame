@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 
-MatriceDouble initMatrice(const size_t nombre_points)
+MatriceDouble initMatriceDouble(const size_t nombre_points)
 {
     MatriceDouble matrice = (MatriceDouble)malloc(nombre_points * sizeof(double*));
 	if (matrice==NULL) {
@@ -25,6 +25,14 @@ MatriceDouble initMatrice(const size_t nombre_points)
     }
 
 	return matrice;
+}
+
+void applyAllMatriceDouble(MatriceDouble matrice, const size_t nombre_points, double (*func)(const double)) {
+	for (size_t i = 0; i < nombre_points; i++) {
+        for (size_t j = 0; j < nombre_points; j++) {
+            matrice[i][j] = func(matrice[i][j]);
+        }
+    }	
 }
 
 /**

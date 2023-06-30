@@ -14,6 +14,7 @@
 #include "wrapper_sdl.h"
 #include "voyageur.h"
 #include "matrice.h"
+#include "fourmis.h"
 
 //Permet de dessiner un SDL_Rect
 void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int recty,int Red,int Green,int Blue)
@@ -184,7 +185,9 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
    
 	printf("Glouton : \n");
     int longueur_glouton = Glouton_sans_proba(matriceGrapheComplet,nombre_points);
-    printf("Glouton : %d \n", longueur_glouton); 
+    printf("Glouton : %d \n", longueur_glouton);
+
+	int longueur_fourmis = calcul_longueur_fourmis(matriceGrapheComplet, nombre_points, 20);
 
 	bool actif = true;
 	while (actif) {

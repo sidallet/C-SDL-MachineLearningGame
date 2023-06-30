@@ -11,3 +11,4 @@ void afficheMatriceDouble(MatriceDouble matrice, const size_t nombre_points);
 
 void libereMatriceDouble(MatriceDouble matrice, const size_t nombre_points);
 
+void applyAllMatriceDouble(MatriceDouble matrice, const size_t nombre_points, double (*func)(const double));
