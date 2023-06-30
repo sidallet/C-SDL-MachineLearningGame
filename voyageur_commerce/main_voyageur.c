@@ -130,7 +130,7 @@ void afficheScore(SDL_Renderer* renderer, int distTotal, int distPresqueOptimal)
 
 int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 {
-	size_t nombre_points = 40;
+	size_t nombre_points = 6;
     if (argc<2 || sscanf(argv[1], "%ld", &nombre_points) == 0) {
 		nombre_points = 6;
 	}
@@ -181,7 +181,7 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 	printf("Matrice de distances graphe complet :\n");
 	afficheMatrice(matriceGrapheComplet, nombre_points);
 
-	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 10000);
+	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 5000000);
 
     thrd_t thread_handles[NUM_THREADS];
     int retours[NUM_THREADS];
@@ -189,7 +189,7 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
     struct params mesParams;
     mesParams.dist = matriceGrapheComplet;
     mesParams.nombre_points = nombre_points;
-    mesParams.p = 0.2;
+    mesParams.p = 0.6;
 
     for (int i = 0; i < NUM_THREADS; i++) {
         thrd_create(&thread_handles[i], Glouton_avec_proba, (void *)&mesParams);
