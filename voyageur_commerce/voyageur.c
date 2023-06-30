@@ -173,7 +173,7 @@ Chemin generer_solution_initiale(const int nombre_noeuds) {
 	for (size_t i=0; i<chemin.nombre_elems-1;++i) {
 		chemin.val[i] = i;
 	}
-	chemin.val[chemin.nombre_elems-1] = chemin.val[0];
+	fisherYatesMelange(&chemin);
 
 	return chemin;
 }
@@ -244,11 +244,7 @@ double init_temperature(Matrice matrice, size_t nombre_noeud) {
 	Chemin chemin = generer_solution_initiale(nombre_noeud);
 	int longeur_max = calculDistanceGrapheComplet(matrice, &chemin);
 	for (size_t i=0; i<20; ++i) {
-		for(size_t j=0; j<nombre_noeud; ++j) {	
-			Chemin nouveau_chemin = alterChemin(&chemin);
-			free(chemin.val);
-			chemin.val = nouveau_chemin.val;
-		}
+		fisherYatesMelange(&chemin);
 		int longeur = calculDistanceGrapheComplet(matrice, &chemin);
 		if (longeur > longeur_max) {
 			longeur_max = longeur;
@@ -256,6 +252,19 @@ double init_temperature(Matrice matrice, size_t nombre_noeud) {
 	}
 
 	return longeur_max;
+}
+
+void fisherYatesMelange(Chemin* chemin)
+{
+	for (int i = 0; i < chemin->nombre_elems-1; i++)
+	{
+		int j = rand() % i +1;
+		int temp = chemin->val[i];
+		chemin->val[i] = chemin->val[j];
+		chemin->val[j] = temp;
+	}
+	chemin->val[chemin->nombre_elems] = chemin->val[0];
+
 }
 
 int recuit(Matrice matrice, int N, int nombre_iterations) {
