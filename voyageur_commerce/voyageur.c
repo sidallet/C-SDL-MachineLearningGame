@@ -258,10 +258,8 @@ int Glouton_sans_proba(Matrice dist,const size_t nombre_points)
 			if (list[compt-1]!=i && dist[list[compt-1]][i]<distance && exist(list,i,compt)==0)
 			{
 				distance =dist[list[compt-1]][i];
-				//printf("dist %d ",dist[a][i]);
 				i_temp=i;
 			}
-			printf("compte : %d et nombre point  %ld \n", compt, nombre_points);
 		}
 		distance_mini=distance_mini+distance;
 		list[compt]=i_temp;
@@ -269,13 +267,6 @@ int Glouton_sans_proba(Matrice dist,const size_t nombre_points)
 
 	list[nombre_points] = list[0];
 	distance_mini += dist[list[nombre_points-1]][list[nombre_points]];
-	
-	printf("liste : ");
-	for (i = 0; i < nombre_points+1; i++)
-	{
-		printf("%d ", list[i]);
-	}
-	printf("\n");
 	
 	return distance_mini;
 }
