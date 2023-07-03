@@ -18,7 +18,6 @@ void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 	Observation observation = creerObservation(game,game->rect_obstacle,game->nbVoiture,fenetre);
 	
 	Decision decision = choisirRegle(&observation, tabRegle);
-	printf("Decision : %d\n", decision);
 
 	game->deplacement_voiture = decision;
 }
@@ -45,7 +44,7 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 		ia_think(&game, &tabRegle,rect_fenetre);
 		game_update(&game, rect_fenetre, delta_time);
 		
-		if (game.vie == 0 || game.distance_parcouru >= 100000) {
+		if (game.vie == 0 || game.distance_parcouru >= 1000000) {
 			return game.distance_parcouru;
 		}
 
@@ -105,8 +104,6 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 
 		}
 	}
-	printf("\nLes observations: ");
-	afficherObservation(stdout,situation);
 	return situation;
 
 }
@@ -126,10 +123,7 @@ Decision choisirRegle(const Observation* observation, const TabRegle* tabRegle) 
 
 	// Tirage
 	int cumul_priorite = 0;
-	printf("\n");
 	for (size_t i=0; i<nb_regles_match; ++i) {
-		afficherRegle(stdout, tabRegle->regles[indice_regles_match[i]]);
-		printf("\n");
 		cumul_priorite += pow(tabRegle->regles[indice_regles_match[i]].priorite, 2);
 	}
 

@@ -7,7 +7,6 @@
 #define RAYON_POINT 10
 
 Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
-	printf("w et h %d %d \n", fenetre->w, fenetre->h);
 	Game game = {
 		.distance_parcouru = 0,
 		.vie = 5,
@@ -38,12 +37,6 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		voitureAleatoire(&game, i, fenetre);
 	}
 
-	printf("voiture obst : \n");
-	for (int i = 0; i < game.nbVoiture; i++)
-	{
-		printf("x %d " , game.rect_obstacle[i].x);
-		printf("y %d " , game.rect_obstacle[i].y);
-	}
 	return game;
 }
 

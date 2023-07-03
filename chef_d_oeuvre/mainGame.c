@@ -2,6 +2,7 @@
 #include "regle.h"
 #include "wrapper_sdl.h"
 #include <SDL2/SDL2_framerate.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <time.h>
 #include "game.h"
@@ -25,10 +26,13 @@ int main (int argc, char* argv[]) {
 
 	FILE* fichier = fopen("regleTest.txt", "r");
 	TabRegle tabRegle = chargerTabRegle(fichier);
-	afficherTabRegle(stdout, tabRegle);
 	fclose(fichier);
-
-	boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
+	
+	time_t dep = clock();
+	for (size_t i=0; i<1000; ++i) {
+		boucle_ia(false, tabRegle, &rect_fenetre, renderer, &fpsManager);
+	}
+	printf("%f\n", (clock()-dep)*1000.0/CLOCKS_PER_SEC);
 
 
 	clean_sdl(&window, &renderer);

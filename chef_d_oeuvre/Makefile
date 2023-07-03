@@ -13,9 +13,14 @@ LDFLAGS:=-lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm -lSDL2
 
 ifeq ($(BUILD), debug)
 	CFLAGS:=$(CFLAGS) -Og -g #-fsanitize=undefined
-	LDFLAGS:=$(LDFLAGS) #-fsanitize=undefined
+	LDFLAGS:=$(LDFLAGS) -g #-fsanitize=undefined
 else
-	CFLAGS:=$(CFLAGS) -O2
+	ifeq ($(BUILD), profil)	
+		LDFLAGS:=$(LDFLAGS) -pg #-fsanitize=undefined
+		CFLAGS:=$(CFLAGS) -Og -pg #-fsanitize=undefined
+	else
+		CFLAGS:=$(CFLAGS) -O2
+	endif
 endif
 
 OBJ=$(addprefix build/,$(SRC:.c=.o))
