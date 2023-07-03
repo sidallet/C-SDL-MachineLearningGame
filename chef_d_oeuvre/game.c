@@ -204,7 +204,6 @@ void deplaceVoiture(SDL_Rect* voiture, int ecart, SDL_Rect* fenetre, int directi
 	if (voiture->x < limiteGauche) {
         voiture->x = limiteGauche;  //pixel vers la gauche
     }
-	printf("direct deplac : %d , deltatime : %d  %d\n", direction_deplacement, deltatime, voiture->x);
 	if (voiture->x+voiture->w > limiteDroite) {
 		voiture->x = limiteDroite - voiture->w - ecart;
 	}

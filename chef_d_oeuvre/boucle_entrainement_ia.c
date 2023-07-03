@@ -1,11 +1,5 @@
 #include "boucle_entrainement_ia.h"
-#include "game.h"
-#include "regle.h"
-#include <SDL2/SDL_events.h>
 #include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 
 void affichage(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre) {
@@ -68,55 +62,50 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 	SDL_Rect rect_proche[12];//x y largeur hauteur
 	bool bool_loin=false;
 	bool bool_proche=false;
+	int colonnes_voiture=game->voiture.x/(game->voiture.x+game->ecart_obstacles);
 	for(i=0;i<12;i++)
 	{
-		rect_Loin[i].h=(game->voiture.w + game->ecart_obstacles)*i;
-		rect_Loin[i].w=0;
-		rect_Loin[i].x=game->voiture.w;
-		rect_Loin[i].y=fenetre->h/2;
+		rect_Loin[i].x=(game->voiture.w + game->ecart_obstacles)*i;
+		rect_Loin[i].y=0;
+		rect_Loin[i].w=game->voiture.w;
+		rect_Loin[i].h=fenetre->h/2;
 
 
-		rect_proche[i].h =(game->voiture.w + game->ecart_obstacles)*i;
-		rect_proche[i].w=fenetre->h/2;
-		rect_proche[i].x=game->voiture.w;
+		rect_proche[i].x =(game->voiture.w + game->ecart_obstacles)*i;
 		rect_proche[i].y=fenetre->h/2;
+		rect_proche[i].w=game->voiture.w;
+		rect_proche[i].h=fenetre->h/2;
 	}
 
 	for (i=-2;i<3;i++)//les 5 colonnes à étudier de -2 à 2
 	{
-		if (game->voiture.x+i*(game->voiture.w + game->ecart_obstacles)<0 || game->voiture.x+i*(game->voiture.w + game->ecart_obstacles)>fenetre->h)
+		if (colonnes_voiture+i<0 || colonnes_voiture+i>12)
 		{
 			situation.routes[i+2]=2;
 		}
 		else
 		{
-		 	bool_loin=test_collision(&rect_Loin[game->voiture.x+i*(game->voiture.w + game->ecart_obstacles)],game->rect_obstacle,nbVoiture);    
-			bool_proche=test_collision(&rect_proche[game->voiture.x+i*(game->voiture.w + game->ecart_obstacles)],game->rect_obstacle,nbVoiture);
+		 	bool_loin=test_collision(&rect_Loin[colonnes_voiture+i],game->rect_obstacle,nbVoiture);    
+			bool_proche=test_collision(&rect_proche[colonnes_voiture+i],game->rect_obstacle,nbVoiture);	
+			if (bool_proche==true)
 			{
-				if (bool_proche==true)
-				{
-					situation.routes[i+2]=2;
-				}
-				else if(bool_proche==false && bool_proche==true) 
-				{
-					situation.routes[i+2]=1;
-				}
-				else if (bool_loin==false && bool_proche==false)
-				{
-					situation.routes[i+2]=0;
-				}
+				situation.routes[i+2]=2;
+			}
+			else if(bool_proche==true) 
+			{
+				situation.routes[i+2]=1;
+			}
+			else // (bool_loin==false && bool_proche==false)
+			{
+				situation.routes[i+2]=0;
+			}
 
-			}	
 	}
 	}
+	printf("\nLes observations: ");
 	afficherObservation(stdout,situation);
 	return situation;
 
-}
-
-Decision choisirRegle(const Observation* observation, const TabRegle* tabRegle)
-{
-	return RIEN;
 }
 
 
@@ -134,10 +123,7 @@ Decision choisirRegle(const Observation* observation, const TabRegle* tabRegle) 
 
 	// Tirage
 	int cumul_priorite = 0;
-	printf("Obs \n");
 	for (size_t i=0; i<nb_regles_match; ++i) {
-		afficherObservation(stdout, tabRegle->regles[indice_regles_match[i]].observ);
-		printf("\n");
 		cumul_priorite += tabRegle->regles[indice_regles_match[i]].priorite;
 	}
 
