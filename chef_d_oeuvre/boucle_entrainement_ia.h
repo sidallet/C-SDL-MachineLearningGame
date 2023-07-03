@@ -6,12 +6,12 @@
 #include "regle.h"
 #include <SDL2/SDL2_framerate.h>
 
-void ia_think(Game* game, const TabRegle* tabRegle);
+void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre);
 
 int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fenetre, SDL_Renderer* renderer, FPSmanager* fpsManager);
 
 
-Observation creerObservation(const Game* game);
+Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],const int nbVoiture,SDL_Rect * fenetre);
 Decision choisirRegle(const Observation* observation, const TabRegle* tabRegle);
 
 bool observation_match(const Observation obs1, const Observation obs2);
