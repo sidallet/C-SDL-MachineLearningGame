@@ -22,8 +22,8 @@ TabRegle chargerTabRegle(FILE* flux) {
     {
         Regle regle;
         regle = chargerRegle(flux);
+		fscanf(flux, "\n");
         tabRegle.regles[i] = regle;
-
     }
 	return tabRegle;
 }

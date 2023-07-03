@@ -14,5 +14,6 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 Observation creerObservation(const Game* game);
 Decision choisirRegle(const Observation* observation, const TabRegle* tabRegle);
 
+bool observation_match(const Observation obs1, const Observation obs2);
 
 #endif // BOUCLE_ENTRAINEMENT_IA_H
