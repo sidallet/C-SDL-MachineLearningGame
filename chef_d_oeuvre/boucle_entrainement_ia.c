@@ -81,7 +81,7 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 	{
 		if (colonnes_voiture+i<0 || colonnes_voiture+i>12)
 		{
-			situation.routes[i+2]=2;
+			situation.routes[i+2]=PROCHE;
 		}
 		else
 		{
@@ -97,7 +97,7 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 			}
 			else // (bool_loin==false && bool_proche==false)
 			{
-				situation.routes[i+2]=0;
+				situation.routes[i+2]=VIDE;
 			}
 
 	}
