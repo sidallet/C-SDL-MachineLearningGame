@@ -13,7 +13,7 @@ typedef struct
 
 
 typedef enum {
-    GAUCHE=0, RIEN, DROITE
+    GAUCHE=-1, RIEN, DROITE
 } Decision ;
 
 typedef struct {
