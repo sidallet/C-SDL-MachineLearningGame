@@ -89,11 +89,11 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 			bool_proche=test_collision(&rect_proche[colonnes_voiture+i],game->rect_obstacle,nbVoiture);	
 			if (bool_proche==true)
 			{
-				situation.routes[i+2]=2;
+				situation.routes[i+2]=PROCHE;
 			}
-			else if(bool_proche==true) 
+			else if(bool_loin==true) 
 			{
-				situation.routes[i+2]=1;
+				situation.routes[i+2]=LOIN;
 			}
 			else // (bool_loin==false && bool_proche==false)
 			{
