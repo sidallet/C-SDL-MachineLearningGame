@@ -17,7 +17,7 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.voiture = {0,fenetre->h-125,65,110},
 		.textureHandler = newTextureHandler(renderer),
 		.deplacement_voiture = 0, 
-		.nbVoiture = 6,
+		.nbVoiture = 10,
 		.vitesse = 100,
 		.font = charger_font(),	
 		.ecart_obstacles = 15,
@@ -96,8 +96,8 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 
 	if (game->deplacement_voiture != 0) {
 		game->temps_deplacement+=deltatime;
-		deplaceVoiture(&game->voiture, game->ecart_obstacles, rect_fenetre, game->deplacement_voiture, deltatime*4);
-		if (game->temps_deplacement > 250) {
+		deplaceVoiture(&game->voiture, game->ecart_obstacles, rect_fenetre, game->deplacement_voiture, deltatime*6.67);
+		if (game->temps_deplacement > 150) {
 			game->voiture.x = (game->voiture.w + game->ecart_obstacles) * ((game->voiture.x+game->voiture.w/2) / (game->voiture.w + game->ecart_obstacles));
 			game->temps_deplacement = 0;
 			game->deplacement_voiture = 0;
