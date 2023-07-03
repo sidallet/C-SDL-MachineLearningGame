@@ -1,0 +1,10 @@
+image: didstopia/sdl2
+
+stages:
+    - build
+
+build:
+    stage: build
+    script:
+        - "cd chef_d_oeuvre"        
+        - "make"
