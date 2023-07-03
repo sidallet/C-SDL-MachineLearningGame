@@ -16,6 +16,7 @@ void affichage(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre)
 
 int main (int argc, char* argv[]) {
 	Regle regle = chargerRegle(stdin);
+	
 	afficherRegle(stdout, regle);
 
 
