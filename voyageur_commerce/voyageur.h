@@ -1,3 +1,6 @@
+#ifndef VOYAGEUR_INCLUDED
+#define VOYAGEUR_INCLUDED
+
 #include <SDL2/SDL_stdinc.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -16,10 +19,23 @@ typedef struct {
 	size_t nombre_elems;
 } Chemin;
 
+struct params
+{
+   Matrice dist;
+   size_t nombre_points;
+   float p;
+};
+
 
 #define RAYON_POINT 10
+#define NUM_THREADS 8
 
 int distance_eucli(Point point1,Point point2);
+int exist(int list[],int i,const size_t nombre_points);
+
+int Glouton_sans_proba(Matrice dist,const size_t nombre_points);
+int Glouton_avec_proba(void * params);
+
 
 /***
  * @brief Genere les points de manière plutot répartie
@@ -41,3 +57,6 @@ Matrice floydWarshall(Matrice graph, size_t nombre_noeuds);
 
 bool verifParcours(const int indicesPointSelect[], const size_t nb_indicesPointSelect, const size_t nombre_noeuds);
 
+int calculDistanceGrapheComplet(const Matrice matrice, const Chemin* chemin);
+
+#endif //VOYAGEUR_INCLUDED

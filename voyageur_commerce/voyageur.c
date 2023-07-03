@@ -224,6 +224,94 @@ Chemin alterChemin(const Chemin* chemin) {
 	return nouveau_chemin;
 }
 
+
+int exist(int list[],int i,const size_t nombre_points)
+{	
+	int j;
+	int present=0;
+	for(j=0;j<nombre_points;j++)
+	{
+		if (list[j]==i)
+		{
+			present=1;
+		}
+	}
+	return present;
+
+}
+
+int Glouton_sans_proba(Matrice dist,const size_t nombre_points)
+{
+	int i;
+	int i_temp = 0;
+	
+	int list[nombre_points+1];
+	int distance=INT16_MAX;
+	int distance_mini = 0;
+	list[0] = rand() % nombre_points;
+	for (int compt=1; compt<nombre_points; ++compt)
+	{
+		distance=INT16_MAX;
+		for (i=0;i<nombre_points;i++)
+		{
+			if (list[compt-1]!=i && dist[list[compt-1]][i]<distance && exist(list,i,compt)==0)
+			{
+				distance =dist[list[compt-1]][i];
+				i_temp=i;
+			}
+		}
+		distance_mini=distance_mini+distance;
+		list[compt]=i_temp;
+	}
+
+	list[nombre_points] = list[0];
+	distance_mini += dist[list[nombre_points-1]][list[nombre_points]];
+	
+	return distance_mini;
+}
+
+int Glouton_avec_proba(void * params)
+{
+	int i;
+	int i_temp = 0;
+	struct params *myParams = (struct params *)params;
+   
+   	Matrice dist = myParams->dist;
+   	size_t nombre_points = myParams->nombre_points;
+   	float p = myParams->p;
+	
+	int list[nombre_points+1];
+	int distance=INT16_MAX;
+	int distance_mini = 0;
+	list[0] = rand() % nombre_points;
+	for (int compt=1; compt<nombre_points; ++compt)
+	{
+		distance=INT16_MAX;
+		for (i=0;i<nombre_points;i++)
+		{
+			int proba_passer = rand() / RAND_MAX;
+			if(dist[list[compt-1]][i]>distance && p < proba_passer)
+			{
+				distance =dist[list[compt-1]][i];
+				i_temp=i;
+			}
+			else if (list[compt-1]!=i && dist[list[compt-1]][i]<distance && exist(list,i,compt)==0)
+			{
+				distance =dist[list[compt-1]][i];
+				i_temp=i;
+			}
+		}
+		distance_mini=distance_mini+distance;
+		list[compt]=i_temp;
+	}
+
+	list[nombre_points] = list[0];
+	distance_mini += dist[list[nombre_points-1]][list[nombre_points]];
+	
+	return distance_mini;
+}
+
+
 bool recuit_impl(Chemin* chemin, const int longueurChemin, const Matrice matrice, double temperature, int* nouvelle_longeur) {
 	Chemin nouveauChemin = alterChemin(chemin);
 	*nouvelle_longeur = calculDistanceGrapheComplet(matrice, &nouveauChemin);

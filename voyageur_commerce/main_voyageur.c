@@ -14,6 +14,8 @@
 #include "wrapper_sdl.h"
 #include "voyageur.h"
 #include "matrice.h"
+#include <threads.h>
+#include "fourmis.h"
 
 //Permet de dessiner un SDL_Rect
 void draw_rec(SDL_Renderer* renderer,int rectWidth, int rectHeight,int rectx,int recty,int Red,int Green,int Blue)
@@ -180,7 +182,35 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[])
 	printf("Matrice de distances graphe complet :\n");
 	afficheMatrice(matriceGrapheComplet, nombre_points);
 
-	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 10000);
+	int longueur_presque_optimale = recuit(matriceGrapheComplet, nombre_points, 5000000);
+
+    thrd_t thread_handles[NUM_THREADS];
+    int retours[NUM_THREADS];
+
+    struct params mesParams;
+    mesParams.dist = matriceGrapheComplet;
+    mesParams.nombre_points = nombre_points;
+    mesParams.p = 0.6;
+
+    for (int i = 0; i < NUM_THREADS; i++) {
+        thrd_create(&thread_handles[i], Glouton_avec_proba, (void *)&mesParams);
+    }
+
+    for (int i = 0; i < NUM_THREADS; i++) {
+        thrd_join(thread_handles[i], &retours[i]);
+    }
+
+    int longueur_glouton = Glouton_sans_proba(matriceGrapheComplet, nombre_points);
+    printf("Glouton : %d \n", longueur_glouton); 
+
+    printf("Glouton proba: \n");
+    for (int i = 0; i < NUM_THREADS; i++) {
+        printf("Glouton proba: %d \n", retours[i]);
+    }
+
+	int longueur_fourmis = calcul_longueur_fourmis(matriceGrapheComplet, nombre_points, 50);
+    printf("Fourmis: %d \n", longueur_fourmis);
+
 
 	bool actif = true;
 	while (actif) {
