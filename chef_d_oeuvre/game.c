@@ -47,18 +47,19 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
 {
     SDL_Rect obst;
     bool positionValide = false;
-	int ecart = 10;
+	int ecart = 15;
+
+
     
     while (!positionValide) {
         int yAlea = rand() % 100*game->nbVoiture;
-		int tailleAlea = rand() %50;
         
-		obst.w = tailleAlea + 80 + ecart;
-		obst.h = tailleAlea + 80 + ecart;
+		obst.w = 65;
+		obst.h = 110;
         
-		int xAlea = rand() % (fenetre->w - obst.w);
+		int xAlea = rand() % 12;
 		
-		obst.x = xAlea + ecart;
+		obst.x = xAlea * (obst.w + ecart);
 		obst.y = -(yAlea+100) - ecart;
 		
 
