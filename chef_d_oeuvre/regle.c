@@ -9,7 +9,7 @@ Regle chargerRegle(FILE* flux) {
 			&regle.observ.routes[2],
 			&regle.observ.routes[3],
 			&regle.observ.routes[4],
-			&regle.decis,
+			(int*)&regle.decis,
 			&regle.priorite
 	);	
 
@@ -35,7 +35,7 @@ void afficherObservation(FILE* flux, const Observation observation) {
 void afficherRegle(FILE* flux, const Regle regle)
 {
     afficherObservation(flux,regle.observ);
-    fprintf(flux, "-> %d (%d)\n",regle.decis, regle.priorite);
+    fprintf(flux, " -> %d (%d)\n",regle.decis, regle.priorite);
 }
 
 
