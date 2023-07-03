@@ -22,6 +22,7 @@ typedef struct
 	SDL_Rect* rect_obstacle;
 	int nbVoiture;
 	int vitesse;
+	int temps_deplacement;
 
 	int ecart_obstacles;
 	TTF_Font* font;
@@ -45,7 +46,7 @@ void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* 
 void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse, TTF_Font* font);
 
 //fonction voiture
-void deplaceVoiture(SDL_Rect* voiture, int ecart, SDL_Rect* fenetre, int direction_deplacement);
+void deplaceVoiture(SDL_Rect* voiture, int ecart, SDL_Rect* fenetre, int direction_deplacement, Uint32 deltatime);
 void afficherVoiture(SDL_Renderer * renderer, const SDL_Rect * voiture, SDL_Texture * textureVoiture, int inclinaison, int delai_invulnerabilite);
 void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre);
 

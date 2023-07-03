@@ -21,6 +21,7 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.vitesse = 100,
 		.font = charger_font(),	
 		.ecart_obstacles = 15,
+		.temps_deplacement = 0,
 	};
 
 	game.voiture.x = (game.voiture.w + game.ecart_obstacles)*6;
@@ -93,6 +94,15 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 		return;
 	}
 
+	if (game->deplacement_voiture != 0) {
+		game->temps_deplacement+=deltatime;
+		deplaceVoiture(&game->voiture, game->ecart_obstacles, rect_fenetre, game->deplacement_voiture, deltatime*4);
+		if (game->temps_deplacement > 250) {
+			game->voiture.x = (game->voiture.w + game->ecart_obstacles) * ((game->voiture.x+game->voiture.w/2) / (game->voiture.w + game->ecart_obstacles));
+			game->temps_deplacement = 0;
+			game->deplacement_voiture = 0;
+		}
+	}
 
 	//Gerer collision ici
 	if (game->delai_invulnerabilite<0) {
@@ -116,13 +126,13 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 			{
 				case SDLK_LEFT:
 				case SDLK_q : {
-					deplaceVoiture(&game->voiture, game->ecart_obstacles, rect_fenetre, -1);
+					game->deplacement_voiture = -1;
 					break;
 				}
 
 				case SDLK_RIGHT:
 				case SDLK_d : {
-					deplaceVoiture(&game->voiture, game->ecart_obstacles, rect_fenetre, 1);
+					game->deplacement_voiture = 1;
 					break;
 				}
 			}
@@ -186,14 +196,15 @@ void liberer_game(Game* game) {
 	freeTextureHandler(&game->textureHandler);
 }
 
-void deplaceVoiture(SDL_Rect* voiture, int ecart, SDL_Rect* fenetre, int direction_deplacement) {
+void deplaceVoiture(SDL_Rect* voiture, int ecart, SDL_Rect* fenetre, int direction_deplacement, Uint32 deltatime) {
     int limiteGauche = 0;  //lim gauche de la fenêtre
     int limiteDroite = 12*(voiture->w+ecart);  //lim gauche de la fenêtre
-	float vitesse = 300.0;
-    voiture->x += (voiture->w+ecart) * direction_deplacement;
+	
+    voiture->x += (voiture->w+ecart) * direction_deplacement * (float)deltatime / 1000.0;
 	if (voiture->x < limiteGauche) {
         voiture->x = limiteGauche;  //pixel vers la gauche
     }
+	printf("direct deplac : %d , deltatime : %d  %d\n", direction_deplacement, deltatime, voiture->x);
 	if (voiture->x+voiture->w > limiteDroite) {
 		voiture->x = limiteDroite - voiture->w - ecart;
 	}
@@ -202,13 +213,13 @@ void deplaceVoiture(SDL_Rect* voiture, int ecart, SDL_Rect* fenetre, int directi
 int deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru , int nbVoiture){
 	int vitesse = 100;
 	
-	vitesse += pow((distance_parcouru/150),1.15);
-	if(vitesse > 1248)
+	vitesse += pow((distance_parcouru/150),1.10);
+	if(vitesse > 1300)
 	{
-		vitesse = 1248;
+		vitesse = 1300;
 		
 	}
-	printf("vitesse %d \n",vitesse);
+	//printf("vitesse %d \n",vitesse);
 	for (int i = 0; i < nbVoiture; i++)
 	{
 		game->rect_obstacle[i].y+=vitesse*deltatime/1000.0;
