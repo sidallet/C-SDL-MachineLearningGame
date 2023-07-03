@@ -1,5 +1,7 @@
+#include "regle.h"
 #include "wrapper_sdl.h"
 #include <SDL2/SDL2_framerate.h>
+#include <stdio.h>
 #include <time.h>
 #include "game.h"
 
@@ -13,6 +15,10 @@ void affichage(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre)
 
 
 int main (int argc, char* argv[]) {
+	Regle regle = chargerRegle(stdin);
+	afficherRegle(stdout, regle);
+
+
 	srand(time(NULL));
 	SDL_Window* window;
 	SDL_Renderer* renderer;
