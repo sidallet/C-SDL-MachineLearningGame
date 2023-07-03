@@ -13,8 +13,8 @@ typedef struct
 
 
 typedef enum {
-        GAUCHE, RIEN, DROITE
-    } Decision ;
+    GAUCHE=0, RIEN, DROITE
+} Decision ;
 
 typedef struct {
     Observation observ;
