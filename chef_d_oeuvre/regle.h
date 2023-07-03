@@ -1,6 +1,6 @@
- #ifndef REGLE_H
- #define REGLE_H
-
+#ifndef REGLE_H
+#define REGLE_H
+#include <stdio.h>
 
 typedef enum {
         JOKER=-1, VIDE, LOIN, PROCHE // mur ?
