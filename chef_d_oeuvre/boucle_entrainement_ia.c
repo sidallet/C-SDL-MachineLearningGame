@@ -1,5 +1,7 @@
 #include "boucle_entrainement_ia.h"
+#include "regle.h"
 #include <stdbool.h>
+#include <stdio.h>
 
 
 void affichage(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre) {
@@ -16,6 +18,7 @@ void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 	Observation observation = creerObservation(game,game->rect_obstacle,game->nbVoiture,fenetre);
 	
 	Decision decision = choisirRegle(&observation, tabRegle);
+	printf("Decision : %d\n", decision);
 
 	game->deplacement_voiture = decision;
 }
@@ -62,7 +65,7 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 	SDL_Rect rect_proche[12];//x y largeur hauteur
 	bool bool_loin=false;
 	bool bool_proche=false;
-	int colonnes_voiture=game->voiture.x/(game->voiture.x+game->ecart_obstacles);
+	int colonnes_voiture=game->voiture.x/(game->voiture.w+game->ecart_obstacles);
 	for(i=0;i<12;i++)
 	{
 		rect_Loin[i].x=(game->voiture.w + game->ecart_obstacles)*i;
@@ -100,7 +103,7 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 				situation.routes[i+2]=VIDE;
 			}
 
-	}
+		}
 	}
 	printf("\nLes observations: ");
 	afficherObservation(stdout,situation);
@@ -123,13 +126,16 @@ Decision choisirRegle(const Observation* observation, const TabRegle* tabRegle) 
 
 	// Tirage
 	int cumul_priorite = 0;
+	printf("\n");
 	for (size_t i=0; i<nb_regles_match; ++i) {
-		cumul_priorite += tabRegle->regles[indice_regles_match[i]].priorite;
+		afficherRegle(stdout, tabRegle->regles[indice_regles_match[i]]);
+		printf("\n");
+		cumul_priorite += pow(tabRegle->regles[indice_regles_match[i]].priorite, 2);
 	}
 
 	float alea = ((float)rand()) / RAND_MAX;
 	for (size_t i=0; i<nb_regles_match; ++i) {
-		float probaI = ((float)tabRegle->regles[indice_regles_match[i]].priorite) / cumul_priorite;
+		float probaI = pow(((float)tabRegle->regles[indice_regles_match[i]].priorite), 2) / cumul_priorite;
 		if (alea < probaI) {
 			return tabRegle->regles[indice_regles_match[i]].decis;
 		}
@@ -151,3 +157,4 @@ bool observation_match(const Observation obs1, const Observation obs2) {
 
 	return true;
 }
+
