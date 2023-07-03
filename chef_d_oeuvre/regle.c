@@ -16,6 +16,18 @@ Regle chargerRegle(FILE* flux) {
 	return regle;
 }
 
+TabRegle chargerTabRegle(FILE* flux) {
+    TabRegle tabRegle;
+    for (int i = 0; i < NB_REGLES; i++)
+    {
+        Regle regle;
+        regle = chargerRegle(flux);
+		fscanf(flux, "\n");
+        tabRegle.regles[i] = regle;
+    }
+	return tabRegle;
+}
+
 
 void afficherObservation(FILE* flux, const Observation observation) {
     fprintf(flux, "[");
@@ -36,6 +48,16 @@ void afficherRegle(FILE* flux, const Regle regle)
 {
     afficherObservation(flux,regle.observ);
     fprintf(flux, " -> %d (%d)\n",regle.decis, regle.priorite);
+}
+
+void afficherTabRegle(FILE* flux, const TabRegle tabRegle)
+{
+    for (int i = 0; i < NB_REGLES; i++)
+    {
+        afficherRegle(flux,tabRegle.regles[i]);
+        fprintf(flux,"\n");
+    }
+    
 }
 
 
