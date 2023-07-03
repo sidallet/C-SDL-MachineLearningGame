@@ -99,4 +99,9 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 
 }
 
+Decision choisirRegle(const Observation* observation, const TabRegle* tabRegle)
+{
+	return RIEN;
+}
+
 
