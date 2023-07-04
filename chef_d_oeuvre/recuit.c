@@ -185,15 +185,3 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 	printf("Score : %d\n", scoreJeu/175);
 	return tabRegle;
 }
-void SauvegardeTable(TabRegle tabregle,FILE* fichier)
-{
-	FILE *fichier = fopen(fichier, "w");
-	int i;
-    if (fichier != NULL) {
-		afficherTabRegle(fichier,tabregle);
-        fclose(fichier);
-    } else {
-        printf("Erreur : impossible de sauvegarder la chaine dans le fichier %s\n", fichier);
-    }
-}
-
