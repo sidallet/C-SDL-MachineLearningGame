@@ -40,21 +40,27 @@ TabRegle generer_solution_initiale() {
 	return tabRegle;
 }
 
+int rand_dif(int base, int mini, int maxi) {
+	int mod = maxi - mini +1;
+	int nouveau = (rand()%mod) + mini;
+	if (nouveau==base) {
+		nouveau = ((nouveau+1-mini)%mod) + mini;
+	}
+	return nouveau;
+}
 
 TabRegle alterTabRegle(TabRegle tabRegle) {
-	int iRegle = rand() % 12;
-	int random_num = rand() % 7;  // Génère un nombre aléatoire entre 0 et 14
+	int iRegle = rand() % NB_REGLES;
+	int random_num = rand() % 7;  // Génère un nombre aléatoire entre 0 et 6 
 
 	if (random_num < 5) { //Modif observation
 		int iObs = rand() % 5;
-		int randObs = (rand() % 4)-1;
-		tabRegle.regles[iRegle].observ.routes[iObs] = randObs;
+		int observ = tabRegle.regles[iRegle].observ.routes[iObs];
+		tabRegle.regles[iRegle].observ.routes[iObs] = rand_dif(observ, -1, 2);
 	} else if (random_num == 5) { //Modif deplacement
-		int iDecis = (rand() % 3)-1;
-		tabRegle.regles[iRegle].decis = iDecis;
+		tabRegle.regles[iRegle].decis = rand_dif(tabRegle.regles[iRegle].decis, -1, 1);
 	} else { //Modif priorité
-		int iPrio = (rand() % 10)+1;
-		tabRegle.regles[iRegle].priorite = iPrio;
+		tabRegle.regles[iRegle].priorite = rand_dif(tabRegle.regles[iRegle].priorite, 1, 10);
 	}
 	return tabRegle;
 }
