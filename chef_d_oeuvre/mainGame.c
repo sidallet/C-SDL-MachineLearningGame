@@ -26,8 +26,11 @@ int main (int argc, char* argv[]) {
 
 	SDL_setFramerate(&fpsManager, 60);
 
+	double temper;
+	int iter;
 	FILE* fichier = fopen("regleSauv.txt", "r");
-	TabRegle tabRecuit = chargerTabRegle(fichier);
+	//TabRegle tabRecuit = chargerTabRegle(fichier);
+	TabRegle tabRecuit = chargerTabTempIter(fichier,&temper,&iter);
 	fclose(fichier);
 
 
@@ -37,13 +40,12 @@ int main (int argc, char* argv[]) {
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
 
 
-	tabRecuit = recuit(500, &rect_fenetre, 104,tabRecuit);
-
+	tabRecuit = recuit(1000, &rect_fenetre, 8,tabRecuit);
 	fichier = fopen("regleSauv.txt", "w");
-	afficherTabRegle(fichier,tabRecuit);
+	afficherTabTemperIter(fichier,tabRecuit,temper,iter);
 	fclose(fichier);
 
-	afficherTabRegle(stdout, tabRecuit);
+	afficherTabTemperIter(stdout, tabRecuit, temper,iter);
 	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
 
 	clean_sdl(&window, &renderer);

@@ -58,4 +58,19 @@ void afficherTabRegle(FILE* flux, const TabRegle tabRegle)
     } 
 }
 
+void afficherTabTemperIter(FILE* flux, const TabRegle tabRegle, double temper, int iter)
+{
+    fprintf(flux, "%lf\n",temper);
+    fprintf(flux, "%d\n",iter);
+    afficherTabRegle(flux,tabRegle);
+}
+
+TabRegle chargerTabTempIter(FILE* flux, double * temper, int * iter)
+{
+    fscanf(flux, "%lf",temper);
+    fscanf(flux, "%d",iter);
+    TabRegle tabRegle = chargerTabRegle(flux);
+    return tabRegle;
+}
+
 

@@ -159,8 +159,6 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 	// if (N <= 1) {
 	// 	return 0;
 	// }
-
-
 	double temperature = init_temperature(rect_fenetre);
 	printf("température initiale : %f\n", temperature);
 	double pente = temperature/nombre_iterations;

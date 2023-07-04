@@ -33,7 +33,10 @@ void afficherObservation(FILE* flux, const Observation observation);
 
 Regle chargerRegle(FILE* flux);
 TabRegle chargerTabRegle(FILE* flux);
+TabRegle chargerTabTempIter(FILE* flux, double * temper, int * iter);
 void afficherTabRegle(FILE* flux, const TabRegle tabRegle);
+void afficherTabTemperIter(FILE* flux, const TabRegle tabRegle, double temper, int iter);
+
 
 
 #endif //REGLE_H
