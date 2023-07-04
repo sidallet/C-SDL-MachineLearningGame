@@ -16,6 +16,7 @@ Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.voiture = {0,fenetre->h-125,65,110},
 		.deplacement_voiture = 0, 
 		.nbVoiture = 10,
+		.nbPiece=1,
 		.vitesse = 100,
 		.ecart_obstacles = 15,
 		.temps_deplacement = 0,
@@ -32,6 +33,8 @@ Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 	game.voiture.x = (game.voiture.w + game.ecart_obstacles)*6;
 
 	game.rect_obstacle = malloc(sizeof(SDL_Rect)*game.nbVoiture);
+	game.rect_piece = malloc(sizeof(SDL_Rect)*game.nbPiece);
+
 	//init voiture dehors
 	SDL_Rect rect_loin = {-100,300, 0,0};
 	for (int i = 0; i < game.nbVoiture ; i++) {
@@ -109,6 +112,10 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 			game->vie--;
 			game->delai_invulnerabilite = game->delai_invulnerabilite_max;
 		}
+		if (test_collision(&game->voiture, game->rect_piece, game->nbPiece)) // test de la piece
+		{
+			game->distance_parcouru+=1000;
+		}
 	}
 	else {
 		game->delai_invulnerabilite -= deltatime;
@@ -169,6 +176,22 @@ void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], S
 	{
 		
 		SDL_RenderCopyEx(renderer,textureObst[i%4],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
+	}
+	int alea = (rand()%10)+1;
+	if (alea==1)//une chance sur 10 de mettre une piece
+	{
+				SDL_RenderCopyEx(renderer,textureObst[8],NULL,&rect_obstacle[0],0,NULL,SDL_FLIP_VERTICAL);
+	}
+	
+	
+}
+
+void afficher_Piece(SDL_Renderer* renderer, const SDL_Rect rect_piece[], SDL_Texture *TEXTURE_Piece[], int nbPiece)
+{
+	SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+	for (int i = 0; i < nbPiece; i++)
+	{
+		SDL_RenderCopyEx(renderer,TEXTURE_Piece[8],NULL,&rect_piece[i],0,NULL,SDL_FLIP_VERTICAL);
 	}
 	
 }
@@ -232,6 +255,31 @@ int deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int d
 	return vitesse;
 		
 }
+
+
+int deplacer_Piece(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru , int nbPiece){
+	int vitesse = 100;
+	
+	vitesse += pow((distance_parcouru/150),1.10);
+	if(vitesse > 1300)
+	{
+		vitesse = 1300;
+		
+	}
+	//printf("vitesse %d \n",vitesse);
+	for (int i = 0; i < nbPiece; i++)
+	{
+		game->rect_piece[i].y+=vitesse*deltatime/1000.0;
+
+		if(game->rect_piece[i].y > rect_fenetre->h)
+		{
+			voitureAleatoire(game,i,rect_fenetre);
+		}
+	}
+	return vitesse;
+		
+}
+
 
 void afficherVoiture(SDL_Renderer* renderer, const SDL_Rect* voiture, SDL_Texture* textureVoiture, int inclinaison, int delai_invulnerabilite)
 {

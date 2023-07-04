@@ -65,6 +65,9 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 	Observation situation;
 	bool bool_loin=false;
 	bool bool_proche=false;
+	bool bool_piece_proche=false;
+	bool bool_piece_loin=false;
+
 	const int colonnes_voiture=game->voiture.x/(game->voiture.w+game->ecart_obstacles);
 	
 	SDL_Rect rect_loin = {
@@ -91,6 +94,9 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 		{
 		 	bool_loin=test_collision(&rect_loin,game->rect_obstacle,nbVoiture);    
 			bool_proche=test_collision(&rect_proche,game->rect_obstacle,nbVoiture);	
+			bool_piece_proche=test_collision(&rect_proche,game->rect_piece,game->nbPiece);	
+			bool_piece_loin=test_collision(&rect_loin,game->rect_piece,game->nbPiece);	
+			
 			if (bool_proche==true)
 			{
 				situation.routes[i+2]=PROCHE;
@@ -101,7 +107,19 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 			}
 			else // (bool_loin==false && bool_proche==false)
 			{
+				if (bool_piece_proche==true)
+				{
+					situation.routes[i+2]=PIECE_PROCHE;
+				}
+				else if(bool_piece_loin==true) 
+				{	
+					situation.routes[i+2]=PIECE_LOIN;
+				}
+				else
+				{
 				situation.routes[i+2]=VIDE;
+				}
+
 			}
 
 		}

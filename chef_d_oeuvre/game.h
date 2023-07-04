@@ -20,7 +20,9 @@ typedef struct
 	TextureHandler textureHandler;
 	int deplacement_voiture;
 	SDL_Rect* rect_obstacle;
+	SDL_Rect* rect_piece;
 	int nbVoiture;
+	int nbPiece;
 	int vitesse;
 	int temps_deplacement;
 
@@ -34,12 +36,14 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre);
 
 
 int deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru , int nbVoiture);
+int deplacer_Piece(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru , int nbPiece);
 void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime);
 void liberer_game(Game* game);
 
 
 void game_afficher(const Game* game, SDL_Renderer* renderer,SDL_Rect* rect_fenetre);
 void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], SDL_Texture *textureObst[], int nombreVoiture);
+void afficher_Piece(SDL_Renderer* renderer, const SDL_Rect rect_piece[], SDL_Texture *textureObst[], int nbPiece);
 void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* rect_fenetre, int distance_parcourue);
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre,int vitesse);
 void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* coeur_gris, int vie, int vie_max, const SDL_Rect* rect_fenetre);

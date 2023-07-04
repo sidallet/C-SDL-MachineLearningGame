@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 typedef enum {
-        JOKER=-1, VIDE, LOIN, PROCHE // mur ?
+        JOKER=-1, VIDE, LOIN, PROCHE, PIECE_PROCHE,PIECE_LOIN // mur ?
 }EtatRoute;
 
 typedef struct 
