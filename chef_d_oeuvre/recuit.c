@@ -161,24 +161,26 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 	// }
 
 
-	double temperature = init_temperature(rect_fenetre)/4;
+	double temperature = init_temperature(rect_fenetre)/6;
 	printf("température initiale : %f\n", temperature);
-	double pente = temperature/nombre_iterations;
+	//double pente = temperature/nombre_iterations;
 	// afficheChemin(&chemin);
 	int scoreJeu = multi_boucle_ia(tabRegle, rect_fenetre, nb_parties);
 
 	int it = 0;
 
-	while (temperature<0.001) {
+	while (it<nombre_iterations) {
+	
 		int nouveux_score;
 		if (recuit_impl(&tabRegle, scoreJeu, temperature, &nouveux_score, rect_fenetre, nb_parties)) {
 			scoreJeu = nouveux_score;
 		}
-		it++;
 		if (it%(1+nombre_iterations/20) == 0) {
 			printf("Iteration : %d  Score : %d Température %f\n", it, scoreJeu/175, temperature);
 		}
-		temperature -= pente;
+		it++;
+		temperature = -pow(-temperature,0.995);
+		
 	}
 
 	printf("Score : %d\n", scoreJeu/175);
