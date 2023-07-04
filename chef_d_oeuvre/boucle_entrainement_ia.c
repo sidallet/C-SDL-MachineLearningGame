@@ -18,7 +18,6 @@ void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 	Observation observation = creerObservation(game,game->rect_obstacle,game->nbVoiture,fenetre);
 	
 	Decision decision = choisirRegle(&observation, tabRegle);
-
 	game->deplacement_voiture = decision;
 }
 

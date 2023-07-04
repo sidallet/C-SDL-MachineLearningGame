@@ -7,9 +7,11 @@
 #include <time.h>
 #include "game.h"
 
+#include "recuit.h"
+#include "regle.h"
+
 
 int main (int argc, char* argv[]) {
-
 
 	srand(time(NULL));
 	SDL_Window* window;
@@ -27,13 +29,14 @@ int main (int argc, char* argv[]) {
 	FILE* fichier = fopen("regleTest.txt", "r");
 	TabRegle tabRegle = chargerTabRegle(fichier);
 	fclose(fichier);
-	
-	time_t dep = clock();
-	for (size_t i=0; i<1000; ++i) {
-		boucle_ia(false, tabRegle, &rect_fenetre, NULL, NULL);
-	}
-	printf("%f\n", (clock()-dep)*1000.0/CLOCKS_PER_SEC);
 
+	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
+	
+	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
+	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
+	TabRegle tabRecuit = recuit(100000, &rect_fenetre, 104);
+	afficherTabRegle(stdout, tabRecuit);
+	//boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
 
 	clean_sdl(&window, &renderer);
 	return EXIT_SUCCESS;
