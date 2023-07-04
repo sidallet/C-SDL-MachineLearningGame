@@ -30,11 +30,12 @@ int main (int argc, char* argv[]) {
 	TabRegle tabRegle = chargerTabRegle(fichier);
 	fclose(fichier);
 
+
 	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
 	
 	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
-	TabRegle tabRecuit = recuit(10000, &rect_fenetre, 104);
+	TabRegle tabRecuit = recuit(100, &rect_fenetre, 104);
 	afficherTabRegle(stdout, tabRecuit);
 	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
 
