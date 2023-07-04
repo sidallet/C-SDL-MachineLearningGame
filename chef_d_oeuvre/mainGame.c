@@ -37,14 +37,14 @@ int main (int argc, char* argv[]) {
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
 
 
-	tabRecuit = recuit(500, &rect_fenetre, 104,tabRecuit);
+	tabRecuit = recuit(0, &rect_fenetre, 8*3,tabRecuit);
 
 	fichier = fopen("regleSauv.txt", "w");
 	afficherTabRegle(fichier,tabRecuit);
 	fclose(fichier);
 
 	afficherTabRegle(stdout, tabRecuit);
-//	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
+	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
 
 	clean_sdl(&window, &renderer);
 	return EXIT_SUCCESS;

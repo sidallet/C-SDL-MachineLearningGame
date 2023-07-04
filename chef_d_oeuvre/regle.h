@@ -22,7 +22,7 @@ typedef struct {
     int priorite;
 }Regle;
 
-#define NB_REGLES 12
+#define NB_REGLES 40
 typedef struct 
 {
     Regle regles[NB_REGLES]; 
