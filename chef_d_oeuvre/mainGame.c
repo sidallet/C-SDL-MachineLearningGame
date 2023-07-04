@@ -37,7 +37,7 @@ int main (int argc, char* argv[]) {
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
 
 
-	tabRecuit = recuit(100, &rect_fenetre, 104,tabRecuit);
+	tabRecuit = recuit(500, &rect_fenetre, 104,tabRecuit);
 
 	fichier = fopen("regleSauv.txt", "w");
 	afficherTabRegle(fichier,tabRecuit);

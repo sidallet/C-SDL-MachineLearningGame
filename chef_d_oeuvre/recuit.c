@@ -114,7 +114,7 @@ bool recuit_impl(TabRegle* tab, const int scoreTab, double temperature, int* nou
 	}
 	else {
 		float p = exp(-(float)(*nouveaux_score - scoreTab)/temperature);
-		if ((double)rand() /INT32_MAX < p) {
+		if ((double)rand() /RAND_MAX < p) {
 			*tab = nouvTab;
 			return true;	
 		}
@@ -137,7 +137,7 @@ double init_temperature(SDL_Rect * rect_fenetre) {
 		}
 	}
 
-	return score_max;
+	return -score_max;
 }
 
 /*
@@ -169,14 +169,14 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 
 	int it = 0;
 
-	while (temperature>0.001) {
+	while (temperature<0.001) {
 		int nouveux_score;
 		if (recuit_impl(&tabRegle, scoreJeu, temperature, &nouveux_score, rect_fenetre, nb_parties)) {
 			scoreJeu = nouveux_score;
 		}
 		it++;
 		if (it%(1+nombre_iterations/20) == 0) {
-			printf("Iteration : %d  Score : %d\n", it, scoreJeu/175);
+			printf("Iteration : %d  Score : %d Température %f\n", it, scoreJeu/175, temperature);
 		}
 		temperature -= pente;
 	}

@@ -1,5 +1,6 @@
 #include "boucle_entrainement_ia.h"
 #include "regle.h"
+#include <SDL2/SDL2_framerate.h>
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -28,6 +29,10 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 	Uint32 delta_time = 0;
 	if (!affichage_actif) {
 		delta_time = 16;
+	}
+	else {
+		SDL_initFramerate(fpsManager);
+		SDL_setFramerate(fpsManager, 60);
 	}
 
 	while (true) {
