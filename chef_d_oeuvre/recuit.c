@@ -155,16 +155,15 @@ void fisherYatesMelange(Chemin* chemin)
 }
 */
 
-TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties) {
+TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties,TabRegle tabRegle) {
 	// if (N <= 1) {
 	// 	return 0;
 	// }
-	TabRegle tabRegle;
+
 
 	double temperature = init_temperature(rect_fenetre);
 	printf("température initiale : %f\n", temperature);
 	double pente = temperature/nombre_iterations;
-	tabRegle = generer_solution_initiale();
 	// afficheChemin(&chemin);
 	int scoreJeu = multi_boucle_ia(tabRegle, rect_fenetre, nb_parties);
 
