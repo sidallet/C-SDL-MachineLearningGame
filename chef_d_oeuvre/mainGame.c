@@ -30,14 +30,14 @@ int main (int argc, char* argv[]) {
 
 	SDL_setFramerate(&fpsManager, 60);
 
-	FILE* fichier = fopen("regleTest.txt", "r");
+	FILE* fichier = fopen("regleTestNul.txt", "r");
 	TabRegle tabRegle = chargerTabRegle(fichier);
 	afficherTabRegle(stdout, tabRegle);
 	fclose(fichier);
 
 	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
-	boucle_ia(true, tab, &rect_fenetre, renderer, &fpsManager);
-
+	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
+	afficherTabRegle(stdout, recuit(5, &rect_fenetre, 100));
 
 
 	clean_sdl(&window, &renderer);

@@ -15,7 +15,7 @@
 TabRegle generer_solution_initiale();
 //void fisherYatesMelange(Chemin* chemin);
 
-//int recuit(Matrice matrice, int N, int nombre_iteration);
+TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties);
 
 
 #endif //VOYAGEUR_INCLUDED

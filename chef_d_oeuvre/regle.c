@@ -55,9 +55,7 @@ void afficherTabRegle(FILE* flux, const TabRegle tabRegle)
     for (int i = 0; i < NB_REGLES; i++)
     {
         afficherRegle(flux,tabRegle.regles[i]);
-        fprintf(flux,"\n");
-    }
-    
+    } 
 }
 
 

@@ -1,4 +1,6 @@
 #include "recuit.h"
+#include "boucle_entrainement_ia.h"
+#include "regle.h"
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_stdinc.h>
 #include <math.h>
@@ -56,9 +58,18 @@ TabRegle alterTabRegle(TabRegle tabRegle) {
 	return tabRegle;
 }
 
-bool recuit_impl(TabRegle* tab, const int scoreTab, double temperature, int* nouveaux_score, SDL_Rect * rect_fenetre) {
+int multi_boucle_ia(TabRegle tabRegle, SDL_Rect* rect_fenetre, size_t nb_parties) {
+	int sum = 0;
+	for (size_t i=0; i<nb_parties; ++i) {
+		sum += boucle_ia(false, tabRegle, rect_fenetre, NULL, NULL);
+	}
+	return sum / nb_parties;
+}
+
+
+bool recuit_impl(TabRegle* tab, const int scoreTab, double temperature, int* nouveaux_score, SDL_Rect * rect_fenetre, size_t nb_parties) {
 	TabRegle nouvTab = alterTabRegle(*tab);
-	*nouveaux_score = boucle_ia(false, nouvTab, rect_fenetre, NULL, NULL);
+	*nouveaux_score = multi_boucle_ia(nouvTab, rect_fenetre, nb_parties);
 	
 	if (-scoreTab > -(*nouveaux_score)) {
 		*tab = nouvTab; //chemin->val = nouveauChemin.val;
@@ -107,7 +118,7 @@ void fisherYatesMelange(Chemin* chemin)
 }
 */
 
-int recuit(int nombre_iterations,SDL_Rect * rect_fenetre) {
+TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties) {
 	// if (N <= 1) {
 	// 	return 0;
 	// }
@@ -118,16 +129,16 @@ int recuit(int nombre_iterations,SDL_Rect * rect_fenetre) {
 	double pente = temperature/nombre_iterations;
 	tabRegle = generer_solution_initiale();
 	// afficheChemin(&chemin);
-	int scoreJeu = boucle_ia(false, tabRegle, rect_fenetre, NULL, NULL);
+	int scoreJeu = multi_boucle_ia(tabRegle, rect_fenetre, nb_parties);
 
 	while (temperature>0.001) {
 		int nouveux_score;
-		if (recuit_impl(&tabRegle, scoreJeu, temperature, &nouveux_score, rect_fenetre)) {
+		if (recuit_impl(&tabRegle, scoreJeu, temperature, &nouveux_score, rect_fenetre, nb_parties)) {
 			scoreJeu = nouveux_score;
 		}
 			
 		temperature -= pente;
 	}
 
-	return scoreJeu;
+	return tabRegle;
 }
