@@ -25,7 +25,7 @@ void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fenetre, SDL_Renderer* renderer, FPSmanager* fpsManager) {
 	
 	Game game = new_game(affichage_actif, renderer, rect_fenetre);
-	
+		
 	Uint32 delta_time = 0;
 	if (!affichage_actif) {
 		delta_time = 16;
@@ -63,36 +63,34 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],const int nbVoiture,SDL_Rect * fenetre)
 {
 	Observation situation;
-	int i;
-	SDL_Rect rect_Loin[12];
-	SDL_Rect rect_proche[12];//x y largeur hauteur
 	bool bool_loin=false;
 	bool bool_proche=false;
-	int colonnes_voiture=game->voiture.x/(game->voiture.w+game->ecart_obstacles);
-	for(i=0;i<12;i++)
-	{
-		rect_Loin[i].x=(game->voiture.w + game->ecart_obstacles)*i;
-		rect_Loin[i].y=0;
-		rect_Loin[i].w=game->voiture.w;
-		rect_Loin[i].h=fenetre->h/2;
+	const int colonnes_voiture=game->voiture.x/(game->voiture.w+game->ecart_obstacles);
+	
+	SDL_Rect rect_loin = {
+		.x=(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.y=0,
+		.w=game->voiture.w,
+		.h=fenetre->h/2,
+	};
 
+	SDL_Rect rect_proche = {
+		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.y=fenetre->h/2,
+		.w=game->voiture.w,
+		.h=fenetre->h/2
+	};
 
-		rect_proche[i].x =(game->voiture.w + game->ecart_obstacles)*i;
-		rect_proche[i].y=fenetre->h/2;
-		rect_proche[i].w=game->voiture.w;
-		rect_proche[i].h=fenetre->h/2;
-	}
-
-	for (i=-2;i<3;i++)//les 5 colonnes à étudier de -2 à 2
+	for (int i=-2;i<3;i++)//les 5 colonnes à étudier de -2 à 2
 	{
 		if (colonnes_voiture+i<0 || colonnes_voiture+i>12)
 		{
-			situation.routes[i+2]=PROCHE;
+			situation.routes[i+2] = PROCHE;	
 		}
 		else
 		{
-		 	bool_loin=test_collision(&rect_Loin[colonnes_voiture+i],game->rect_obstacle,nbVoiture);    
-			bool_proche=test_collision(&rect_proche[colonnes_voiture+i],game->rect_obstacle,nbVoiture);	
+		 	bool_loin=test_collision(&rect_loin,game->rect_obstacle,nbVoiture);    
+			bool_proche=test_collision(&rect_proche,game->rect_obstacle,nbVoiture);	
 			if (bool_proche==true)
 			{
 				situation.routes[i+2]=PROCHE;
@@ -107,6 +105,8 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 			}
 
 		}
+		rect_loin.x += game->voiture.w + game->ecart_obstacles;
+		rect_proche.x += game->voiture.w + game->ecart_obstacles;
 	}
 	return situation;
 

@@ -44,7 +44,7 @@ int main (int argc, char* argv[]) {
 	fclose(fichier);
 
 	afficherTabRegle(stdout, tabRecuit);
-	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
+//	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
 
 	clean_sdl(&window, &renderer);
 	return EXIT_SUCCESS;
