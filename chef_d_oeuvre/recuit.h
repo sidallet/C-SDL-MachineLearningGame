@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include "regle.h"
+#include "boucle_entrainement_ia.h"
 
 #define RAYON_POINT 10
 #define NUM_THREADS 8

@@ -60,7 +60,7 @@ Chemin alterChemin(const Chemin* chemin) {
 	}
 	return nouveau_chemin;
 }
-
+*/
 
 bool recuit_impl(Chemin* chemin, const int longueurChemin, const Matrice matrice, double temperature, int* nouvelle_longeur) {
 	Chemin nouveauChemin = alterChemin(chemin);
@@ -85,21 +85,22 @@ bool recuit_impl(Chemin* chemin, const int longueurChemin, const Matrice matrice
 }
 
 
+double init_temperature(SDL_Rect * rect_fenetre) {
+	TabRegle tab = generer_solution_initiale();
+	int score_max = boucle_ia(false, tab, rect_fenetre, NULL, NULL);
 
-double init_temperature(Matrice matrice, size_t nombre_noeud) {
-	Chemin chemin = generer_solution_initiale(nombre_noeud);
-	int longeur_max = calculDistanceGrapheComplet(matrice, &chemin);
 	for (size_t i=0; i<20; ++i) {
-		fisherYatesMelange(&chemin);
-		int longeur = calculDistanceGrapheComplet(matrice, &chemin);
-		if (longeur > longeur_max) {
-			longeur_max = longeur;
+		tab = generer_solution_initiale();
+		int score = boucle_ia(false, tab, rect_fenetre, NULL, NULL);
+		if (-score > -score_max) { //comme le recuit est une minimisation on fait l'opposé du score (on veut maximiser)
+			score_max = score;
 		}
 	}
 
-	return longeur_max;
+	return score_max;
 }
 
+/*
 void fisherYatesMelange(Chemin* chemin)
 {
 	for (int i = 0; i < chemin->nombre_elems-1; i++)
@@ -112,21 +113,23 @@ void fisherYatesMelange(Chemin* chemin)
 	chemin->val[chemin->nombre_elems-1] = chemin->val[0];
 
 }
+*/
 
-int recuit(Matrice matrice, int N, int nombre_iterations) {
-	if (N <= 1) {
-		return 0;
-	}
+int recuit(Matrice matrice, int N, int nombre_iterations,SDL_Rect * rect_fenetre) {
+	// if (N <= 1) {
+	// 	return 0;
+	// }
+	TabRegle tabRegle;
 
 	double temperature = init_temperature(matrice, N);
 	printf("température initiale : %f\n", temperature);
 	double pente = temperature/nombre_iterations;
-	Chemin chemin = generer_solution_initiale(N);
-	afficheChemin(&chemin);
-	int longeurChemin = calculDistanceGrapheComplet(matrice, &chemin);
+	tabRegle = generer_solution_initiale();
+	// afficheChemin(&chemin);
+	int scoreJeu = boucle_ia(false, tab, rect_fenetre, NULL, NULL);
 
 	while (temperature>0.001) {
-		int nouvelle_longeur;
+		int nouveux_score;
 		if (recuit_impl(&chemin, longeurChemin, matrice, temperature, &nouvelle_longeur)) {
 			longeurChemin = nouvelle_longeur;
 		}
@@ -140,4 +143,3 @@ int recuit(Matrice matrice, int N, int nombre_iterations) {
 	free(chemin.val);
 	return longeurChemin;
 }
-*/
