@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "sdl.h": "c",
-        "texturehandler.h": "c"
+        "texturehandler.h": "c",
+        "sdl_stdinc.h": "c",
+        "time.h": "c"
     }
 }

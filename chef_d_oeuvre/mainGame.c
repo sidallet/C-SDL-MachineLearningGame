@@ -6,9 +6,16 @@
 #include <time.h>
 #include "game.h"
 
+#include "recuit.h"
+#include "regle.h"
+
 
 int main (int argc, char* argv[]) {
 
+	TabRegle tab = generer_solution_initiale();
+	printf("tab regle : i!i!i!i!i!i!ii!!ii!i! \n");
+	afficherTabRegle(stdout,tab);
+	printf("fin tab regle : i!i!i!i!i!i!ii!!ii!i! \n");
 
 	srand(time(NULL));
 	SDL_Window* window;
@@ -28,7 +35,9 @@ int main (int argc, char* argv[]) {
 	afficherTabRegle(stdout, tabRegle);
 	fclose(fichier);
 
-	boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
+	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
+	boucle_ia(true, tab, &rect_fenetre, renderer, &fpsManager);
+
 
 
 	clean_sdl(&window, &renderer);
