@@ -37,45 +37,37 @@ TabRegle generer_solution_initiale() {
 	return tabRegle;
 }
 
-/*
-Chemin alterChemin(const Chemin* chemin) {
-	int i = rand()%(chemin->nombre_elems-1);
-	int	j = 1 + rand()%(chemin->nombre_elems-2);
-	if (j == i) {
-		j = 1+(j+1)%(chemin->nombre_elems-2); 
-	}
 
+TabRegle alterTabRegle(TabRegle tabRegle) {
+	int iRegle = rand() % 12;
+	int random_num = rand() % 7;  // Génère un nombre aléatoire entre 0 et 14
 
-	Chemin nouveau_chemin = {
-		.val = malloc(sizeof(int)*chemin->nombre_elems),
-		.nombre_elems = chemin->nombre_elems,
-	};
-	
-	memcpy(nouveau_chemin.val, chemin->val, sizeof(int)*chemin->nombre_elems);
-	
-	nouveau_chemin.val[i] = chemin->val[j];
-	nouveau_chemin.val[j] = chemin->val[i];
-	if (i==0) {
-		nouveau_chemin.val[chemin->nombre_elems-1] = chemin->val[j];
+	if (random_num < 5) { //Modif observation
+		int iObs = rand() % 5;
+		int randObs = (rand() % 4)-1;
+		tabRegle.regles[iRegle].observ.routes[iObs] = randObs;
+	} else if (random_num == 5) { //Modif deplacement
+		int iDecis = (rand() % 3)-1;
+		tabRegle.regles[iRegle].decis = iDecis;
+	} else { //Modif priorité
+		int iPrio = (rand() % 10)+1;
+		tabRegle.regles[iRegle].priorite = iPrio;
 	}
-	return nouveau_chemin;
+	return tabRegle;
 }
-*/
 
-bool recuit_impl(Chemin* chemin, const int longueurChemin, const Matrice matrice, double temperature, int* nouvelle_longeur) {
-	Chemin nouveauChemin = alterChemin(chemin);
-	*nouvelle_longeur = calculDistanceGrapheComplet(matrice, &nouveauChemin);
+bool recuit_impl(TabRegle* tab, const int scoreTab, double temperature, int* nouveaux_score, SDL_Rect * rect_fenetre) {
+	TabRegle nouvTab = alterTabRegle(*tab);
+	*nouveaux_score = boucle_ia(false, nouvTab, rect_fenetre, NULL, NULL);
 	
-	if (longueurChemin > *nouvelle_longeur) {
-		free(chemin->val);
-		chemin->val = nouveauChemin.val;
+	if (-scoreTab > -(*nouveaux_score)) {
+		*tab = nouvTab; //chemin->val = nouveauChemin.val;
 		return true;
 	}
 	else {
-		float p = exp(-(float)(*nouvelle_longeur - longueurChemin)/temperature);
+		float p = exp(-(float)(*nouveaux_score - scoreTab)/temperature);
 		if ((double)rand() /INT32_MAX < p) {
-			free(chemin->val);
-			chemin->val = nouveauChemin.val;
+			*tab = nouvTab;
 			return true;	
 		}
 		else {
@@ -115,31 +107,27 @@ void fisherYatesMelange(Chemin* chemin)
 }
 */
 
-int recuit(Matrice matrice, int N, int nombre_iterations,SDL_Rect * rect_fenetre) {
+int recuit(int nombre_iterations,SDL_Rect * rect_fenetre) {
 	// if (N <= 1) {
 	// 	return 0;
 	// }
 	TabRegle tabRegle;
 
-	double temperature = init_temperature(matrice, N);
+	double temperature = init_temperature(rect_fenetre);
 	printf("température initiale : %f\n", temperature);
 	double pente = temperature/nombre_iterations;
 	tabRegle = generer_solution_initiale();
 	// afficheChemin(&chemin);
-	int scoreJeu = boucle_ia(false, tab, rect_fenetre, NULL, NULL);
+	int scoreJeu = boucle_ia(false, tabRegle, rect_fenetre, NULL, NULL);
 
 	while (temperature>0.001) {
 		int nouveux_score;
-		if (recuit_impl(&chemin, longeurChemin, matrice, temperature, &nouvelle_longeur)) {
-			longeurChemin = nouvelle_longeur;
+		if (recuit_impl(&tabRegle, scoreJeu, temperature, &nouveux_score, rect_fenetre)) {
+			scoreJeu = nouveux_score;
 		}
 			
 		temperature -= pente;
 	}
 
-	afficheChemin(&chemin);
-	printf("Longueur %d\n", longeurChemin);
-
-	free(chemin.val);
-	return longeurChemin;
+	return scoreJeu;
 }
