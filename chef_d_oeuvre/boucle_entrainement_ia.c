@@ -24,7 +24,7 @@ void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 
 int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fenetre, SDL_Renderer* renderer, FPSmanager* fpsManager) {
 	
-	Game game = new_game(renderer, rect_fenetre);
+	Game game = new_game(affichage_actif, renderer, rect_fenetre);
 	
 	Uint32 delta_time = 0;
 	if (!affichage_actif) {

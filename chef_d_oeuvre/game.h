@@ -28,7 +28,7 @@ typedef struct
 	TTF_Font* font;
 } Game;
 
-Game new_game(SDL_Renderer* renderer, SDL_Rect * rect);
+Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * rect);
 
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre);
 

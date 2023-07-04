@@ -30,7 +30,7 @@ int main (int argc, char* argv[]) {
 	
 	time_t dep = clock();
 	for (size_t i=0; i<1000; ++i) {
-		boucle_ia(false, tabRegle, &rect_fenetre, renderer, &fpsManager);
+		boucle_ia(false, tabRegle, &rect_fenetre, NULL, NULL);
 	}
 	printf("%f\n", (clock()-dep)*1000.0/CLOCKS_PER_SEC);
 

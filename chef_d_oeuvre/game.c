@@ -6,7 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 #define RAYON_POINT 10
 
-Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
+Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 	Game game = {
 		.distance_parcouru = 0,
 		.vie = 5,
@@ -14,14 +14,20 @@ Game new_game(SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.delai_invulnerabilite = -1,
 		.delai_invulnerabilite_max = 800,
 		.voiture = {0,fenetre->h-125,65,110},
-		.textureHandler = newTextureHandler(renderer),
 		.deplacement_voiture = 0, 
 		.nbVoiture = 10,
 		.vitesse = 100,
-		.font = charger_font(),	
 		.ecart_obstacles = 15,
 		.temps_deplacement = 0,
 	};
+
+	if (affichage_on) {
+		game.textureHandler = newTextureHandler(renderer);
+		game.font = charger_font();
+	}
+	else {
+		game.font = NULL;
+	}
 
 	game.voiture.x = (game.voiture.w + game.ecart_obstacles)*6;
 
@@ -183,8 +189,10 @@ void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int 
 }
 
 void liberer_game(Game* game) {
-	TTF_CloseFont(game->font);
-	TTF_Quit();
+	if (game->font != NULL) {
+		TTF_CloseFont(game->font);
+		TTF_Quit();
+	}
 	free(game->rect_obstacle);
 	freeTextureHandler(&game->textureHandler);
 }
