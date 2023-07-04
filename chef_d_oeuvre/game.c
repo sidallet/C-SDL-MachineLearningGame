@@ -40,11 +40,24 @@ Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 	for (int i = 0; i < game.nbVoiture ; i++) {
 		game.rect_obstacle[i] = rect_loin;
 	}
+	
+	for (int i = 0; i < game.nbPiece ; i++) {// init piece dehors
+		game.rect_piece[i] = rect_loin;
+	}
+
 
 	for (int i = 0; i < game.nbVoiture ; i++)
 	{
 		voitureAleatoire(&game, i, fenetre);
 	}
+
+
+	for (int i = 0; i < game.nbPiece ; i++)
+	{
+		voitureAleatoire(&game, i, fenetre); //ya un pb la parceque cette fonction fais que pour des obstacles
+	}
+
+
 
 	return game;
 }
@@ -114,7 +127,7 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 		}
 		if (test_collision(&game->voiture, game->rect_piece, game->nbPiece)) // test de la piece
 		{
-			game->distance_parcouru+=1000;
+			game->distance_parcouru+=100000; //on met un bonus si la voiture touche la piece
 		}
 	}
 	else {
@@ -157,6 +170,7 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
 	afficherRoute(renderer, game->textureHandler.textures[TEXTURE_Route], rect_fenetre, game->distance_parcouru);
 	afficher_obstacle(renderer,game->rect_obstacle, (SDL_Texture**)game->textureHandler.textures,game->nbVoiture);
+	afficher_Piece(renderer,game->rect_piece, (SDL_Texture**)game->textureHandler.textures,game->nbPiece);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15, game->delai_invulnerabilite);
 	if (game->vie <= 0) {
 		afficherFin(renderer, rect_fenetre, game->distance_parcouru/175, game->vitesse/4, game->font);
@@ -174,16 +188,8 @@ void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], S
 	SDL_SetRenderDrawColor(renderer, 255,0,0,255);
 	for (int i = 0; i < nombreVoiture; i++)
 	{
-		
 		SDL_RenderCopyEx(renderer,textureObst[i%4],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
-	}
-	int alea = (rand()%10)+1;
-	if (alea==1)//une chance sur 10 de mettre une piece
-	{
-				SDL_RenderCopyEx(renderer,textureObst[8],NULL,&rect_obstacle[0],0,NULL,SDL_FLIP_VERTICAL);
-	}
-	
-	
+	}	
 }
 
 void afficher_Piece(SDL_Renderer* renderer, const SDL_Rect rect_piece[], SDL_Texture *TEXTURE_Piece[], int nbPiece)
@@ -193,7 +199,6 @@ void afficher_Piece(SDL_Renderer* renderer, const SDL_Rect rect_piece[], SDL_Tex
 	{
 		SDL_RenderCopyEx(renderer,TEXTURE_Piece[8],NULL,&rect_piece[i],0,NULL,SDL_FLIP_VERTICAL);
 	}
-	
 }
 
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int vitesse){
@@ -273,7 +278,7 @@ int deplacer_Piece(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int dist
 
 		if(game->rect_piece[i].y > rect_fenetre->h)
 		{
-			voitureAleatoire(game,i,rect_fenetre);
+			voitureAleatoire(game,i,rect_fenetre);//je pense ya un pb ici :i:i:i:i:i:i:i:i:i:i:i:i:i:i
 		}
 	}
 	return vitesse;
