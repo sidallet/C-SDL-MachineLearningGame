@@ -2,9 +2,16 @@ image: didstopia/sdl2
 
 stages:
     - build
+    - test
 
 build:
     stage: build
     script:
         - "cd chef_d_oeuvre"        
         - "make"
+
+test:
+    stage: test
+    script:
+        - "cd chef_d_oeuvre"
+        - "make test"
