@@ -17,8 +17,9 @@ void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 		return; // En déplacement: pas de decision
 	}
 	Observation observation = creerObservation(game,game->rect_obstacle,game->nbVoiture,fenetre);
+	ObservationPiece observationPiece = creerObservationPiece(game, fenetre);
 	
-	Decision decision = choisirRegle(&observation, tabRegle);
+	Decision decision = choisirRegle(&observation,&observationPiece ,tabRegle);
 	game->deplacement_voiture = decision;
 }
 
@@ -60,6 +61,7 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 
 	liberer_game(&game);
 }
+
 Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],const int nbVoiture,SDL_Rect * fenetre)
 {
 	Observation situation;
@@ -142,14 +144,95 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 
 }
 
+ObservationPiece creerObservationPiece(const Game* game, SDL_Rect * fenetre)
+{
+	ObservationPiece situationPiece;
+	situationPiece.presence = VIDE;
+	situationPiece.colonne = 0;
+	bool bool_loin=false;
+	bool bool_moyen=false;
+	bool bool_proche=false;
+	bool bool_contact=false;
+	const int colonnes_voiture=game->voiture.x/(game->voiture.w+game->ecart_obstacles);
+	
+	SDL_Rect rect_loin = { //Rect en haut de la fenetre
+		.x=(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.y=0,
+		.w=game->voiture.w,
+		.h=fenetre->h/4,
+	};
+
+	SDL_Rect rect_moyen = { //Rect en dessous du rect_loin
+		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.y=fenetre->h/4,
+		.w=game->voiture.w,
+		.h=fenetre->h/4
+	};
+
+	SDL_Rect rect_proche = { //Rect en dessous du milieu
+		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.y=fenetre->h/2,
+		.w=game->voiture.w,
+		.h=fenetre->h/4
+	};
+
+	SDL_Rect rect_contact = { //Rect tout en bas
+		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.y=(3*fenetre->h)/4,
+		.w=game->voiture.w,
+		.h=fenetre->h/4
+	};
+
+	for (int i=-2;i<3;i++)//les 5 colonnes à étudier de -2 à 2
+	{
+		if (colonnes_voiture+i<0 || colonnes_voiture+i>12)
+		{
+			continue;	
+		}
+		else
+		{
+		 	bool_loin=test_collisionPiece(&rect_loin,game->rect_piece);   
+			bool_moyen=test_collisionPiece(&rect_loin,game->rect_piece);
+			bool_proche=test_collisionPiece(&rect_loin,game->rect_piece);	
+			bool_contact=test_collisionPiece(&rect_loin,game->rect_piece);	
+			if (bool_contact==true) //La voiture est tres proche
+			{
+				situationPiece.presence = CONTACT;
+				situationPiece.colonne = i;
+			}
+			else if(bool_proche==true) //La voiture est proche
+			{
+				situationPiece.presence = PROCHE;
+				situationPiece.colonne = i;
+			}
+			else if(bool_moyen==true) //La voiture est assez loin
+			{
+				situationPiece.presence = MOYEN;
+				situationPiece.colonne = i;
+			}
+			else if(bool_loin==true) //La voiture est très loin
+			{
+				situationPiece.presence = LOIN;
+				situationPiece.colonne = i;
+			}
+
+		}
+		rect_loin.x += game->voiture.w + game->ecart_obstacles;
+		rect_proche.x += game->voiture.w + game->ecart_obstacles;
+		rect_contact.x += game->voiture.w + game->ecart_obstacles;
+		rect_moyen.x += game->voiture.w + game->ecart_obstacles;
+	}
+	return situationPiece;
+
+}
 
 
-Decision choisirRegle(const Observation* observation, const TabRegle* tabRegle) {
+Decision choisirRegle(const Observation* observation, const ObservationPiece* observationPiece,const TabRegle* tabRegle) {
 	// Selection
 	size_t indice_regles_match[NB_REGLES];
 	size_t nb_regles_match = 0;
 	for (size_t i=0; i<NB_REGLES; ++i) {
-		if (observation_match(*observation, tabRegle->regles[i].observ)) {
+		if (observation_match(*observation, tabRegle->regles[i].observ) && observationPiece_match(*observationPiece, tabRegle->regles[i].obsPiece) ) {
 			indice_regles_match[nb_regles_match] = i;
 			nb_regles_match++;
 		}	
@@ -184,5 +267,23 @@ bool observation_match(const Observation obs1, const Observation obs2) {
 	}
 
 	return true;
+}
+
+bool observationPiece_match(const ObservationPiece obs1, const ObservationPiece obs2) {
+	if(obs1.presence == JOKER || obs2.presence == JOKER)
+	{
+		return obs1.colonne==obs2.colonne;
+	}
+	if(obs1.presence != obs2.presence)
+	{
+		return false;
+	}
+
+	if(obs1.presence == VIDE)
+	{
+		return false;
+	}
+	return obs1.colonne == obs2.colonne;
+
 }
 

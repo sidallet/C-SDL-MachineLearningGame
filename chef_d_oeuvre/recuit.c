@@ -51,7 +51,7 @@ int rand_dif(int base, int mini, int maxi) {
 
 TabRegle alterTabRegle(TabRegle tabRegle) {
 	int iRegle = rand() % NB_REGLES;
-	int random_num = rand() % 7;  // Génère un nombre aléatoire entre 0 et 6 
+	int random_num = rand() % 9;  // Génère un nombre aléatoire entre 0 et 6 
 
 	if (random_num < 5) { //Modif observation
 		int iObs = rand() % 5;
@@ -59,9 +59,16 @@ TabRegle alterTabRegle(TabRegle tabRegle) {
 		tabRegle.regles[iRegle].observ.routes[iObs] = rand_dif(observ, -1, 4);
 	} else if (random_num == 5) { //Modif deplacement
 		tabRegle.regles[iRegle].decis = rand_dif(tabRegle.regles[iRegle].decis, -1, 1);
-	} else { //Modif priorité
+	} else if (random_num == 6){ //Modif priorité
 		tabRegle.regles[iRegle].priorite = rand_dif(tabRegle.regles[iRegle].priorite, 1, 10);
 	}
+	else if (random_num == 7) {
+		tabRegle.regles[iRegle].obsPiece.colonne = rand_dif(tabRegle.regles[iRegle].obsPiece.colonne, -2, 2);
+	}
+	else {
+		tabRegle.regles[iRegle].obsPiece.presence = rand_dif(tabRegle.regles[iRegle].obsPiece.presence, -1, 4);
+	}
+
 	return tabRegle;
 }
 

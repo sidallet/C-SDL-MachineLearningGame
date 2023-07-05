@@ -141,7 +141,6 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 			game->delai_invulnerabilite = game->delai_invulnerabilite_max;
 		}
 		if (test_collisionPiece(&game->voiture, game->rect_piece)) {
-			printf("PIECE COLLISION ii!i!i!i!i!i!i!i!\n");
 			game->nbPieceRamass++;
 			pieceAleatoire(game,rect_fenetre);
 		}
@@ -151,7 +150,7 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 	}
 }
 
-int calculerScore(Game * game)
+int calculerScore(const Game * game)
 {
 	return game->distance_parcouru + (game->nbPieceRamass*100)*175;
 }
@@ -229,7 +228,6 @@ void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int 
 	sprintf(vitesse_char, "%d KM/H", vitesse);
 
 	char score[25];
-	printf("score calcul  %d!i!i!i!i!i!i!i!i!i\n", dist/175);
 	sprintf(score, "%d POINTS",dist/175);
 
 	stringRGBA(renderer, rect_fenetre->w-90,10, vitesse_char, 0, 0, 20, 255);  //affichage texte

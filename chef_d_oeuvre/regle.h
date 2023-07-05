@@ -18,7 +18,7 @@ typedef struct
 typedef struct 
 {
     EtatRoute presence;
-    int route;
+    int colonne; //-2 à 2 (relatif à la voiture)
 }ObservationPiece;
 
 
@@ -28,6 +28,7 @@ typedef enum {
 
 typedef struct {
     Observation observ;
+    ObservationPiece obsPiece;
     Decision decis;
     int priorite;
 }Regle;
@@ -40,6 +41,7 @@ typedef struct
 
 void afficherRegle(FILE* flux, const Regle regle);
 void afficherObservation(FILE* flux, const Observation observation);
+void afficherObservationPiece(FILE* flux, const ObservationPiece obsPiece);
 
 Regle chargerRegle(FILE* flux);
 TabRegle chargerTabRegle(FILE* flux);

@@ -3,12 +3,14 @@
 
 Regle chargerRegle(FILE* flux) {
 	Regle regle;
-	fscanf(flux, "[%d %d %d %d %d] -> %d (%d)", 
+	fscanf(flux, "[%d %d %d %d %d][%d %d] -> %d (%d)", 
 			&regle.observ.routes[0],
 			&regle.observ.routes[1],
 			&regle.observ.routes[2],
 			&regle.observ.routes[3],
 			&regle.observ.routes[4],
+            &regle.obsPiece.colonne,
+            &regle.obsPiece.presence,
 			(int*)&regle.decis,
 			&regle.priorite
 	);	
@@ -44,9 +46,14 @@ void afficherObservation(FILE* flux, const Observation observation) {
     fprintf(flux, "]");
 }
 
+void afficherObservationPiece(FILE* flux, const ObservationPiece obsPiece) {
+    fprintf(flux, "[%d %d]",obsPiece.colonne,obsPiece.presence);
+}
+
 void afficherRegle(FILE* flux, const Regle regle)
 {
     afficherObservation(flux,regle.observ);
+    afficherObservationPiece(flux,regle.obsPiece);
     fprintf(flux, " -> %d (%d)\n",regle.decis, regle.priorite);
 }
 
