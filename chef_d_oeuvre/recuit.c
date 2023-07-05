@@ -152,7 +152,7 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 
 	while (it<nombre_iterations) {
 		int nouveux_score;
-		if (recuit_impl(&tabRegle, scoreJeu, temperature, &nouveux_score, rect_fenetre, nb_parties)) {
+		if (recuit_impl(&tabRegle, scoreJeu, temperature-300, &nouveux_score, rect_fenetre, nb_parties)) {
 			scoreJeu = nouveux_score;
 		}
 		if (it%(1+nombre_iterations/20) == 0) {
