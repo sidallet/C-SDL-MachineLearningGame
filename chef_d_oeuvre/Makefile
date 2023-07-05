@@ -7,7 +7,7 @@ EXE_TEST=test.out
 
 CC=gcc
 
-CFLAGS:=-std=c11 -Wall -Wextra -MMD $(sdl2-config --cflags) 
+CFLAGS:=-std=c11 -Wall -Wextra -MMD $(sdl2-config --cflags)
 
 BUILD=debug
 
