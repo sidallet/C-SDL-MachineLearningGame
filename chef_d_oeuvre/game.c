@@ -135,14 +135,14 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 	deplacer_piece(game,rect_fenetre,deltatime,game->distance_parcouru);
 
 	//Gerer collision ici
+		if (test_collisionPiece(&game->voiture, game->rect_piece)) {
+			game->nbPieceRamass++;
+			pieceAleatoire(game,rect_fenetre);
+		}
 	if (game->delai_invulnerabilite<0) {
 		if (test_collision(&game->voiture, game->rect_obstacle, game->nbVoiture)) {
 			game->vie--;
 			game->delai_invulnerabilite = game->delai_invulnerabilite_max;
-		}
-		if (test_collisionPiece(&game->voiture, game->rect_piece)) {
-			game->nbPieceRamass++;
-			pieceAleatoire(game,rect_fenetre);
 		}
 	}
 	else {
