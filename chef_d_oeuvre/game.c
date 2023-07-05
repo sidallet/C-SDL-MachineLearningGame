@@ -95,7 +95,7 @@ void pieceAleatoire(Game * game, SDL_Rect * fenetre)
 		int xAlea = rand() % 12;
 		
 		piece.x = xAlea * (piece.w + game->ecart_obstacles);
-		piece.y = -(yAlea+100) - game->ecart_obstacles;
+		piece.y = -(yAlea+2000) - game->ecart_obstacles;
 		
 		positionValide = true;
         
@@ -152,7 +152,7 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 
 int calculerScore(const Game * game)
 {
-	return game->distance_parcouru + (game->nbPieceRamass*100)*175;
+	return game->distance_parcouru + (game->nbPieceRamass*150)*175;
 }
 
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
