@@ -104,8 +104,9 @@ int multi_boucle_ia(TabRegle tabRegle, SDL_Rect* rect_fenetre, size_t nb_parties
 }
 
 
-bool recuit_impl(TabRegle* tab, const int scoreTab, double temperature, int* nouveaux_score, SDL_Rect * rect_fenetre, size_t nb_parties) {
+bool recuit_impl(TabRegle* tab, const int scoreTab, double temperature, int* nouveaux_score, SDL_Rect * rect_fenetre, size_t nb_parties, unsigned seed_base) {
 	TabRegle nouvTab = alterTabRegle(*tab);
+	srand(seed_base);
 	*nouveaux_score = multi_boucle_ia(nouvTab, rect_fenetre, nb_parties);
 	
 	if (-scoreTab > -(*nouveaux_score)) {
@@ -148,6 +149,9 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 	printf("température initiale : %f\n", temperature);
 	// afficheChemin(&chemin);
 	double raison = 0.997;//pow(-temperature, (1.0/nombre_iterations)-1);
+	
+	unsigned int seed_base = rand();
+	srand(seed_base);
 	int scoreJeu = multi_boucle_ia(tabRegle, rect_fenetre, nb_parties);
 	printf("raison : %f\n", raison);
 	int it = 0;
@@ -155,7 +159,7 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 
 	while (it<nombre_iterations) {
 		int nouveux_score;
-		if (recuit_impl(&tabRegle, scoreJeu, temperature-temperature_min, &nouveux_score, rect_fenetre, nb_parties)) {
+		if (recuit_impl(&tabRegle, scoreJeu, temperature-temperature_min, &nouveux_score, rect_fenetre, nb_parties, seed_base)) {
 			scoreJeu = nouveux_score;
 		}
 		if (it%(1+nombre_iterations/20) == 0) {
