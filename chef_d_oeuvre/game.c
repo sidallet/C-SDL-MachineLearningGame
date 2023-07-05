@@ -352,10 +352,7 @@ bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], con
 }
 
 bool test_collisionPiece(const SDL_Rect* voiture, const SDL_Rect rect_piece) {
-		if (SDL_HasIntersection(voiture, &rect_piece)) {
-			return true;
-		}	
-	return false;
+		return SDL_HasIntersection(voiture, &rect_piece);
 }
 
 void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse, TTF_Font* font) {
