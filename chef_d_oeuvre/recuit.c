@@ -170,7 +170,7 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 			printf("Iteration : %d  Score : %d Température %f\n", it, scoreJeu/175, temperature-temperature_min);
 		}
 		it++;
-		if (it%6 == 0) {
+		if (it%10 == 0) {
 			if (last_checkscore == scoreJeu) {
 				temperature -= 600;
 			}
