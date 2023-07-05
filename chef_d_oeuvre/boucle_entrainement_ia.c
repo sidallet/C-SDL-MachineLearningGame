@@ -19,7 +19,6 @@ void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 	}
 	Observation observation = creerObservation(game,game->rect_obstacle,game->nbVoiture,fenetre);
 	ObservationPiece observationPiece = creerObservationPiece(game, fenetre);
-	
 	Decision decision = choisirRegle(&observation,&observationPiece ,tabRegle);
 	game->deplacement_voiture = decision;
 }
@@ -193,9 +192,9 @@ ObservationPiece creerObservationPiece(const Game* game, SDL_Rect * fenetre)
 		else
 		{
 		 	bool_loin=test_collisionPiece(&rect_loin,game->rect_piece);   
-			bool_moyen=test_collisionPiece(&rect_loin,game->rect_piece);
-			bool_proche=test_collisionPiece(&rect_loin,game->rect_piece);	
-			bool_contact=test_collisionPiece(&rect_loin,game->rect_piece);	
+			bool_moyen=test_collisionPiece(&rect_moyen,game->rect_piece);
+			bool_proche=test_collisionPiece(&rect_proche,game->rect_piece);	
+			bool_contact=test_collisionPiece(&rect_contact,game->rect_piece);	
 			if (bool_contact==true) //La voiture est tres proche
 			{
 				situationPiece.presence = CONTACT;
@@ -246,12 +245,12 @@ Decision choisirRegle(const Observation* observation, const ObservationPiece* ob
 	// Tirage
 	int cumul_priorite = 0;
 	for (size_t i=0; i<nb_regles_match; ++i) {
-		cumul_priorite += pow(tabRegle->regles[indice_regles_match[i]].priorite, 2);
+		cumul_priorite += pow(tabRegle->regles[indice_regles_match[i]].priorite, 4);
 	}
 
 	float alea = ((float)rand()) / RAND_MAX;
 	for (size_t i=0; i<nb_regles_match; ++i) {
-		float probaI = pow(((float)tabRegle->regles[indice_regles_match[i]].priorite), 2) / cumul_priorite;
+		float probaI = pow(((float)tabRegle->regles[indice_regles_match[i]].priorite), 4) / cumul_priorite;
 		if (alea < probaI) {
 			return tabRegle->regles[indice_regles_match[i]].decis;
 		}
@@ -289,6 +288,5 @@ bool observationPiece_match(const ObservationPiece obs1, const ObservationPiece 
 		return false;
 	}
 	return obs1.colonne == obs2.colonne;
-
 }
 
