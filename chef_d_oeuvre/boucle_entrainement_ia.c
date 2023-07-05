@@ -200,21 +200,25 @@ ObservationPiece creerObservationPiece(const Game* game, SDL_Rect * fenetre)
 			{
 				situationPiece.presence = CONTACT;
 				situationPiece.colonne = i;
+				break;
 			}
 			else if(bool_proche==true) //La voiture est proche
 			{
 				situationPiece.presence = PROCHE;
 				situationPiece.colonne = i;
+				break;
 			}
 			else if(bool_moyen==true) //La voiture est assez loin
 			{
 				situationPiece.presence = MOYEN;
 				situationPiece.colonne = i;
+				break;
 			}
 			else if(bool_loin==true) //La voiture est très loin
 			{
 				situationPiece.presence = LOIN;
 				situationPiece.colonne = i;
+				break;
 			}
 
 		}
