@@ -86,7 +86,7 @@ void pieceAleatoire(Game * game, SDL_Rect * fenetre)
     bool positionValide = false;
 
     while (!positionValide) {
-        int yAlea = rand() % 100;
+        int yAlea = rand() % 1500;
         
 		piece.w = 65;
 		piece.h = 65;
@@ -94,7 +94,7 @@ void pieceAleatoire(Game * game, SDL_Rect * fenetre)
 		int xAlea = rand() % 12;
 		
 		piece.x = xAlea * (piece.w + game->ecart_obstacles);
-		piece.y = -(yAlea+100) - game->ecart_obstacles;
+		piece.y = -(yAlea+1000) - game->ecart_obstacles;
 		
 		positionValide = true;
         
@@ -140,7 +140,9 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 			game->delai_invulnerabilite = game->delai_invulnerabilite_max;
 		}
 		if (test_collisionPiece(&game->voiture, game->rect_piece)) {
+			printf("PIECE COLLISION ii!i!i!i!i!i!i!i!\n");
 			game->nbPieceRamass;
+			pieceAleatoire(game,rect_fenetre);
 		}
 	}
 	else {
@@ -148,6 +150,10 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 	}
 }
 
+int calculerScore(Game * game)
+{
+	return game->distance_parcouru += (game->nbPieceRamass*100)*175;
+}
 
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 
