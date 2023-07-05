@@ -60,6 +60,8 @@ void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite
 bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], const int nbVoiture);
 bool test_collisionPiece(const SDL_Rect* voiture, const SDL_Rect rect_piece);
 
+int calculerScore(const Game * game);
+
 TTF_Font* charger_font();
 
 #endif //GAME_INCLUDED

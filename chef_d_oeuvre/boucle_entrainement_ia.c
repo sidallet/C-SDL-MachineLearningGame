@@ -1,4 +1,5 @@
 #include "boucle_entrainement_ia.h"
+#include "game.h"
 #include "regle.h"
 #include <SDL2/SDL2_framerate.h>
 #include <stdbool.h>
@@ -50,7 +51,7 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 		game_update(&game, rect_fenetre, delta_time);
 		
 		if (game.vie == 0 || game.distance_parcouru >= 1000000) {
-			return game.distance_parcouru;
+			return calculerScore(&game);
 		}
 
 		if (affichage_actif) {
