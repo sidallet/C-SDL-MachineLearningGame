@@ -142,14 +142,8 @@ double init_temperature(SDL_Rect * rect_fenetre) {
 
 
 TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties,TabRegle tabRegle) {
-<<<<<<< HEAD
-	// if (N <= 1) {
-	// 	return 0;
-	// }
 
 	double temperature_min = 600;
-=======
->>>>>>> 79141a4196a25fdb3950aad79895d623b97e1212
 	double temperature = init_temperature(rect_fenetre);
 	printf("température initiale : %f\n", temperature);
 	// afficheChemin(&chemin);
