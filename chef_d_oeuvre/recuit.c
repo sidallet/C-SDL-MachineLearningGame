@@ -55,11 +55,11 @@ TabRegle alterTabRegle(TabRegle tabRegle) {
 
 	if (random_num < 5) { //Modif observation
 		int iObs = rand() % 5;
-		if (rand()%3) {
+		int observ = tabRegle.regles[iRegle].observ.routes[iObs];
+		if (observ!=JOKER && rand()%3) {
 			tabRegle.regles[iRegle].observ.routes[iObs] = JOKER;
 			return tabRegle;
 		}
-		int observ = tabRegle.regles[iRegle].observ.routes[iObs];
 		tabRegle.regles[iRegle].observ.routes[iObs] = rand_dif(observ, -1, 4);
 	} else if (random_num == 5) { //Modif deplacement
 		tabRegle.regles[iRegle].decis = rand_dif(tabRegle.regles[iRegle].decis, -1, 1);
@@ -70,7 +70,7 @@ TabRegle alterTabRegle(TabRegle tabRegle) {
 		tabRegle.regles[iRegle].obsPiece.colonne = rand_dif(tabRegle.regles[iRegle].obsPiece.colonne, -2, 2);
 	}
 	else {
-		if (rand()%3) {
+		if (tabRegle.regles[iRegle].obsPiece.presence!=JOKER && rand()%3) {
 			tabRegle.regles[iRegle].obsPiece.presence = JOKER;
 		}
 		else {
@@ -163,7 +163,7 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 	double temperature = init_temperature(rect_fenetre)/6;
 	printf("température initiale : %f\n", temperature);
 	// afficheChemin(&chemin);
-	double raison = 0.997;//pow(-temperature, (1.0/nombre_iterations)-1);
+	double raison = 0.995;//pow(-temperature, (1.0/nombre_iterations)-1);
 	int scoreJeu = multi_boucle_ia(tabRegle, rect_fenetre, nb_parties);
 	printf("raison : %f\n", raison);
 	int it = 0;
@@ -179,7 +179,7 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 			printf("Iteration : %d  Score : %d Température %f\n", it, scoreJeu/175, temperature-temperature_min);
 		}
 		it++;
-		if (it%10 == 0) {
+		if (it%60 == 0) {
 			if (last_checkscore == scoreJeu) {
 				temperature -= 600;
 			}
