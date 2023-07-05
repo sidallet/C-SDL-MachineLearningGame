@@ -55,6 +55,10 @@ TabRegle alterTabRegle(TabRegle tabRegle) {
 
 	if (random_num < 5) { //Modif observation
 		int iObs = rand() % 5;
+		if (rand()%3) {
+			tabRegle.regles[iRegle].observ.routes[iObs] = JOKER;
+			return tabRegle;
+		}
 		int observ = tabRegle.regles[iRegle].observ.routes[iObs];
 		tabRegle.regles[iRegle].observ.routes[iObs] = rand_dif(observ, -1, 4);
 	} else if (random_num == 5) { //Modif deplacement
@@ -66,7 +70,12 @@ TabRegle alterTabRegle(TabRegle tabRegle) {
 		tabRegle.regles[iRegle].obsPiece.colonne = rand_dif(tabRegle.regles[iRegle].obsPiece.colonne, -2, 2);
 	}
 	else {
-		tabRegle.regles[iRegle].obsPiece.presence = rand_dif(tabRegle.regles[iRegle].obsPiece.presence, -1, 4);
+		if (rand()%3) {
+			tabRegle.regles[iRegle].obsPiece.presence = JOKER;
+		}
+		else {
+			tabRegle.regles[iRegle].obsPiece.presence = rand_dif(tabRegle.regles[iRegle].obsPiece.presence, -1, 4);
+		}
 	}
 
 	return tabRegle;
