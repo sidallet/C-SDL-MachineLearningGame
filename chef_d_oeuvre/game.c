@@ -18,6 +18,7 @@ Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.nbVoiture = 10,
 		.vitesse = 100,
 		.ecart_obstacles = 15,
+		.nbPieceRamass = 0,
 		.temps_deplacement = 0,
 	};
 
@@ -86,7 +87,7 @@ void pieceAleatoire(Game * game, SDL_Rect * fenetre)
     bool positionValide = false;
 
     while (!positionValide) {
-        int yAlea = rand() % 1500;
+        int yAlea = rand() % 100;
         
 		piece.w = 65;
 		piece.h = 65;
@@ -94,7 +95,7 @@ void pieceAleatoire(Game * game, SDL_Rect * fenetre)
 		int xAlea = rand() % 12;
 		
 		piece.x = xAlea * (piece.w + game->ecart_obstacles);
-		piece.y = -(yAlea+1000) - game->ecart_obstacles;
+		piece.y = -(yAlea+100) - game->ecart_obstacles;
 		
 		positionValide = true;
         
@@ -141,7 +142,7 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 		}
 		if (test_collisionPiece(&game->voiture, game->rect_piece)) {
 			printf("PIECE COLLISION ii!i!i!i!i!i!i!i!\n");
-			game->nbPieceRamass;
+			game->nbPieceRamass++;
 			pieceAleatoire(game,rect_fenetre);
 		}
 	}
@@ -152,7 +153,7 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 
 int calculerScore(Game * game)
 {
-	return game->distance_parcouru += (game->nbPieceRamass*100)*175;
+	return game->distance_parcouru + (game->nbPieceRamass*100)*175;
 }
 
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
@@ -192,10 +193,10 @@ void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fene
 	afficher_piece(renderer,game->rect_piece, game->textureHandler.textures[8]);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15, game->delai_invulnerabilite);
 	if (game->vie <= 0) {
-		afficherFin(renderer, rect_fenetre, game->distance_parcouru/175, game->vitesse/4, game->font);
+		afficherFin(renderer, rect_fenetre, calculerScore(game)/175, game->vitesse/4, game->font);
 		return;
 	}
-	afficher_texte(renderer, game->distance_parcouru, rect_fenetre, game->vitesse);
+	afficher_texte(renderer, calculerScore(game), rect_fenetre, game->vitesse);
 	afficherVie(renderer, game->textureHandler.textures[TEXTURE_Coeur_rouge], game->textureHandler.textures[TEXTURE_Coeur_gris], game->vie, game->vie_max, rect_fenetre);
 
 	afficherEffetDegats(renderer, game->delai_invulnerabilite, game->delai_invulnerabilite_max, rect_fenetre);
@@ -228,7 +229,8 @@ void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int 
 	sprintf(vitesse_char, "%d KM/H", vitesse);
 
 	char score[25];
-	sprintf(score, "%d POINTS", dist/175);
+	printf("score calcul  %d!i!i!i!i!i!i!i!i!i\n", dist/175);
+	sprintf(score, "%d POINTS",dist/175);
 
 	stringRGBA(renderer, rect_fenetre->w-90,10, vitesse_char, 0, 0, 20, 255);  //affichage texte
 	stringRGBA(renderer, rect_fenetre->w-90,20, score, 0, 0, 20, 255);  //affichage texte

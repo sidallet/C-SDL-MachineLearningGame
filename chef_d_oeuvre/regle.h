@@ -2,6 +2,8 @@
 #define REGLE_H
 #include <stdio.h>
 
+//------------------------------------------------------------------
+
 typedef enum {
         JOKER=-1, VIDE, LOIN, MOYEN, PROCHE, CONTACT,  // mur ?
 }EtatRoute;
@@ -10,6 +12,14 @@ typedef struct
 {
     EtatRoute routes[5]; //Gauchegauche, gauche, centre, droite, droitedroite
 }Observation;
+
+//------------------------------------------------------------------
+
+typedef struct 
+{
+    EtatRoute presence;
+    int route;
+}ObservationPiece;
 
 
 typedef enum {
