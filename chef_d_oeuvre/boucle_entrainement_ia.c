@@ -64,22 +64,40 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 {
 	Observation situation;
 	bool bool_loin=false;
+	bool bool_moyen=false;
 	bool bool_proche=false;
+	bool bool_contact=false;
 	const int colonnes_voiture=game->voiture.x/(game->voiture.w+game->ecart_obstacles);
 	
-	SDL_Rect rect_loin = {
+	SDL_Rect rect_loin = { //Rect en haut de la fenetre
 		.x=(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
 		.y=0,
 		.w=game->voiture.w,
-		.h=fenetre->h/2,
+		.h=fenetre->h/4,
 	};
 
-	SDL_Rect rect_proche = {
+	SDL_Rect rect_moyen = { //Rect en dessous du rect_loin
+		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.y=fenetre->h/4,
+		.w=game->voiture.w,
+		.h=fenetre->h/4
+	};
+
+	SDL_Rect rect_proche = { //Rect en dessous du milieu
 		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
 		.y=fenetre->h/2,
 		.w=game->voiture.w,
-		.h=fenetre->h/2
+		.h=fenetre->h/4
 	};
+
+	SDL_Rect rect_contact = { //Rect tout en bas
+		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.y=(3*fenetre->h)/4,
+		.w=game->voiture.w,
+		.h=fenetre->h/4
+	};
+
+	
 
 	for (int i=-2;i<3;i++)//les 5 colonnes à étudier de -2 à 2
 	{
@@ -89,17 +107,27 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 		}
 		else
 		{
-		 	bool_loin=test_collision(&rect_loin,game->rect_obstacle,nbVoiture);    
+		 	bool_loin=test_collision(&rect_loin,game->rect_obstacle,nbVoiture);   
+			bool_moyen=test_collision(&rect_moyen,game->rect_obstacle,nbVoiture); 
 			bool_proche=test_collision(&rect_proche,game->rect_obstacle,nbVoiture);	
-			if (bool_proche==true)
+			bool_contact=test_collision(&rect_contact,game->rect_obstacle,nbVoiture);	
+			if (bool_contact==true) //La voiture est tres proche
+			{
+				situation.routes[i+2]=CONTACT;
+			}
+			else if(bool_proche==true) //La voiture est proche
 			{
 				situation.routes[i+2]=PROCHE;
 			}
-			else if(bool_loin==true) 
+			else if(bool_moyen==true) //La voiture est assez loin
+			{
+				situation.routes[i+2]=MOYEN;
+			}
+			else if(bool_loin==true) //La voiture est très loin
 			{
 				situation.routes[i+2]=LOIN;
 			}
-			else // (bool_loin==false && bool_proche==false)
+			else // (bool_loin==false && bool_proche==false) Pas de voiture
 			{
 				situation.routes[i+2]=VIDE;
 			}
@@ -107,6 +135,8 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 		}
 		rect_loin.x += game->voiture.w + game->ecart_obstacles;
 		rect_proche.x += game->voiture.w + game->ecart_obstacles;
+		rect_contact.x += game->voiture.w + game->ecart_obstacles;
+		rect_moyen.x += game->voiture.w + game->ecart_obstacles;
 	}
 	return situation;
 

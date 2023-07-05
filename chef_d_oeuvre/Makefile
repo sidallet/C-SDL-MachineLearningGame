@@ -2,7 +2,7 @@
 SRC=$(wildcard *.c)  # en commentaire, je ne suis pas un grand amateur
 EXE=carcheez.out
 
-SRC_TEST=$(wildcard test/*.c)
+SRC_TEST=$(wildcard test/*.c) $(SRC)
 EXE_TEST=test.out
 
 CC=gcc
@@ -12,7 +12,7 @@ CFLAGS:=-std=c11 -Wall -Wextra -MMD $(sdl2-config --cflags)
 BUILD=debug
 
 #CFLAGS:=-Wall -Wextra -MMD -O2 $(sdl2-config --cflags)  # pour la version release
-LDFLAGS:=-lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm -lSDL2
+LDFLAGS:=-lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm -lSDL2 -pthread
 
 ifeq ($(BUILD), debug)
 	CFLAGS:=$(CFLAGS) -Og -g #-fsanitize=undefined
@@ -46,7 +46,7 @@ build/%.o: %.c
 
 build/test/%.o: test/%.c
 	@mkdir -p build/test
-	$(CC) -DUNIT_TEST $(CFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) -I. -o $@ -c $<
 
 clean:
 	rm -rf build core *.o

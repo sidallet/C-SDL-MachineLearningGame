@@ -11,6 +11,7 @@
 #include "regle.h"
 
 
+#ifndef UNIT_TEST
 int main (int argc, char* argv[]) {
 
 	srand(time(NULL));
@@ -37,7 +38,7 @@ int main (int argc, char* argv[]) {
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
 
 
-	tabRecuit = recuit(1000, &rect_fenetre, 8*3,tabRecuit);
+	tabRecuit = recuit(15000, &rect_fenetre, 8*3,tabRecuit);
 
 	fichier = fopen("regleSauv.txt", "w");
 	afficherTabRegle(fichier,tabRecuit);
@@ -49,3 +50,4 @@ int main (int argc, char* argv[]) {
 	clean_sdl(&window, &renderer);
 	return EXIT_SUCCESS;
 }
+#endif

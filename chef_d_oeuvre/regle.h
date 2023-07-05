@@ -3,9 +3,9 @@
 #include <stdio.h>
 
 typedef enum {
-        JOKER=-1, VIDE, LOIN, PROCHE // mur ?
+        JOKER=-1, VIDE, LOIN, MOYEN, PROCHE, CONTACT,  // mur ?
 }EtatRoute;
-
+#define NB_ETAT 6
 typedef struct 
 {
     EtatRoute routes[5]; //Gauchegauche, gauche, centre, droite, droitedroite
@@ -22,7 +22,7 @@ typedef struct {
     int priorite;
 }Regle;
 
-#define NB_REGLES 40
+#define NB_REGLES 12
 typedef struct 
 {
     Regle regles[NB_REGLES]; 
