@@ -103,7 +103,7 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 	{
 		if (colonnes_voiture+i<0 || colonnes_voiture+i>12)
 		{
-			situation.routes[i+2] = PROCHE;	
+			situation.routes[i+2] = CONTACT;	
 		}
 		else
 		{
