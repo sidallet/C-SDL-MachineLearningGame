@@ -1,8 +1,13 @@
-image: didstopia/sdl2
+image: gcc
 
 stages:
     - build
     - test
+
+before_script:
+    - "apt-get update -qq"
+    - "apt-get install -y -qq make"
+    - "apt-get install -y -qq libsdl2*"
 
 build:
     stage: build
