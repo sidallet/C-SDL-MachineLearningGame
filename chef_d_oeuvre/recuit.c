@@ -11,6 +11,7 @@
 #include <string.h>
 #include <threads.h>
 
+#define PUISSANCE_TEMPERATURE 0.995
 
 Regle genererRegleAlea(Regle regle)
 {
@@ -132,7 +133,7 @@ double init_temperature(SDL_Rect * rect_fenetre) {
 	for (size_t i=0; i<20; ++i) {
 		tab = generer_solution_initiale();
 		int score = boucle_ia(false, tab, rect_fenetre, NULL, NULL);
-		if (-score > -score_max) { //comme le recuit est une minimisation on fait l'opposé du score (on veut maximiser)
+		if (score > score_max) { //comme le recuit est une minimisation on fait l'opposé du score (on veut maximiser)
 			score_max = score;
 		}
 	}
@@ -161,26 +162,27 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 	// }
 
 
-	double temperature = init_temperature(rect_fenetre)/4;
+	double temperature = init_temperature(rect_fenetre);
 	printf("température initiale : %f\n", temperature);
-	double pente = temperature/nombre_iterations;
 	// afficheChemin(&chemin);
+	double raison = 0.99;//pow(-temperature, (1.0/nombre_iterations)-1);
 	int scoreJeu = multi_boucle_ia(tabRegle, rect_fenetre, nb_parties);
-
+	printf("raison : %f\n", raison);
 	int it = 0;
 
-	while (temperature<0.001) {
+	while (it<nombre_iterations) {
 		int nouveux_score;
 		if (recuit_impl(&tabRegle, scoreJeu, temperature, &nouveux_score, rect_fenetre, nb_parties)) {
 			scoreJeu = nouveux_score;
 		}
-		it++;
 		if (it%(1+nombre_iterations/20) == 0) {
 			printf("Iteration : %d  Score : %d Température %f\n", it, scoreJeu/175, temperature);
 		}
-		temperature -= pente;
+		it++;
+		temperature *= raison;
 	}
 
 	printf("Score : %d\n", scoreJeu/175);
 	return tabRegle;
 }
+
