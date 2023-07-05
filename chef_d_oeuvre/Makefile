@@ -2,12 +2,12 @@
 SRC=$(wildcard *.c)  # en commentaire, je ne suis pas un grand amateur
 EXE=carcheez.out
 
-SRC_TEST=$(wildcard test/*.c)
+SRC_TEST=$(wildcard test/*.c) $(SRC)
 EXE_TEST=test.out
 
 CC=gcc
 
-CFLAGS:=-std=c11 -Wall -Wextra -MMD $(sdl2-config --cflags)
+CFLAGS:=-std=c11 -Wall -Wextra -MMD $(sdl2-config --cflags) 
 
 BUILD=debug
 
@@ -46,7 +46,7 @@ build/%.o: %.c
 
 build/test/%.o: test/%.c
 	@mkdir -p build/test
-	$(CC) -DUNIT_TEST $(CFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) -I. -o $@ -c $<
 
 clean:
 	rm -rf build core *.o

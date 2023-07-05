@@ -135,6 +135,8 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 		}
 		rect_loin.x += game->voiture.w + game->ecart_obstacles;
 		rect_proche.x += game->voiture.w + game->ecart_obstacles;
+		rect_contact.x += game->voiture.w + game->ecart_obstacles;
+		rect_moyen.x += game->voiture.w + game->ecart_obstacles;
 	}
 	return situation;
 

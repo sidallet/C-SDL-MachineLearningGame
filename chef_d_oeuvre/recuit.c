@@ -145,7 +145,7 @@ TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties
 	double temperature = init_temperature(rect_fenetre);
 	printf("température initiale : %f\n", temperature);
 	// afficheChemin(&chemin);
-	double raison = 0.99;//pow(-temperature, (1.0/nombre_iterations)-1);
+	double raison = 0.992;//pow(-temperature, (1.0/nombre_iterations)-1);
 	int scoreJeu = multi_boucle_ia(tabRegle, rect_fenetre, nb_parties);
 	printf("raison : %f\n", raison);
 	int it = 0;

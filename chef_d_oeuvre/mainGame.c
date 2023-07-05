@@ -11,6 +11,7 @@
 #include "regle.h"
 
 
+#ifndef UNIT_TEST
 int main (int argc, char* argv[]) {
 
 	srand(time(NULL));
@@ -49,3 +50,4 @@ int main (int argc, char* argv[]) {
 	clean_sdl(&window, &renderer);
 	return EXIT_SUCCESS;
 }
+#endif
