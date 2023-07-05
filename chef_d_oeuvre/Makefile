@@ -12,7 +12,7 @@ CFLAGS:=-std=c11 -Wall -Wextra -MMD $(sdl2-config --cflags)
 BUILD=debug
 
 #CFLAGS:=-Wall -Wextra -MMD -O2 $(sdl2-config --cflags)  # pour la version release
-LDFLAGS:=-lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm -lSDL2
+LDFLAGS:=-lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm -lSDL2 -pthread
 
 ifeq ($(BUILD), debug)
 	CFLAGS:=$(CFLAGS) -Og -g #-fsanitize=undefined
