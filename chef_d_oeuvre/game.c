@@ -80,6 +80,35 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
     game->rect_obstacle[pos] = obst;
 }
 
+void pieceAleatoire(Game * game, SDL_Rect * fenetre)
+{
+    SDL_Rect piece;
+    bool positionValide = false;
+
+    while (!positionValide) {
+        int yAlea = rand() % 100;
+        
+		piece.w = 65;
+		piece.h = 65;
+        
+		int xAlea = rand() % 12;
+		
+		piece.x = xAlea * (piece.w + game->ecart_obstacles);
+		piece.y = -(yAlea+100) - game->ecart_obstacles;
+		
+		positionValide = true;
+        
+		if (SDL_HasIntersection(&game->rect_piece, &piece)) {
+			positionValide = false;
+			break;
+			
+		}
+    }
+	
+	piece.y += game->ecart_obstacles;
+    game->rect_piece = piece;
+}
+
 
 //Appelé une fois par frame
 void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
@@ -102,6 +131,7 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 			game->deplacement_voiture = 0;
 		}
 	}
+	deplacer_piece(game,rect_fenetre,deltatime,game->distance_parcouru);
 
 	//Gerer collision ici
 	if (game->delai_invulnerabilite<0) {
@@ -150,6 +180,7 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
 	afficherRoute(renderer, game->textureHandler.textures[TEXTURE_Route], rect_fenetre, game->distance_parcouru);
 	afficher_obstacle(renderer,game->rect_obstacle, (SDL_Texture**)game->textureHandler.textures,game->nbVoiture);
+	afficher_piece(renderer,game->rect_piece, game->textureHandler.textures[8]);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15, game->delai_invulnerabilite);
 	if (game->vie <= 0) {
 		afficherFin(renderer, rect_fenetre, game->distance_parcouru/175, game->vitesse/4, game->font);
@@ -171,6 +202,12 @@ void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], S
 		SDL_RenderCopyEx(renderer,textureObst[i%4],NULL,&rect_obstacle[i],0,NULL,SDL_FLIP_VERTICAL);
 	}
 	
+}
+
+void afficher_piece(SDL_Renderer* renderer, const SDL_Rect rect_piece, SDL_Texture *texturePiece)
+{
+	SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+	SDL_RenderCopyEx(renderer,texturePiece,NULL,&rect_piece,0,NULL,SDL_FLIP_VERTICAL);
 }
 
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int vitesse){
@@ -230,6 +267,18 @@ int deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int d
 		}
 	}
 	return vitesse;
+		
+}
+
+void deplacer_piece(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru){
+	//printf("vitesse %d \n",vitesse);
+	
+	game->rect_piece.y+= game->vitesse*deltatime/1000.0;
+	if(game->rect_piece.y > rect_fenetre->h)
+	{
+		pieceAleatoire(game,rect_fenetre);
+	}
+
 		
 }
 
