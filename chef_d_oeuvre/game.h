@@ -24,6 +24,7 @@ typedef struct
 	int vitesse;
 	int temps_deplacement;
 	SDL_Rect rect_piece;
+	int nbPieceRamass;
 	int ecart_obstacles;
 	TTF_Font* font;
 } Game;
@@ -57,6 +58,7 @@ void pieceAleatoire(Game * game, SDL_Rect * fenetre);
 
 void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre);
 bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], const int nbVoiture);
+bool test_collisionPiece(const SDL_Rect* voiture, const SDL_Rect rect_piece);
 
 TTF_Font* charger_font();
 

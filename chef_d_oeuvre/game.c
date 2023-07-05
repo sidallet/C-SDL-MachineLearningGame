@@ -139,6 +139,9 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 			game->vie--;
 			game->delai_invulnerabilite = game->delai_invulnerabilite_max;
 		}
+		if (test_collisionPiece(&game->voiture, game->rect_piece)) {
+			game->nbPieceRamass;
+		}
 	}
 	else {
 		game->delai_invulnerabilite -= deltatime;
@@ -339,6 +342,13 @@ bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], con
 			return true;
 		}	
 	}
+	return false;
+}
+
+bool test_collisionPiece(const SDL_Rect* voiture, const SDL_Rect rect_piece) {
+		if (SDL_HasIntersection(voiture, &rect_piece)) {
+			return true;
+		}	
 	return false;
 }
 
