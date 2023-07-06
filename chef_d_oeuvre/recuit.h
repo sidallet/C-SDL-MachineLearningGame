@@ -10,7 +10,6 @@
 #include "boucle_entrainement_ia.h"
 
 #define RAYON_POINT 10
-#define NUM_THREADS 8
 
 TabRegle generer_solution_initiale();
 //void fisherYatesMelange(Chemin* chemin);

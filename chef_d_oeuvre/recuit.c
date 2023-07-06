@@ -84,52 +84,6 @@ TabRegle alterTabRegle(TabRegle tabRegle) {
 	return tabRegle;
 }
 
-struct ParamsBoucleIA {
-	TabRegle tabRegle;
-	SDL_Rect rect_fenetre;
-	size_t nb_parties;
-};
-
-int wrap_boucle_ia(void* params) {
-	struct ParamsBoucleIA* p = (struct ParamsBoucleIA*) params;
-	int sum = 0;
-	for (size_t i=0; i<p->nb_parties; ++i) {
-		sum += boucle_ia(false, p->tabRegle, &p->rect_fenetre, NULL, NULL);
-	}
-	return sum;
-}
-
-int multi_boucle_ia(TabRegle tabRegle, SDL_Rect* rect_fenetre, size_t nb_parties) {
-	int sum = 0;
-	thrd_t threads_handles[NUM_THREADS];
-	int retours[NUM_THREADS];
-
-
-	for (int i=0; i<NUM_THREADS; ++i) {
-		threads_handles[i] = 0;
-		retours[i] = 0;
-	}
-	struct ParamsBoucleIA params = {
-		.tabRegle = tabRegle,
-		.rect_fenetre = *rect_fenetre,
-		.nb_parties = nb_parties/NUM_THREADS
-	};
-
-    for (int i = 0; i < NUM_THREADS; i++) {
-        if (thrd_create(&threads_handles[i], wrap_boucle_ia, (void *)&params) != thrd_success) {
-			fprintf(stderr, "Erreur création thread\n");
-		}
-    }
-
-    for (int i = 0; i < NUM_THREADS; i++) {
-        thrd_join(threads_handles[i], &retours[i]);
-		sum += retours[i];
-    }
-
-	return sum / nb_parties;
-}
-
-
 bool recuit_impl(TabRegle* tab, const int scoreTab, double temperature, int* nouveaux_score, SDL_Rect * rect_fenetre, size_t nb_parties) {
 	TabRegle nouvTab = alterTabRegle(*tab);
 	*nouveaux_score = multi_boucle_ia(nouvTab, rect_fenetre, nb_parties);

@@ -6,10 +6,13 @@
 #include "regle.h"
 #include <SDL2/SDL2_framerate.h>
 
+#define NUM_THREADS 8
+
 void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre);
 
 int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fenetre, SDL_Renderer* renderer, FPSmanager* fpsManager);
 
+int multi_boucle_ia(TabRegle tabRegle, SDL_Rect* rect_fenetre, size_t nb_parties);
 
 Observation creerObservation(const Game* game, SDL_Rect * fenetre);
 ObservationPiece creerObservationPiece(const Game* game, SDL_Rect * fenetre);
