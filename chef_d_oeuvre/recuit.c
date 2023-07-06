@@ -144,10 +144,10 @@ double init_temperature(SDL_Rect * rect_fenetre) {
 TabRegle recuit(int nombre_iterations,SDL_Rect * rect_fenetre, size_t nb_parties,TabRegle tabRegle) {
 
 	double temperature_min = 600;
-	double temperature = init_temperature(rect_fenetre)/6;
+	double temperature = init_temperature(rect_fenetre)/8;
 	printf("température initiale : %f\n", temperature);
 	// afficheChemin(&chemin);
-	double raison = 0.997;//pow(-temperature, (1.0/nombre_iterations)-1);
+	double raison = 0.995;//pow(-temperature, (1.0/nombre_iterations)-1);
 	int scoreJeu = multi_boucle_ia(tabRegle, rect_fenetre, nb_parties);
 	printf("raison : %f\n", raison);
 	int it = 0;
