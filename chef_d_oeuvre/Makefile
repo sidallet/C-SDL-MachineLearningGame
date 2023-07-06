@@ -15,8 +15,8 @@ BUILD=debug
 LDFLAGS:=-lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm -lSDL2 -pthread
 
 ifeq ($(BUILD), debug)
-	CFLAGS:=$(CFLAGS) -Og -g #-fsanitize=undefined
-	LDFLAGS:=$(LDFLAGS) -g #-fsanitize=undefined
+	CFLAGS:=$(CFLAGS) -Og -g #-fsanitize=undefined,address
+	LDFLAGS:=$(LDFLAGS) -g #-fsanitize=undefined,address
 else
 	ifeq ($(BUILD), profil)	
 		LDFLAGS:=$(LDFLAGS) -pg #-fsanitize=undefined

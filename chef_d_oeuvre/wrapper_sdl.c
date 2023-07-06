@@ -50,11 +50,11 @@ bool start_sdl(SDL_Window** window, SDL_Renderer** renderer, const char* titre, 
 }
 
 void clean_sdl(SDL_Window** window, SDL_Renderer** renderer) {
-        SDL_DestroyRenderer(*renderer);
-        SDL_DestroyWindow(*window);
-        *window = NULL;
-        *renderer = NULL;
-        SDL_Quit();
+    SDL_DestroyRenderer(*renderer);
+    SDL_DestroyWindow(*window);
+    *window = NULL;
+    *renderer = NULL;
+    SDL_Quit();
 }
 
 

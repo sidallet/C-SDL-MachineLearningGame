@@ -17,7 +17,7 @@ void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 	if (game->deplacement_voiture != 0) {
 		return; // En déplacement: pas de decision
 	}
-	Observation observation = creerObservation(game,game->rect_obstacle,game->nbVoiture,fenetre);
+	Observation observation = creerObservation(game,fenetre);
 	ObservationPiece observationPiece = creerObservationPiece(game, fenetre);
 	Decision decision = choisirRegle(&observation,&observationPiece ,tabRegle);
 	game->deplacement_voiture = decision;
@@ -35,13 +35,13 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 		SDL_initFramerate(fpsManager);
 		SDL_setFramerate(fpsManager, 60);
 	}
-
-	while (true) {
+	bool running = true;
+	while (running) {
 		if (affichage_actif) {
 			SDL_Event event;
 			while(SDL_PollEvent(&event)) {
 				if (event.type == SDL_QUIT) {
-					return 0;
+					running = false;
 				}	
 			}
 		}
@@ -50,7 +50,7 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 		game_update(&game, rect_fenetre, delta_time);
 		
 		if (game.vie == 0 || game.distance_parcouru >= 1000000) {
-			return calculerScore(&game);
+			running = false;
 		}
 
 		if (affichage_actif) {
@@ -59,10 +59,12 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 		}
 	}
 
+	const int score = calculerScore(&game);
 	liberer_game(&game);
+	return score;
 }
 
-Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],const int nbVoiture,SDL_Rect * fenetre)
+Observation creerObservation(const Game* game, SDL_Rect * fenetre)
 {
 	Observation situation;
 	bool bool_loin=false;
@@ -109,10 +111,10 @@ Observation creerObservation(const Game* game,const SDL_Rect rect_obstacle[],con
 		}
 		else
 		{
-		 	bool_loin=test_collision(&rect_loin,game->rect_obstacle,nbVoiture);   
-			bool_moyen=test_collision(&rect_moyen,game->rect_obstacle,nbVoiture); 
-			bool_proche=test_collision(&rect_proche,game->rect_obstacle,nbVoiture);	
-			bool_contact=test_collision(&rect_contact,game->rect_obstacle,nbVoiture);	
+		 	bool_loin=test_collision(&rect_loin,game->rect_obstacle, game->nbVoiture);   
+			bool_moyen=test_collision(&rect_moyen,game->rect_obstacle, game->nbVoiture); 
+			bool_proche=test_collision(&rect_proche,game->rect_obstacle, game->nbVoiture);	
+			bool_contact=test_collision(&rect_contact,game->rect_obstacle, game->nbVoiture);	
 			if (bool_contact==true) //La voiture est tres proche
 			{
 				situation.routes[i+2]=CONTACT;
@@ -274,7 +276,8 @@ bool observation_match(const Observation obs1, const Observation obs2) {
 }
 
 bool observationPiece_match(const ObservationPiece obs1, const ObservationPiece obs2) {
-	if(obs1.presence == JOKER || obs2.presence == JOKER)
+	if(obs1.presence == JOKER 
+			|| obs2.presence == JOKER)
 	{
 		return obs1.colonne==obs2.colonne;
 	}
