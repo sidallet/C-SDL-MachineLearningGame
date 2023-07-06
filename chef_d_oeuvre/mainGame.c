@@ -15,17 +15,17 @@
 int main (int argc, char* argv[]) {
 
 	srand(time(NULL));
-/*	SDL_Window* window;
-	SDL_Renderer* renderer;*/
+	SDL_Window* window;
+	SDL_Renderer* renderer;
 	SDL_Rect rect_fenetre = {100, 100, 1000, 800};
-/*	if (!start_sdl(&window, &renderer, "Carcheeez", &rect_fenetre)) {
+	if (!start_sdl(&window, &renderer, "Carcheeez", &rect_fenetre)) {
 		return EXIT_FAILURE;
 	}
 
 	FPSmanager fpsManager;
 	SDL_initFramerate(&fpsManager);
 
-	SDL_setFramerate(&fpsManager, 60);*/
+	SDL_setFramerate(&fpsManager, 60);
 
 	FILE* fichier = fopen("regleSauv.txt", "r");
 	TabRegle tabRecuit = chargerTabRegle(fichier);
@@ -45,9 +45,9 @@ int main (int argc, char* argv[]) {
 	fclose(fichier);
 
 	afficherTabRegle(stdout, tabRecuit);
-//	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
+	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
 
-//	clean_sdl(&window, &renderer);
+	clean_sdl(&window, &renderer);
 	return EXIT_SUCCESS;
 }
 #endif
