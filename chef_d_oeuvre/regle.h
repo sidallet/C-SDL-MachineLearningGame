@@ -2,6 +2,8 @@
 #define REGLE_H
 #include <stdio.h>
 
+//------------------------------------------------------------------
+
 typedef enum {
         JOKER=-1, VIDE, LOIN, MOYEN, PROCHE, CONTACT,  // mur ?
 }EtatRoute;
@@ -11,6 +13,14 @@ typedef struct
     EtatRoute routes[5]; //Gauchegauche, gauche, centre, droite, droitedroite
 }Observation;
 
+//------------------------------------------------------------------
+
+typedef struct 
+{
+    EtatRoute presence;
+    int colonne; //-2 à 2 (relatif à la voiture)
+}ObservationPiece;
+
 
 typedef enum {
     GAUCHE=-1, RIEN, DROITE
@@ -18,6 +28,7 @@ typedef enum {
 
 typedef struct {
     Observation observ;
+    ObservationPiece obsPiece;
     Decision decis;
     int priorite;
 }Regle;
@@ -30,6 +41,7 @@ typedef struct
 
 void afficherRegle(FILE* flux, const Regle regle);
 void afficherObservation(FILE* flux, const Observation observation);
+void afficherObservationPiece(FILE* flux, const ObservationPiece obsPiece);
 
 Regle chargerRegle(FILE* flux);
 TabRegle chargerTabRegle(FILE* flux);

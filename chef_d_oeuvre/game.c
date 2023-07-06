@@ -18,6 +18,7 @@ Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.nbVoiture = 10,
 		.vitesse = 100,
 		.ecart_obstacles = 15,
+		.nbPieceRamass = 0,
 		.temps_deplacement = 0,
 	};
 
@@ -80,6 +81,35 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
     game->rect_obstacle[pos] = obst;
 }
 
+void pieceAleatoire(Game * game, SDL_Rect * fenetre)
+{
+    SDL_Rect piece;
+    bool positionValide = false;
+
+    while (!positionValide) {
+        int yAlea = rand() % 100;
+        
+		piece.w = 65;
+		piece.h = 65;
+        
+		int xAlea = rand() % 12;
+		
+		piece.x = xAlea * (piece.w + game->ecart_obstacles);
+		piece.y = -(yAlea+2000) - game->ecart_obstacles;
+		
+		positionValide = true;
+        
+		if (SDL_HasIntersection(&game->rect_piece, &piece)) {
+			positionValide = false;
+			break;
+			
+		}
+    }
+	
+	piece.y += game->ecart_obstacles;
+    game->rect_piece = piece;
+}
+
 
 //Appelé une fois par frame
 void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
@@ -102,8 +132,13 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 			game->deplacement_voiture = 0;
 		}
 	}
+	deplacer_piece(game,rect_fenetre,deltatime,game->distance_parcouru);
 
 	//Gerer collision ici
+		if (test_collisionPiece(&game->voiture, game->rect_piece)) {
+			game->nbPieceRamass++;
+			pieceAleatoire(game,rect_fenetre);
+		}
 	if (game->delai_invulnerabilite<0) {
 		if (test_collision(&game->voiture, game->rect_obstacle, game->nbVoiture)) {
 			game->vie--;
@@ -115,6 +150,10 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 	}
 }
 
+int calculerScore(const Game * game)
+{
+	return game->distance_parcouru + (game->nbPieceRamass*150)*175;
+}
 
 void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 
@@ -150,12 +189,13 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
 	afficherRoute(renderer, game->textureHandler.textures[TEXTURE_Route], rect_fenetre, game->distance_parcouru);
 	afficher_obstacle(renderer,game->rect_obstacle, (SDL_Texture**)game->textureHandler.textures,game->nbVoiture);
+	afficher_piece(renderer,game->rect_piece, game->textureHandler.textures[8]);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15, game->delai_invulnerabilite);
 	if (game->vie <= 0) {
-		afficherFin(renderer, rect_fenetre, game->distance_parcouru/175, game->vitesse/4, game->font);
+		afficherFin(renderer, rect_fenetre, calculerScore(game)/175, game->vitesse/4, game->font);
 		return;
 	}
-	afficher_texte(renderer, game->distance_parcouru, rect_fenetre, game->vitesse);
+	afficher_texte(renderer, calculerScore(game), rect_fenetre, game->vitesse);
 	afficherVie(renderer, game->textureHandler.textures[TEXTURE_Coeur_rouge], game->textureHandler.textures[TEXTURE_Coeur_gris], game->vie, game->vie_max, rect_fenetre);
 
 	afficherEffetDegats(renderer, game->delai_invulnerabilite, game->delai_invulnerabilite_max, rect_fenetre);
@@ -173,6 +213,12 @@ void afficher_obstacle(SDL_Renderer* renderer, const SDL_Rect rect_obstacle[], S
 	
 }
 
+void afficher_piece(SDL_Renderer* renderer, const SDL_Rect rect_piece, SDL_Texture *texturePiece)
+{
+	SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+	SDL_RenderCopyEx(renderer,texturePiece,NULL,&rect_piece,0,NULL,SDL_FLIP_VERTICAL);
+}
+
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int vitesse){
 	SDL_Rect fond_blanc = {rect_fenetre->w-92, 5, 90, 25};
 	roundedBoxRGBA(renderer, fond_blanc.x, fond_blanc.y, fond_blanc.x + fond_blanc.w, fond_blanc.y + fond_blanc.h, 2, 255, 255, 255, 80);
@@ -182,7 +228,7 @@ void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int 
 	sprintf(vitesse_char, "%d KM/H", vitesse);
 
 	char score[25];
-	sprintf(score, "%d POINTS", dist/175);
+	sprintf(score, "%d POINTS",dist/175);
 
 	stringRGBA(renderer, rect_fenetre->w-90,10, vitesse_char, 0, 0, 20, 255);  //affichage texte
 	stringRGBA(renderer, rect_fenetre->w-90,20, score, 0, 0, 20, 255);  //affichage texte
@@ -230,6 +276,18 @@ int deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int d
 		}
 	}
 	return vitesse;
+		
+}
+
+void deplacer_piece(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru){
+	//printf("vitesse %d \n",vitesse);
+	
+	game->rect_piece.y+= game->vitesse*deltatime/1000.0;
+	if(game->rect_piece.y > rect_fenetre->h)
+	{
+		pieceAleatoire(game,rect_fenetre);
+	}
+
 		
 }
 
@@ -291,6 +349,10 @@ bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], con
 		}	
 	}
 	return false;
+}
+
+bool test_collisionPiece(const SDL_Rect* voiture, const SDL_Rect rect_piece) {
+		return SDL_HasIntersection(voiture, &rect_piece);
 }
 
 void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse, TTF_Font* font) {
