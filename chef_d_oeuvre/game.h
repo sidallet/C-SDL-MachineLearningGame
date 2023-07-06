@@ -11,6 +11,12 @@
 
 typedef struct
 {
+	SDL_Rect* rect_obstacle;
+	int nbObstacle;
+}Patern;
+
+typedef struct
+{
 	int distance_parcouru;
 	int vie;
 	int vie_max;
@@ -23,10 +29,13 @@ typedef struct
 	int nbVoiture;
 	int vitesse;
 	int temps_deplacement;
-
+	Patern patern;
 	int ecart_obstacles;
 	TTF_Font* font;
 } Game;
+
+
+
 
 Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * rect);
 
@@ -44,6 +53,7 @@ void afficherRoute(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect*
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre,int vitesse);
 void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* coeur_gris, int vie, int vie_max, const SDL_Rect* rect_fenetre);
 void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse, TTF_Font* font);
+void initializePatern(Game * game, Patern* patern);
 
 //fonction voiture
 void deplaceVoiture(SDL_Rect* voiture, int ecart, SDL_Rect* fenetre, int direction_deplacement, Uint32 deltatime);

@@ -27,6 +27,7 @@ int main (int argc, char* argv[]) {
 
 	SDL_setFramerate(&fpsManager, 60);
 
+
 	FILE* fichier = fopen("regleSauv.txt", "r");
 	TabRegle tabRecuit = chargerTabRegle(fichier);
 	fclose(fichier);
@@ -38,7 +39,7 @@ int main (int argc, char* argv[]) {
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
 
 
-	tabRecuit = recuit(5000, &rect_fenetre, 8*3,tabRecuit);
+	tabRecuit = recuit(1, &rect_fenetre, 8*3,tabRecuit);
 
 	fichier = fopen("regleSauv.txt", "w");
 	afficherTabRegle(fichier,tabRecuit);

@@ -6,6 +6,21 @@
 #include <SDL2/SDL_ttf.h>
 #define RAYON_POINT 10
 
+
+void initializePatern(Game * game, Patern* patern)
+{
+    patern->rect_obstacle = (SDL_Rect*)malloc(patern->nbObstacle * sizeof(SDL_Rect));
+    patern->nbObstacle = patern->nbObstacle;
+    
+    for (int i = 0; i < patern->nbObstacle; i++)
+    {
+        patern->rect_obstacle[i].x = i*(game->voiture.w+game->ecart_obstacles);
+        patern->rect_obstacle[i].y = 0;
+        patern->rect_obstacle[i].w = 65;
+        patern->rect_obstacle[i].h = 110;
+    }
+}
+
 Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 	Game game = {
 		.distance_parcouru = 0,
@@ -20,6 +35,16 @@ Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.ecart_obstacles = 15,
 		.temps_deplacement = 0,
 	};
+
+	game.patern.nbObstacle = 3;
+	initializePatern(&game,&game.patern);
+
+	printf("nb obstacle : %d\n", game.patern.nbObstacle);
+	for (int i = 0; i < game.patern.nbObstacle; i++)
+    {
+        printf("coord patern numero %d : %d\n",i,game.patern.rect_obstacle[i].x);
+    }
+	
 
 	if (affichage_on) {
 		game.textureHandler = newTextureHandler(renderer);
@@ -51,8 +76,6 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
     SDL_Rect obst;
     bool positionValide = false;
 
-
-    
     while (!positionValide) {
         int yAlea = rand() % 100*game->nbVoiture;
         
@@ -75,6 +98,19 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
 		}
     }
 	
+	obst.y += game->ecart_obstacles;
+
+    game->rect_obstacle[pos] = obst;
+}
+
+void envoyerPatern(SDL_Rect voiture,int pos, SDL_Rect * fenetre, Game * game, int randCol)
+{
+    SDL_Rect obst;
+	obst.w = voiture.w;
+	obst.h = voiture.h;
+	obst.x = (voiture.w+game->ecart_obstacles)*randCol;
+	obst.y = voiture.y;
+
 	obst.y += game->ecart_obstacles;
 
     game->rect_obstacle[pos] = obst;
@@ -226,7 +262,20 @@ int deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int d
 
 		if(game->rect_obstacle[i].y > rect_fenetre->h)
 		{
-			voitureAleatoire(game,i,rect_fenetre);
+			int randChoix = rand() %4;
+			int randCol = rand() %10;
+			if(randChoix < 2)
+			{	
+				printf("patern envoyé \n");
+				for (int j = 0; j < game->patern.nbObstacle; j++)
+				{
+					envoyerPatern(game->patern.rect_obstacle[j],j, rect_fenetre, game, randCol+j);
+				}
+			}
+			else {
+				voitureAleatoire(game,i,rect_fenetre);
+			}
+
 		}
 	}
 	return vitesse;
