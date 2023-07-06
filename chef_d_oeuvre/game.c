@@ -13,6 +13,8 @@ Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.vie_max = 5,
 		.delai_invulnerabilite = -1,
 		.delai_invulnerabilite_max = 800,
+		.delai_piece = -1,
+		.delai_piece_max = 150,
 		.voiture = {0,fenetre->h-125,65,110},
 		.deplacement_voiture = 0, 
 		.nbVoiture = 10,
@@ -135,10 +137,16 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 	deplacer_piece(game, rect_fenetre, deltatime);
 
 	//Gerer collision ici
-		if (test_collisionPiece(&game->voiture, game->rect_piece)) {
-			game->nbPieceRamass++;
-			pieceAleatoire(game);
-		}
+	if (test_collisionPiece(&game->voiture, game->rect_piece)) {
+		game->nbPieceRamass++;
+		game->delai_piece = game->delai_piece_max;
+		pieceAleatoire(game);
+	}
+	if(game->delai_piece > 0)
+	{
+		game->delai_piece -= deltatime;
+	}
+
 	if (game->delai_invulnerabilite<0) {
 		if (test_collision(&game->voiture, game->rect_obstacle, game->nbVoiture)) {
 			game->vie--;
@@ -199,6 +207,7 @@ void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fene
 	afficherVie(renderer, game->textureHandler.textures[TEXTURE_Coeur_rouge], game->textureHandler.textures[TEXTURE_Coeur_gris], game->vie, game->vie_max, rect_fenetre);
 
 	afficherEffetDegats(renderer, game->delai_invulnerabilite, game->delai_invulnerabilite_max, rect_fenetre);
+	afficherEffetPiece(renderer, game->delai_piece, game->delai_piece_max, rect_fenetre);
 }
 
 
@@ -331,6 +340,16 @@ void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* 
 void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre) {
 	if (delai_invulnerabilite > 0.8*delai_invulnerabilite_max) {
 		SDL_SetRenderDrawColor(renderer, 200, 100, 100, 55);
+		SDL_Rect rect = *rect_fenetre;
+		rect.x = 0;
+		rect.y = 0;
+		SDL_RenderFillRect(renderer, &rect);
+	}
+}
+
+void afficherEffetPiece(SDL_Renderer* renderer, const int delai_piece, const int delai_piece_max, const SDL_Rect* rect_fenetre) {
+	if (delai_piece > 0) {
+		SDL_SetRenderDrawColor(renderer, 252, 224, 95, 120);
 		SDL_Rect rect = *rect_fenetre;
 		rect.x = 0;
 		rect.y = 0;

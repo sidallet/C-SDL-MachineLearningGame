@@ -16,6 +16,8 @@ typedef struct
 	int vie_max;
 	int delai_invulnerabilite;
 	int delai_invulnerabilite_max;
+	int delai_piece;
+	int delai_piece_max;
 	SDL_Rect voiture;
 	TextureHandler textureHandler;
 	int deplacement_voiture;
@@ -57,6 +59,7 @@ void pieceAleatoire(Game * game);
 
 
 void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre);
+void afficherEffetPiece(SDL_Renderer* renderer, const int delai_piece, const int delai_piece_max, const SDL_Rect* rect_fenetre);
 bool test_collision(const SDL_Rect* voiture, const SDL_Rect rect_obstacle[], const int nbVoiture);
 bool test_collisionPiece(const SDL_Rect* voiture, const SDL_Rect rect_piece);
 
