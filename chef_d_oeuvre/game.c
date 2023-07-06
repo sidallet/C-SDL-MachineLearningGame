@@ -231,6 +231,7 @@ void afficher_piece(SDL_Renderer* renderer, const SDL_Rect rect_piece, SDL_Textu
 void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int vitesse){
 	SDL_Rect fond_blanc = {rect_fenetre->w-92, 5, 90, 25};
 	roundedBoxRGBA(renderer, fond_blanc.x, fond_blanc.y, fond_blanc.x + fond_blanc.w, fond_blanc.y + fond_blanc.h, 2, 255, 255, 255, 80);
+	roundedBoxRGBA(renderer, 40, 5, 375, 25, 2, 255, 255, 255, 80);
 
 	vitesse = vitesse / 4; //On divise par 4 pour "convertir" en km/h
 	char vitesse_char[25];
@@ -239,8 +240,13 @@ void afficher_texte(SDL_Renderer* renderer,int dist,SDL_Rect* rect_fenetre, int 
 	char score[25];
 	sprintf(score, "%d POINTS",dist/175);
 
-	stringRGBA(renderer, rect_fenetre->w-90,10, vitesse_char, 0, 0, 20, 255);  //affichage texte
-	stringRGBA(renderer, rect_fenetre->w-90,20, score, 0, 0, 20, 255);  //affichage texte
+	char info[40];
+	sprintf(info, "Appuyer sur F3 pour afficher la vision");
+
+	stringRGBA(renderer, rect_fenetre->w-90,10, vitesse_char, 0, 0, 20, 255);  //affichage vitesse
+	stringRGBA(renderer, rect_fenetre->w-90,20, score, 0, 0, 20, 255);  //affichage score
+
+	stringRGBA(renderer, 55,15, info, 0, 0, 20, 255);  //affichage F3
 }
 
 void liberer_game(Game* game) {
