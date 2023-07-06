@@ -6,26 +6,42 @@
 #include <stdio.h>
 #include <threads.h>
 
+void afficherObservationHitbox(const Game * game, SDL_Renderer * renderer,SDL_Rect * rect_fenetre,Observation obs,  int colVoiture)
+{
+	SDL_Rect rect_affich;
 
-void affichage(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre) {
+	rect_affich.w = game->voiture.w;
+	rect_affich.h = rect_fenetre->h/4;
+
+	for (int i = -2; i < 3; i++)
+	{
+		SDL_SetRenderDrawColor(renderer, 0 + ((rect_fenetre->h/4)/3 * (obs.routes[i+2] - 1)) , 150 - (rect_fenetre->h/4)/3, 0, 175);
+		rect_affich.x = (game->voiture.w + game->ecart_obstacles) * (i+colVoiture);
+		rect_affich.y = (rect_fenetre->h/4) * (obs.routes[i+2] - 1);
+		SDL_RenderFillRect(renderer, &rect_affich);
+	}
+}
+
+void affichage(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre, Observation obs, int colVoiture) {
 	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 	SDL_RenderClear(renderer);
 	game_afficher(game,renderer, rect_fenetre);
+	afficherObservationHitbox(game,renderer,rect_fenetre,obs,colVoiture);
 	SDL_RenderPresent(renderer);
 }
 
-void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
+Observation ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 	if (game->deplacement_voiture != 0) {
 		return; // En déplacement: pas de decision
 	}
 	Observation observation = creerObservation(game,fenetre);
 	ObservationPiece observationPiece = creerObservationPiece(game, fenetre);
-	Decision decision = choisirRegle(&observation,&observationPiece ,tabRegle);
-	game->deplacement_voiture = decision;
+	game->deplacement_voiture = choisirRegle(&observation,&observationPiece ,tabRegle);
+	return observation;
 }
 
 int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fenetre, SDL_Renderer* renderer, FPSmanager* fpsManager) {
-	
+	Observation obs;
 	Game game = new_game(affichage_actif, renderer, rect_fenetre);
 		
 	Uint32 delta_time = 0;
@@ -46,8 +62,8 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 				}	
 			}
 		}
-
-		ia_think(&game, &tabRegle,rect_fenetre);
+		const int colVoiture = game.voiture.x/(game.voiture.w+game.ecart_obstacles);
+		obs = ia_think(&game, &tabRegle,rect_fenetre);
 		game_update(&game, rect_fenetre, delta_time);
 		
 		if (game.vie == 0 || game.distance_parcouru >= 1000000) {
@@ -55,7 +71,7 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 		}
 
 		if (affichage_actif) {
-			affichage(renderer, &game, rect_fenetre);
+			affichage(renderer, &game, rect_fenetre, obs,colVoiture);
 			delta_time = SDL_framerateDelay(fpsManager);
 		}
 	}

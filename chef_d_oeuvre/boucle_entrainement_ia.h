@@ -8,7 +8,7 @@
 
 #define NUM_THREADS 8
 
-void ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre);
+Observation ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre);
 
 int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fenetre, SDL_Renderer* renderer, FPSmanager* fpsManager);
 
