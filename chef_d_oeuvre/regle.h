@@ -47,5 +47,7 @@ Regle chargerRegle(FILE* flux);
 TabRegle chargerTabRegle(FILE* flux);
 void afficherTabRegle(FILE* flux, const TabRegle tabRegle);
 
+Regle genererRegleAlea();
+TabRegle alterTabRegle(TabRegle tabRegle);
 
 #endif //REGLE_H

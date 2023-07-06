@@ -7,9 +7,8 @@
 #include <time.h>
 #include "game.h"
 
-#include "recuit.h"
 #include "regle.h"
-
+#include "genetique.h"
 
 #ifndef UNIT_TEST
 int main (int argc, char* argv[]) {
@@ -27,22 +26,14 @@ int main (int argc, char* argv[]) {
 
 	SDL_setFramerate(&fpsManager, 60);
 
-	FILE* fichier = fopen("regleSauv.txt", "r");
-	TabRegle tabRecuit = chargerTabRegle(fichier);
-	fclose(fichier);
-
-
 	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
 	
 	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
 
 
-	tabRecuit = recuit(2000, &rect_fenetre, 8*3,tabRecuit);
+	TabRegle tabRecuit = genetique(100, &rect_fenetre, 8*3);
 
-	fichier = fopen("regleSauv.txt", "w");
-	afficherTabRegle(fichier,tabRecuit);
-	fclose(fichier);
 
 	afficherTabRegle(stdout, tabRecuit);
 	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
