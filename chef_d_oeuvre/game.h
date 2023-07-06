@@ -31,7 +31,7 @@ typedef struct
 
 Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * rect);
 
-void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre);
+void game_handle_event(Game* game, SDL_Event* event);
 
 
 int deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru , int nbVoiture);
@@ -48,12 +48,12 @@ void afficherVie(SDL_Renderer* renderer, SDL_Texture* coeur_rouge, SDL_Texture* 
 void afficherFin(SDL_Renderer* renderer, SDL_Rect* rect_fenetre, int score, int vitesse, TTF_Font* font);
 
 //fonction voiture
-void deplaceVoiture(SDL_Rect* voiture, int ecart, SDL_Rect* fenetre, int direction_deplacement, Uint32 deltatime);
+void deplaceVoiture(SDL_Rect* voiture, int ecart, int direction_deplacement, Uint32 deltatime);
 void afficherVoiture(SDL_Renderer * renderer, const SDL_Rect * voiture, SDL_Texture * textureVoiture, int inclinaison, int delai_invulnerabilite);
-void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre);
+void voitureAleatoire(Game * game, const int pos);
 
-void deplacer_piece(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru);
-void pieceAleatoire(Game * game, SDL_Rect * fenetre);
+void deplacer_piece(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime);
+void pieceAleatoire(Game * game);
 
 
 void afficherEffetDegats(SDL_Renderer* renderer, const int delai_invulnerabilite, const int delai_invulnerabilite_max, const SDL_Rect* rect_fenetre);

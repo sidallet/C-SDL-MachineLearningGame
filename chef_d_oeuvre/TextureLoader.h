@@ -15,3 +15,4 @@
  * \return Return texture created on success. Else return NULL and print the error on STDERR.
 */
 SDL_Texture* createTextureFromPath(SDL_Renderer* renderer, char* path);
+

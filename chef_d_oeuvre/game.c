@@ -41,13 +41,13 @@ Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 
 	for (int i = 0; i < game.nbVoiture ; i++)
 	{
-		voitureAleatoire(&game, i, fenetre);
+		voitureAleatoire(&game, i);
 	}
 
 	return game;
 }
 
-void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
+void voitureAleatoire(Game * game, const int pos)
 {
     SDL_Rect obst;
     bool positionValide = false;
@@ -81,7 +81,7 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
     game->rect_obstacle[pos] = obst;
 }
 
-void pieceAleatoire(Game * game, SDL_Rect * fenetre)
+void pieceAleatoire(Game * game)
 {
     SDL_Rect piece;
     bool positionValide = false;
@@ -125,19 +125,19 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 
 	if (game->deplacement_voiture != 0) {
 		game->temps_deplacement+=deltatime;
-		deplaceVoiture(&game->voiture, game->ecart_obstacles, rect_fenetre, game->deplacement_voiture, deltatime*6.67);
+		deplaceVoiture(&game->voiture, game->ecart_obstacles, game->deplacement_voiture, deltatime*6.67);
 		if (game->temps_deplacement > 150) {
 			game->voiture.x = (game->voiture.w + game->ecart_obstacles) * ((game->voiture.x+game->voiture.w/2) / (game->voiture.w + game->ecart_obstacles));
 			game->temps_deplacement = 0;
 			game->deplacement_voiture = 0;
 		}
 	}
-	deplacer_piece(game,rect_fenetre,deltatime,game->distance_parcouru);
+	deplacer_piece(game, rect_fenetre, deltatime);
 
 	//Gerer collision ici
 		if (test_collisionPiece(&game->voiture, game->rect_piece)) {
 			game->nbPieceRamass++;
-			pieceAleatoire(game,rect_fenetre);
+			pieceAleatoire(game);
 		}
 	if (game->delai_invulnerabilite<0) {
 		if (test_collision(&game->voiture, game->rect_obstacle, game->nbVoiture)) {
@@ -155,7 +155,7 @@ int calculerScore(const Game * game)
 	return game->distance_parcouru + (game->nbPieceRamass*150)*175;
 }
 
-void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
+void game_handle_event(Game* game, SDL_Event* event) {
 
 	switch (event->type)
 	{
@@ -243,7 +243,7 @@ void liberer_game(Game* game) {
 	freeTextureHandler(&game->textureHandler);
 }
 
-void deplaceVoiture(SDL_Rect* voiture, int ecart, SDL_Rect* fenetre, int direction_deplacement, Uint32 deltatime) {
+void deplaceVoiture(SDL_Rect* voiture, int ecart, int direction_deplacement, Uint32 deltatime) {
     int limiteGauche = 0;  //lim gauche de la fenêtre
     int limiteDroite = 12*(voiture->w+ecart);  //lim gauche de la fenêtre
 	
@@ -272,23 +272,19 @@ int deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int d
 
 		if(game->rect_obstacle[i].y > rect_fenetre->h)
 		{
-			voitureAleatoire(game,i,rect_fenetre);
+			voitureAleatoire(game,i);
 		}
 	}
 	return vitesse;
 		
 }
 
-void deplacer_piece(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru){
-	//printf("vitesse %d \n",vitesse);
-	
+void deplacer_piece(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime){
 	game->rect_piece.y+= game->vitesse*deltatime/1000.0;
 	if(game->rect_piece.y > rect_fenetre->h)
 	{
-		pieceAleatoire(game,rect_fenetre);
+		pieceAleatoire(game);
 	}
-
-		
 }
 
 void afficherVoiture(SDL_Renderer* renderer, const SDL_Rect* voiture, SDL_Texture* textureVoiture, int inclinaison, int delai_invulnerabilite)

@@ -12,8 +12,9 @@
 #include <threads.h>
 
 
-Regle genererRegleAlea(Regle regle)
+Regle genererRegleAlea()
 {
+	Regle regle;
 	for (int i = 0; i < 5; i++)
 	{
 		int randRegle = (rand() % NB_ETAT)-1;
@@ -25,17 +26,19 @@ Regle genererRegleAlea(Regle regle)
 
 	int randPrio = (rand() % 10)+1;
 	regle.priorite = randPrio;
+
+	regle.obsPiece.colonne = (rand()%5) -2;
+	regle.obsPiece.presence = (rand()% NB_ETAT)-1;
+
 	return regle;
 	
 }
 
 TabRegle generer_solution_initiale() {
 	TabRegle tabRegle;
-	Regle regle;
 	for (int i = 0; i < NB_REGLES; i++)
 	{
-		regle = genererRegleAlea(regle);
-		tabRegle.regles[i] = regle;
+		tabRegle.regles[i] = genererRegleAlea();
 	}
 	return tabRegle;
 }
@@ -101,6 +104,11 @@ int multi_boucle_ia(TabRegle tabRegle, SDL_Rect* rect_fenetre, size_t nb_parties
 	thrd_t threads_handles[NUM_THREADS];
 	int retours[NUM_THREADS];
 
+
+	for (int i=0; i<NUM_THREADS; ++i) {
+		threads_handles[i] = 0;
+		retours[i] = 0;
+	}
 	struct ParamsBoucleIA params = {
 		.tabRegle = tabRegle,
 		.rect_fenetre = *rect_fenetre,
@@ -108,7 +116,9 @@ int multi_boucle_ia(TabRegle tabRegle, SDL_Rect* rect_fenetre, size_t nb_parties
 	};
 
     for (int i = 0; i < NUM_THREADS; i++) {
-        thrd_create(&threads_handles[i], wrap_boucle_ia, (void *)&params);
+        if (thrd_create(&threads_handles[i], wrap_boucle_ia, (void *)&params) != thrd_success) {
+			fprintf(stderr, "Erreur création thread\n");
+		}
     }
 
     for (int i = 0; i < NUM_THREADS; i++) {
