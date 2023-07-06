@@ -15,7 +15,7 @@ void initializePatern(Game * game, Patern* patern)
     for (int i = 0; i < patern->nbObstacle; i++)
     {
         patern->rect_obstacle[i].x = i*(game->voiture.w+game->ecart_obstacles);
-        patern->rect_obstacle[i].y = 0;
+        patern->rect_obstacle[i].y = -110;
         patern->rect_obstacle[i].w = 65;
         patern->rect_obstacle[i].h = 110;
     }
@@ -103,17 +103,18 @@ void voitureAleatoire(Game * game, int pos, SDL_Rect * fenetre)
     game->rect_obstacle[pos] = obst;
 }
 
-void envoyerPatern(SDL_Rect voiture,int pos, SDL_Rect * fenetre, Game * game, int randCol)
+void envoyerPatern(Game * game,int pos, SDL_Rect * fenetre, int col)
 {
     SDL_Rect obst;
-	obst.w = voiture.w;
-	obst.h = voiture.h;
-	obst.x = (voiture.w+game->ecart_obstacles)*randCol;
-	obst.y = voiture.y;
+
+	obst.w = 65;
+	obst.h = 110;
+	obst.x = (col * (obst.w + game->ecart_obstacles)) + pos* (obst.w + game->ecart_obstacles);
+	obst.y = -100;
 
 	obst.y += game->ecart_obstacles;
 
-    game->rect_obstacle[pos] = obst;
+    game->patern.rect_obstacle[pos] = obst;
 }
 
 
@@ -122,6 +123,7 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 	if (game->vie>0) {
 		game->distance_parcouru += deltatime;
 		game->vitesse = deplacer_obstacle(game,rect_fenetre,deltatime, game->distance_parcouru, game->nbVoiture);
+		deplacer_patern(game,rect_fenetre,deltatime, game->distance_parcouru);
 	}	
 
 	if (game->vie<=0) {
@@ -141,7 +143,7 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 
 	//Gerer collision ici
 	if (game->delai_invulnerabilite<0) {
-		if (test_collision(&game->voiture, game->rect_obstacle, game->nbVoiture)) {
+		if (test_collision(&game->voiture, game->rect_obstacle, game->nbVoiture) || test_collision(&game->voiture, game->patern.rect_obstacle, game->patern.nbObstacle)) {
 			game->vie--;
 			game->delai_invulnerabilite = game->delai_invulnerabilite_max;
 		}
@@ -186,6 +188,7 @@ void game_handle_event(Game* game, SDL_Event* event, SDL_Rect* rect_fenetre) {
 void game_afficher(const Game* game, SDL_Renderer* renderer, SDL_Rect* rect_fenetre) {
 	afficherRoute(renderer, game->textureHandler.textures[TEXTURE_Route], rect_fenetre, game->distance_parcouru);
 	afficher_obstacle(renderer,game->rect_obstacle, (SDL_Texture**)game->textureHandler.textures,game->nbVoiture);
+	afficher_obstacle(renderer,game->patern.rect_obstacle, (SDL_Texture**)game->textureHandler.textures,game->patern.nbObstacle);
 	afficherVoiture(renderer,&game->voiture,game->textureHandler.textures[TEXTURE_voiture_course],game->deplacement_voiture*15, game->delai_invulnerabilite);
 	if (game->vie <= 0) {
 		afficherFin(renderer, rect_fenetre, game->distance_parcouru/175, game->vitesse/4, game->font);
@@ -262,23 +265,26 @@ int deplacer_obstacle(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int d
 
 		if(game->rect_obstacle[i].y > rect_fenetre->h)
 		{
-			int randChoix = rand() %4;
-			int randCol = rand() %10;
-			if(randChoix < 2)
-			{	
-				printf("patern envoyé \n");
-				for (int j = 0; j < game->patern.nbObstacle; j++)
-				{
-					envoyerPatern(game->patern.rect_obstacle[j],j, rect_fenetre, game, randCol+j);
-				}
-			}
-			else {
-				voitureAleatoire(game,i,rect_fenetre);
-			}
-
+			voitureAleatoire(game,i,rect_fenetre);
 		}
+
 	}
 	return vitesse;
+		
+}
+
+void deplacer_patern(Game* game,SDL_Rect* rect_fenetre, Uint32 deltatime, int distance_parcouru){
+	int randChoix = rand() % 10;
+	for (int i = 0; i < game->patern.nbObstacle; i++)
+	{
+		game->patern.rect_obstacle[i].y+=game->vitesse*deltatime/1000.0;
+
+		if(game->patern.rect_obstacle[i].y > rect_fenetre->h)
+		{
+			envoyerPatern(game,i,rect_fenetre, randChoix);
+		}
+
+	}
 		
 }
 
