@@ -2,21 +2,23 @@
 #include "game.h"
 #include "regle.h"
 #include <SDL2/SDL2_framerate.h>
+#include <SDL2/SDL_rect.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <threads.h>
+
 
 void afficherObservationHitbox(const Game * game, SDL_Renderer * renderer,SDL_Rect * rect_fenetre,Observation obs,  int colVoiture)
 {
 	SDL_Rect rect_affich;
 
-	rect_affich.w = game->voiture.w;
+	rect_affich.w = game->voiture1.w;
 	rect_affich.h = rect_fenetre->h/4;
 
 	for (int i = -2; i < 3; i++)
 	{
 		SDL_SetRenderDrawColor(renderer, 0 + ((rect_fenetre->h/4)/3 * (obs.routes[i+2] - 1)) , 150 - (rect_fenetre->h/4)/3, 0, 175);
-		rect_affich.x = (game->voiture.w + game->ecart_obstacles) * (i+colVoiture);
+		rect_affich.x = (game->voiture1.w + game->ecart_obstacles) * (i+colVoiture);
 		rect_affich.y = (rect_fenetre->h/4) * (obs.routes[i+2] - 1);
 		SDL_RenderFillRect(renderer, &rect_affich);
 	}
@@ -37,18 +39,22 @@ void affichageJoueur(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fe
 	SDL_RenderPresent(renderer);
 }
 
-Observation ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
-	if (game->deplacement_voiture != 0) {
+Observation ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre, SDL_Rect* v, int* deplacement_v, int vnum) {
+	if (*deplacement_v!= 0) {
 		return; // En déplacement: pas de decision
 	}
-	Observation observation = creerObservation(game,fenetre);
-	ObservationPiece observationPiece = creerObservationPiece(game, fenetre);
-	game->deplacement_voiture = choisirRegle(&observation,&observationPiece ,tabRegle);
+	Observation observation = creerObservation(game, v,fenetre);
+	ObservationPiece observationPiece = creerObservationPiece(game, v, fenetre);
+	int colone_relative = coord_to_colone(game->voiture1, game->ecart_obstacles) - coord_to_colone(game->voiture2, game->ecart_obstacles);
+	if (vnum == 2) {
+		colone_relative = -colone_relative;
+	}
+	*deplacement_v = choisirRegle(&observation,&observationPiece, colone_relative ,tabRegle);
 	return observation;
 }
 
 int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fenetre, SDL_Renderer* renderer, FPSmanager* fpsManager) {
-	Observation obs;
+	Observation obs1, obs2;
 	bool vision = false;
 	Game game = new_game(affichage_actif, renderer, rect_fenetre);
 		
@@ -73,8 +79,9 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 				}
 			}
 		}
-		const int colVoiture = game.voiture.x/(game.voiture.w+game.ecart_obstacles);
-		obs = ia_think(&game, &tabRegle,rect_fenetre);
+		const int colVoiture = game.voiture1.x/(game.voiture1.w+game.ecart_obstacles);
+		obs1 = ia_think(&game, &tabRegle,rect_fenetre, &game.voiture1, &game.deplacement_voiture1, 1);
+		obs1 = ia_think(&game, &tabRegle,rect_fenetre, &game.voiture2, &game.deplacement_voiture2, 2);
 		game_update(&game, rect_fenetre, delta_time);
 		
 		if (game.vie == 0 || game.distance_parcouru >= 1000000) {
@@ -82,7 +89,7 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 		}
 
 		if (affichage_actif) {
-			affichage(renderer, &game, rect_fenetre, obs,colVoiture, vision);
+			affichage(renderer, &game, rect_fenetre, obs1,colVoiture, vision);
 			delta_time = SDL_framerateDelay(fpsManager);
 		}
 	}
@@ -92,44 +99,32 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 	return score;
 }
 
-Observation creerObservation(const Game* game, SDL_Rect * fenetre)
+Observation creerObservation(const Game* game, SDL_Rect* v, SDL_Rect * fenetre)
 {
 	Observation situation;
 	bool bool_loin=false;
 	bool bool_moyen=false;
 	bool bool_proche=false;
 	bool bool_contact=false;
-	const int colonnes_voiture=game->voiture.x/(game->voiture.w+game->ecart_obstacles);
+	const int colonnes_voiture=v->x/(v->w+game->ecart_obstacles);
 	
 	SDL_Rect rect_loin = { //Rect en haut de la fenetre
-		.x=(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.x=(v->w + game->ecart_obstacles)*(colonnes_voiture-2),
 		.y=0,
-		.w=game->voiture.w,
+		.w=v->w,
 		.h=fenetre->h/4,
 	};
 
-	SDL_Rect rect_moyen = { //Rect en dessous du rect_loin
-		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
-		.y=fenetre->h/4,
-		.w=game->voiture.w,
-		.h=fenetre->h/4
-	};
+	SDL_Rect rect_moyen = rect_loin; //Rect en dessous du rect_loin
+	rect_moyen.y=fenetre->h/4;
 
-	SDL_Rect rect_proche = { //Rect en dessous du milieu
-		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
-		.y=fenetre->h/2,
-		.w=game->voiture.w,
-		.h=fenetre->h/4
-	};
+	SDL_Rect rect_proche = rect_loin; //Rect en dessous du rect_loin
+	rect_proche.y=fenetre->h/2;
 
-	SDL_Rect rect_contact = { //Rect tout en bas
-		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
-		.y=(3*fenetre->h)/4,
-		.w=game->voiture.w,
-		.h=fenetre->h/4
-	};
+	SDL_Rect rect_contact = rect_loin; //Rect en dessous du rect_loin
+	rect_contact.y=3*fenetre->h/4;
 
-	
+
 
 	for (int i=-2;i<3;i++)//les 5 colonnes à étudier de -2 à 2
 	{
@@ -165,16 +160,16 @@ Observation creerObservation(const Game* game, SDL_Rect * fenetre)
 			}
 
 		}
-		rect_loin.x += game->voiture.w + game->ecart_obstacles;
-		rect_proche.x += game->voiture.w + game->ecart_obstacles;
-		rect_contact.x += game->voiture.w + game->ecart_obstacles;
-		rect_moyen.x += game->voiture.w + game->ecart_obstacles;
+		rect_loin.x += v->w + game->ecart_obstacles;
+		rect_proche.x += v->w + game->ecart_obstacles;
+		rect_contact.x += v->w + game->ecart_obstacles;
+		rect_moyen.x += v->w + game->ecart_obstacles;
 	}
 	return situation;
 
 }
 
-ObservationPiece creerObservationPiece(const Game* game, SDL_Rect * fenetre)
+ObservationPiece creerObservationPiece(const Game* game, SDL_Rect* v, SDL_Rect * fenetre)
 {
 	ObservationPiece situationPiece;
 	situationPiece.presence = VIDE;
@@ -183,35 +178,24 @@ ObservationPiece creerObservationPiece(const Game* game, SDL_Rect * fenetre)
 	bool bool_moyen=false;
 	bool bool_proche=false;
 	bool bool_contact=false;
-	const int colonnes_voiture=game->voiture.x/(game->voiture.w+game->ecart_obstacles);
-	
+	const int colonnes_voiture=v->x/(v->w+game->ecart_obstacles);
+		
 	SDL_Rect rect_loin = { //Rect en haut de la fenetre
-		.x=(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
+		.x=(v->w + game->ecart_obstacles)*(colonnes_voiture-2),
 		.y=0,
-		.w=game->voiture.w,
+		.w=v->w,
 		.h=fenetre->h/4,
 	};
 
-	SDL_Rect rect_moyen = { //Rect en dessous du rect_loin
-		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
-		.y=fenetre->h/4,
-		.w=game->voiture.w,
-		.h=fenetre->h/4
-	};
+	SDL_Rect rect_moyen = rect_loin; //Rect en dessous du rect_loin
+	rect_moyen.y=fenetre->h/4;
 
-	SDL_Rect rect_proche = { //Rect en dessous du milieu
-		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
-		.y=fenetre->h/2,
-		.w=game->voiture.w,
-		.h=fenetre->h/4
-	};
+	SDL_Rect rect_proche = rect_loin; //Rect en dessous du rect_loin
+	rect_proche.y=fenetre->h/2;
 
-	SDL_Rect rect_contact = { //Rect tout en bas
-		.x =(game->voiture.w + game->ecart_obstacles)*(colonnes_voiture-2),
-		.y=(3*fenetre->h)/4,
-		.w=game->voiture.w,
-		.h=fenetre->h/4
-	};
+	SDL_Rect rect_contact = rect_loin; //Rect en dessous du rect_loin
+	rect_contact.y=3*fenetre->h/4;
+
 
 	for (int i=-2;i<3;i++)//les 5 colonnes à étudier de -2 à 2
 	{
@@ -251,22 +235,25 @@ ObservationPiece creerObservationPiece(const Game* game, SDL_Rect * fenetre)
 			}
 
 		}
-		rect_loin.x += game->voiture.w + game->ecart_obstacles;
-		rect_proche.x += game->voiture.w + game->ecart_obstacles;
-		rect_contact.x += game->voiture.w + game->ecart_obstacles;
-		rect_moyen.x += game->voiture.w + game->ecart_obstacles;
+
+		rect_loin.x += v->w + game->ecart_obstacles;
+		rect_proche.x += v->w + game->ecart_obstacles;
+		rect_contact.x += v->w + game->ecart_obstacles;
+		rect_moyen.x += v->w + game->ecart_obstacles;
+
 	}
 	return situationPiece;
 
 }
 
 
-Decision choisirRegle(const Observation* observation, const ObservationPiece* observationPiece,const TabRegle* tabRegle) {
+Decision choisirRegle(const Observation* observation, const ObservationPiece* observationPiece, int colone_relative,const TabRegle* tabRegle) {
 	// Selection
 	size_t indice_regles_match[NB_REGLES];
 	size_t nb_regles_match = 0;
 	for (size_t i=0; i<NB_REGLES; ++i) {
-		if (observation_match(*observation, tabRegle->regles[i].observ) && observationPiece_match(*observationPiece, tabRegle->regles[i].obsPiece) ) {
+		if (observation_match(*observation, tabRegle->regles[i].observ) && observationPiece_match(*observationPiece, tabRegle->regles[i].obsPiece)
+					&& (tabRegle->regles[i].colone_double==0 || colone_relative == tabRegle->regles[i].colone_double)) {
 			indice_regles_match[nb_regles_match] = i;
 			nb_regles_match++;
 		}	

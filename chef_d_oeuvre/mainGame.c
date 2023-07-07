@@ -41,7 +41,7 @@ int boucle_joueur(const bool affichage_actif, SDL_Rect* rect_fenetre, SDL_Render
 				}
 			}
 		}
-		const int colVoiture = game.voiture.x/(game.voiture.w+game.ecart_obstacles);
+		//const int colVoiture = game.voiture.x/(game.voiture.w+game.ecart_obstacles);
 		game_update(&game, rect_fenetre, delta_time);
 		
 		if (game.vie == 0 || game.distance_parcouru >= 1000000) {
@@ -75,9 +75,9 @@ int main (int argc, char* argv[]) {
 
 	SDL_setFramerate(&fpsManager, 60);
 
-	// FILE* fichier = fopen("regleSauv.txt", "r");
-	// TabRegle tabRecuit = chargerTabRegle(fichier);
-	// fclose(fichier);
+	FILE* fichier = fopen("regleSauv.txt", "r");
+	TabRegle tabRecuit = chargerTabRegle(fichier);
+	fclose(fichier);
 
 
 	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
@@ -86,16 +86,16 @@ int main (int argc, char* argv[]) {
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
 
 
-	// tabRecuit = recuit(2000, &rect_fenetre, 8,tabRecuit);
+	tabRecuit = recuit(2000, &rect_fenetre, 8,tabRecuit);
 
-	// fichier = fopen("regleSauv.txt", "w");
-	// afficherTabRegle(fichier,tabRecuit);
-	// fclose(fichier);
+	fichier = fopen("regleSauv.txt", "w");
+	afficherTabRegle(fichier,tabRecuit);
+	fclose(fichier);
 
-	// afficherTabRegle(stdout, tabRecuit);
-	 //boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
-	int scoreJoueur = boucle_joueur(true, &rect_fenetre, renderer, &fpsManager);
-	printf("[Score] -> %d\n",scoreJoueur/175);
+	afficherTabRegle(stdout, tabRecuit);
+	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
+	//int scoreJoueur = boucle_joueur(true, &rect_fenetre, renderer, &fpsManager);
+	//printf("[Score] -> %d\n",scoreJoueur/175);
 	clean_sdl(&window, &renderer);
 	return EXIT_SUCCESS;
 }

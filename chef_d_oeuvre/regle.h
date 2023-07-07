@@ -31,6 +31,7 @@ typedef struct {
     ObservationPiece obsPiece;
     Decision decis;
     int priorite;
+	int colone_double; // 0 en jocker
 }Regle;
 
 #define NB_REGLES 20

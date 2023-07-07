@@ -18,9 +18,11 @@ typedef struct
 	int delai_invulnerabilite_max;
 	int delai_piece;
 	int delai_piece_max;
-	SDL_Rect voiture;
+	SDL_Rect voiture1;
+	SDL_Rect voiture2;
 	TextureHandler textureHandler;
-	int deplacement_voiture;
+	int deplacement_voiture1;
+	int deplacement_voiture2;
 	SDL_Rect* rect_obstacle;
 	int nbVoiture;
 	int vitesse;
@@ -66,6 +68,8 @@ bool test_collisionPiece(const SDL_Rect* voiture, const SDL_Rect rect_piece);
 int calculerScore(const Game * game);
 
 TTF_Font* charger_font();
+
+int coord_to_colone (SDL_Rect voiture, int ecart_obstacles);
 
 #endif //GAME_INCLUDED
 
