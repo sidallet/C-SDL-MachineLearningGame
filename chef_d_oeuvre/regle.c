@@ -132,3 +132,24 @@ TabRegle alterTabRegle(TabRegle tabRegle) {
 	return tabRegle;
 }
 
+Regle copier_regle(Regle regle) {
+	Regle r;
+	r.priorite = regle.priorite;
+	r.decis = regle.decis;
+	r.obsPiece = regle.obsPiece;
+	
+	for (size_t i=0; i<5; ++i) {
+		r.observ.routes[i] = regle.observ.routes[i];
+	}
+	return r;
+}
+
+TabRegle copier_tab_regle(TabRegle tab) {
+	TabRegle nouv;
+	
+	for (size_t i=0; i<NB_REGLES; ++i) {
+		nouv.regles[i] = copier_regle(tab.regles[i]);	
+	}
+	return nouv;
+}
+

@@ -6,9 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define TAILLE_POPULATION 40
-#define NOMBRE_PARENTS 10
-
 void generer_population_initiale(TabRegle population[]) {
 	for (int s=0; s<TAILLE_POPULATION; ++s) {
 		for (size_t i=0; i<NB_REGLES; ++i) {
@@ -17,14 +14,6 @@ void generer_population_initiale(TabRegle population[]) {
 	}
 }
 
-TabRegle copier_tab_regle(TabRegle tab) {
-	TabRegle nouv;
-	
-	for (size_t i=0; i<NB_REGLES; ++i) {
-		nouv.regles[i] = tab.regles[i];	
-	}
-	return nouv;
-}
 
 void echanger2(TabRegle arr1[], int arr2[], size_t a, size_t b) {
 	TabRegle tmp1 = copier_tab_regle(arr1[a]);
@@ -81,14 +70,60 @@ void selectionner_parents(TabRegle population[], int scores[]) {
 	}
 }
 
+Regle fusion_regle(Regle r1, Regle r2) {
+	int randi = rand()%(5+2+1+1);
+	Regle rfus;
+	rfus.decis = r2.decis;
+	rfus.obsPiece = r2.obsPiece;
+	rfus.priorite = r2.priorite;
+
+	if (randi<5) {
+		for (size_t i=0; i<randi; ++i) {
+			rfus.observ.routes[i] = r1.observ.routes[i];
+		}
+		for (size_t i=randi; i<5; ++i) {
+			rfus.observ.routes[i] = r2.observ.routes[i];
+		}
+	}
+	else {
+		for (size_t i=0; i<5; ++i) {
+			rfus.observ.routes[i] = r1.observ.routes[i];
+		}
+
+		switch (randi) {
+			case 5: {
+				rfus.obsPiece.colonne = r1.obsPiece.colonne;
+				break;
+			}
+			case 6: {
+				rfus.obsPiece = r1.obsPiece;
+				break;
+			}
+			case 7: {
+				rfus.obsPiece = r1.obsPiece;
+				rfus.decis = r1.decis;
+				break;
+			}
+			case 8: {
+				rfus.obsPiece = r1.obsPiece;
+				rfus.decis = r1.decis;
+				rfus.priorite = r1.priorite;
+				break;
+			}
+		
+		}		
+	}
+	return rfus;
+}
+
 TabRegle fusion_parent(const TabRegle parent1, const TabRegle parent2) {
 	TabRegle fils;
 	for (size_t i=0; i<NB_REGLES; ++i) {
 		if (rand()%2==0) {
-			fils.regles[i] = parent1.regles[i];		
+			fils.regles[i] = fusion_regle(parent1.regles[i], parent2.regles[i]);		
 		}
 		else {
-			fils.regles[i] = parent2.regles[i];		
+			fils.regles[i] = fusion_regle(parent2.regles[i], parent1.regles[i]);		
 		}
 	}
 
@@ -97,14 +132,15 @@ TabRegle fusion_parent(const TabRegle parent1, const TabRegle parent2) {
 
 void generer_enfants(TabRegle population[]) {
 	for (size_t i=NOMBRE_PARENTS; i<TAILLE_POPULATION; ++i) {
-		population[i] = fusion_parent(population[i%NOMBRE_PARENTS], population[(i+NOMBRE_PARENTS/2)%NOMBRE_PARENTS]);
+		population[i] = fusion_parent(population[i%NOMBRE_PARENTS], population[(i+rand())%NOMBRE_PARENTS]);
 	}
 }
 
-void muter_population(TabRegle population[]) {
+void muter_population(TabRegle population[], int scores[]) {
 	for (size_t i=0; i<TAILLE_POPULATION; ++i) {
-		if (rand()%5 == 0){
+		if (rand()%20 == 0){
 			population[i] = copier_tab_regle(alterTabRegle(population[i]));
+			scores[i] = 0;
 		}	
 	}
 }
@@ -133,22 +169,41 @@ void calculerScorePopulation(TabRegle population[], int scores[], SDL_Rect* rect
 	}
 }
 
-TabRegle genetique(int nombre_iterations, SDL_Rect * rect_fenetre, size_t nb_parties) {
-	TabRegle population[TAILLE_POPULATION];
+TabRegle genetique(int nombre_iterations, SDL_Rect * rect_fenetre, size_t nb_parties, TabRegle population[TAILLE_POPULATION]) {
 	int scores[TAILLE_POPULATION];
 	init_score(scores);
-	generer_population_initiale(population);
+	calculerScorePopulation(population, scores, rect_fenetre, nb_parties);
 
+	for (int s=0; s<TAILLE_POPULATION; ++s) {
+		printf("%d ", scores[s]/175);	
+	}
+	printf("\n");	
+
+	printf("%d\n", scores[selection_meilleur(scores)]/175);
 	for(size_t i=0; i<nombre_iterations; ++i) {
-		calculerScorePopulation(population, scores, rect_fenetre, nb_parties);
 		selectionner_parents(population, scores);
 
 		generer_enfants(population);
 	
-		muter_population(population);
+		muter_population(population, scores);
+		calculerScorePopulation(population, scores, rect_fenetre, nb_parties);
+
+
+		for (int s=0; s<NOMBRE_PARENTS; ++s) {
+			printf("%d ", scores[s]/175);	
+		}
+		printf("\n");	
+
 		printf("%d\n", scores[selection_meilleur(scores)]/175);
 	}
-	
+
+	for (int s=0; s<TAILLE_POPULATION; ++s) {
+		printf("%d ", scores[s]/175);	
+	}
+	printf("\n");	
+
+
+
 	return population[selection_meilleur(scores)];
 }
 

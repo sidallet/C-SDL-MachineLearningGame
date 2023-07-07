@@ -9,6 +9,7 @@
 
 #include "regle.h"
 #include "genetique.h"
+#include "recuit.h"
 
 #ifndef UNIT_TEST
 int main (int argc, char* argv[]) {
@@ -32,7 +33,16 @@ int main (int argc, char* argv[]) {
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
 
 
-	TabRegle tabRecuit = genetique(100, &rect_fenetre, 8*3);
+	FILE* file = fopen("regleSauv.txt", "r");
+	TabRegle rBase = chargerTabRegle(file);
+	fclose(file);
+
+	TabRegle population[TAILLE_POPULATION];
+	for (size_t i=0; i<TAILLE_POPULATION; ++i) {
+		population[i] = copier_tab_regle(recuit(30, &rect_fenetre, 8, rBase));
+	}
+
+	TabRegle tabRecuit = genetique(100, &rect_fenetre, 8*3, population);
 
 
 	afficherTabRegle(stdout, tabRecuit);
