@@ -95,7 +95,7 @@ int main (int argc, char* argv[]) {
 	// afficherTabRegle(stdout, tabRecuit);
 	 //boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);
 	int scoreJoueur = boucle_joueur(true, &rect_fenetre, renderer, &fpsManager);
-	printf("[Score] -> %d\n",scoreJoueur);
+	printf("[Score] -> %d\n",scoreJoueur/175);
 	clean_sdl(&window, &renderer);
 	return EXIT_SUCCESS;
 }
