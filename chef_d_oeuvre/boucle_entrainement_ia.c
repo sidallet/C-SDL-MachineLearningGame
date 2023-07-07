@@ -81,7 +81,7 @@ int boucle_ia(const bool affichage_actif, TabRegle tabRegle, SDL_Rect* rect_fene
 		}
 		const int colVoiture = game.voiture1.x/(game.voiture1.w+game.ecart_obstacles);
 		obs1 = ia_think(&game, &tabRegle,rect_fenetre, &game.voiture1, &game.deplacement_voiture1, 1);
-		obs1 = ia_think(&game, &tabRegle,rect_fenetre, &game.voiture2, &game.deplacement_voiture2, 2);
+		obs2 = ia_think(&game, &tabRegle,rect_fenetre, &game.voiture2, &game.deplacement_voiture2, 2);
 		game_update(&game, rect_fenetre, delta_time);
 		
 		if (game.vie == 0 || game.distance_parcouru >= 1000000) {
@@ -253,7 +253,7 @@ Decision choisirRegle(const Observation* observation, const ObservationPiece* ob
 	size_t nb_regles_match = 0;
 	for (size_t i=0; i<NB_REGLES; ++i) {
 		if (observation_match(*observation, tabRegle->regles[i].observ) && observationPiece_match(*observationPiece, tabRegle->regles[i].obsPiece)
-					&& (tabRegle->regles[i].colone_double==0 || colone_relative == tabRegle->regles[i].colone_double)) {
+					&& (tabRegle->regles[i].colone_double==0 || (abs(colone_relative - tabRegle->regles[i].colone_double) < 5 && colone_relative * tabRegle->regles[i].colone_double > 0 ))) {
 			indice_regles_match[nb_regles_match] = i;
 			nb_regles_match++;
 		}	

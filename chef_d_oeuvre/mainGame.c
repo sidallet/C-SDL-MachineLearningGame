@@ -7,9 +7,9 @@
 #include <time.h>
 #include "game.h"
 
-#include "recuit.h"
 #include "regle.h"
-
+#include "genetique.h"
+#include "recuit.h"
 
 #ifndef UNIT_TEST
 
@@ -33,12 +33,7 @@ int boucle_joueur(const bool affichage_actif, SDL_Rect* rect_fenetre, SDL_Render
 				if (event.type == SDL_QUIT) {
 					running = false;
 				}	
-				if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q) {
-					game_handle_event(&game,&event);
-				}
-				if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_d) {
-					game_handle_event(&game,&event);
-				}
+				game_handle_event(&game,&event);
 			}
 		}
 		//const int colVoiture = game.voiture.x/(game.voiture.w+game.ecart_obstacles);
@@ -75,22 +70,20 @@ int main (int argc, char* argv[]) {
 
 	SDL_setFramerate(&fpsManager, 60);
 
-	FILE* fichier = fopen("regleSauv.txt", "r");
-	TabRegle tabRecuit = chargerTabRegle(fichier);
-	fclose(fichier);
-
-
 	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
 	
 	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
 	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
+	FILE* file = fopen("regleSauv.txt", "r");
+	TabRegle tabRecuit = chargerTabRegle(file);
+	fclose(file);
+
+	tabRecuit = recuit(20000, &rect_fenetre, 8,tabRecuit);
+	FILE* fileo = fopen("regleSauv.txt", "w");
+	afficherTabRegle(fileo, tabRecuit);
+	fclose(fileo);
 
 
-	tabRecuit = recuit(2000, &rect_fenetre, 8,tabRecuit);
-
-	fichier = fopen("regleSauv.txt", "w");
-	afficherTabRegle(fichier,tabRecuit);
-	fclose(fichier);
 
 	afficherTabRegle(stdout, tabRecuit);
 	boucle_ia(true, tabRecuit, &rect_fenetre, renderer, &fpsManager);

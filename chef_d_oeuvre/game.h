@@ -26,7 +26,8 @@ typedef struct
 	SDL_Rect* rect_obstacle;
 	int nbVoiture;
 	int vitesse;
-	int temps_deplacement;
+	int temps_deplacement1;
+	int temps_deplacement2;
 	SDL_Rect rect_piece;
 	int nbPieceRamass;
 	int ecart_obstacles;

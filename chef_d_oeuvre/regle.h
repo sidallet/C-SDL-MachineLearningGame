@@ -34,7 +34,7 @@ typedef struct {
 	int colone_double; // 0 en jocker
 }Regle;
 
-#define NB_REGLES 20
+#define NB_REGLES 30
 typedef struct 
 {
     Regle regles[NB_REGLES]; 
@@ -47,6 +47,12 @@ void afficherObservationPiece(FILE* flux, const ObservationPiece obsPiece);
 Regle chargerRegle(FILE* flux);
 TabRegle chargerTabRegle(FILE* flux);
 void afficherTabRegle(FILE* flux, const TabRegle tabRegle);
+
+Regle genererRegleAlea();
+TabRegle alterTabRegle(TabRegle tabRegle);
+
+TabRegle copier_tab_regle(TabRegle tab);
+Regle copier_regle(Regle regle);
 
 
 #endif //REGLE_H

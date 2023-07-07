@@ -24,7 +24,8 @@ Game new_game(bool affichage_on, SDL_Renderer* renderer, SDL_Rect * fenetre) {
 		.vitesse = 100,
 		.ecart_obstacles = 15,
 		.nbPieceRamass = 0,
-		.temps_deplacement = 0,
+		.temps_deplacement1 = 0,
+		.temps_deplacement2 = 0,
 	};
 
 	if (affichage_on) {
@@ -117,14 +118,14 @@ void pieceAleatoire(Game * game)
 }
 
 
-void deplacer_voiture(Game* game, SDL_Rect* v, int* deplacement_v, Uint32 deltatime) {
+void deplacer_voiture(Game* game, SDL_Rect* v, int* deplacement_v, Uint32 deltatime, int* temps_deplacement) {
 
 	if (*deplacement_v != 0) {
-		game->temps_deplacement+=deltatime;
+		*temps_deplacement+=deltatime;
 		deplaceVoiture(v, game->ecart_obstacles, *deplacement_v, deltatime*6.67);
-		if (game->temps_deplacement > 150) {
+		if (*temps_deplacement > 150) {
 			v->x = (v->w + game->ecart_obstacles) * ((v->x+v->w/2) / (v->w + game->ecart_obstacles));
-			game->temps_deplacement = 0;
+			*temps_deplacement = 0;
 			*deplacement_v = 0;
 		}
 	}
@@ -143,11 +144,13 @@ void game_update(Game* game,SDL_Rect* rect_fenetre,Uint32 deltatime){
 		return;
 	}
 
-	deplacer_voiture(game, &game->voiture1, &game->deplacement_voiture1, deltatime);
-	deplacer_voiture(game, &game->voiture2, &game->deplacement_voiture2, deltatime);
 	if ( coord_to_colone(game->voiture1, game->ecart_obstacles) == coord_to_colone(game->voiture2, game->ecart_obstacles)) {
 		game->vie = 0;
-	} 
+		return;
+	}
+
+	deplacer_voiture(game, &game->voiture1, &game->deplacement_voiture1, deltatime, &game->temps_deplacement1);
+	deplacer_voiture(game, &game->voiture2, &game->deplacement_voiture2, deltatime, &game->temps_deplacement2);
 
 	deplacer_piece(game, rect_fenetre, deltatime);
 
@@ -187,6 +190,7 @@ void game_handle_event(Game* game, SDL_Event* event) {
 			{
 				case SDLK_LEFT:
 					game->deplacement_voiture2 = -1;
+					break;
 				case SDLK_q : {
 					game->deplacement_voiture1 = -1;
 					break;
