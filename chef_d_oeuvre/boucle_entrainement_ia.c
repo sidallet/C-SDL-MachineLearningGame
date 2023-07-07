@@ -30,6 +30,13 @@ void affichage(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre,
 	SDL_RenderPresent(renderer);
 }
 
+void affichageJoueur(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre) {
+	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+	SDL_RenderClear(renderer);
+	game_afficher(game,renderer, rect_fenetre);
+	SDL_RenderPresent(renderer);
+}
+
 Observation ia_think(Game* game, const TabRegle* tabRegle,SDL_Rect * fenetre) {
 	if (game->deplacement_voiture != 0) {
 		return; // En déplacement: pas de decision

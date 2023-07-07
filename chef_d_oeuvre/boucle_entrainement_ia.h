@@ -21,4 +21,6 @@ Decision choisirRegle(const Observation* observation, const ObservationPiece* ob
 bool observation_match(const Observation obs1, const Observation obs2);
 bool observationPiece_match(const ObservationPiece obs1, const ObservationPiece obs2);
 
+void affichageJoueur(SDL_Renderer* renderer, const Game* game, SDL_Rect* rect_fenetre);
+
 #endif // BOUCLE_ENTRAINEMENT_IA_H
