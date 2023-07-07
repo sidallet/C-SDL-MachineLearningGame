@@ -41,8 +41,9 @@ int main (int argc, char* argv[]) {
 	for (size_t i=0; i<TAILLE_POPULATION; ++i) {
 		population[i] = copier_tab_regle(recuit(30, &rect_fenetre, 8, rBase));
 	}
+	//generer_population_initiale(population);
 
-	TabRegle tabRecuit = genetique(100, &rect_fenetre, 8*3, population);
+	TabRegle tabRecuit = genetique(10, &rect_fenetre, 8*3, population);
 
 
 	afficherTabRegle(stdout, tabRecuit);

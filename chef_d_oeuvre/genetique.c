@@ -138,7 +138,7 @@ void generer_enfants(TabRegle population[]) {
 
 void muter_population(TabRegle population[], int scores[]) {
 	for (size_t i=0; i<TAILLE_POPULATION; ++i) {
-		if (rand()%20 == 0){
+		if (rand()%80 == 0){
 			population[i] = copier_tab_regle(alterTabRegle(population[i]));
 			scores[i] = 0;
 		}	
@@ -169,6 +169,14 @@ void calculerScorePopulation(TabRegle population[], int scores[], SDL_Rect* rect
 	}
 }
 
+int moyenne_tab(int tab[], size_t deb, size_t fin) {
+	int sum = 0;
+	for (size_t i=deb; i<fin; ++i) {
+		sum += tab[i];
+	}
+	return sum/(fin-deb);
+}
+
 TabRegle genetique(int nombre_iterations, SDL_Rect * rect_fenetre, size_t nb_parties, TabRegle population[TAILLE_POPULATION]) {
 	int scores[TAILLE_POPULATION];
 	init_score(scores);
@@ -194,7 +202,7 @@ TabRegle genetique(int nombre_iterations, SDL_Rect * rect_fenetre, size_t nb_par
 		}
 		printf("\n");	
 
-		printf("%d\n", scores[selection_meilleur(scores)]/175);
+		printf("Max :%d ; Moy : %d\n", scores[selection_meilleur(scores)]/175, moyenne_tab(scores, 0, NOMBRE_PARENTS)/175);
 	}
 
 	for (int s=0; s<TAILLE_POPULATION; ++s) {

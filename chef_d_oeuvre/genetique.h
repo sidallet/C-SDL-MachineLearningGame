@@ -4,8 +4,8 @@
 #include "regle.h"
 #include <SDL2/SDL_rect.h>
 
-#define NOMBRE_PARENTS 100
-#define TAILLE_POPULATION 1000
+#define NOMBRE_PARENTS 20
+#define TAILLE_POPULATION 120
 
 TabRegle genetique(int nombre_iterations, SDL_Rect * rect_fenetre, size_t nb_parties, TabRegle population_initiale[TAILLE_POPULATION]);
 
