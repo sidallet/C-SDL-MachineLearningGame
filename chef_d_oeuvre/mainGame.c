@@ -4,6 +4,7 @@
 #include <SDL2/SDL2_framerate.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include "game.h"
 
@@ -13,6 +14,11 @@
 
 #ifndef UNIT_TEST
 int main (int argc, char* argv[]) {
+	char nom_fichier_regle[300] = "regleSauv.txt";
+	if (argc >= 2) {
+		strncpy(nom_fichier_regle, argv[1], 299);
+	}
+
 
 	srand(time(NULL));
 	SDL_Window* window;
@@ -27,21 +33,12 @@ int main (int argc, char* argv[]) {
 
 	SDL_setFramerate(&fpsManager, 60);
 
-	FILE* fichier = fopen("regleSauv.txt", "r");
+	FILE* fichier = fopen(nom_fichier_regle, "r");
+	if (fichier==NULL) {
+		fprintf(stderr, "Erreur ouverture fichier regle %s\n", nom_fichier_regle);
+		return EXIT_FAILURE;
+	}
 	TabRegle tabRecuit = chargerTabRegle(fichier);
-	fclose(fichier);
-
-
-	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
-	
-	//boucle_ia(true, tabRegle, &rect_fenetre, renderer, &fpsManager);
-	//boucle_ia(false, tab, &rect_fenetre, renderer, &fpsManager);
-
-
-	//tabRecuit = recuit(50, &rect_fenetre, 8*3,tabRecuit);
-
-	fichier = fopen("regleSauv.txt", "w");
-	afficherTabRegle(fichier,tabRecuit);
 	fclose(fichier);
 
 	afficherTabRegle(stdout, tabRecuit);
