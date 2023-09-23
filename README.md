@@ -2,6 +2,7 @@
 # Projet apprentissage de règles
 
 Projet d'une durée de deux semaines qui contient plusieurs sous-parties.
+Réalisé dans le cadre d'un cursus d'ingénier en informatique, en C/SDL2.
 
 
 ## Projets individuels
